@@ -1,15 +1,17 @@
 package local.jarios.exceptions;
 
+import org.hibernate.HibernateException;
+
 /**
  * Description:
  * Author: juan
  * Date: 28/12/2024
  * Team:
  */
-public class MiSessionFactoryProviderException extends RuntimeException {
+public class MiSessionFactoryProviderException extends Exception {
 
-    public MiSessionFactoryProviderException(String message, Throwable cause) {
+    public MiSessionFactoryProviderException(HibernateException ex) {
 
-        super(message, cause);
+        super(ex);
     }
 }

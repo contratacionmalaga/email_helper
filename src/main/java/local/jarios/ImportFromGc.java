@@ -3,14 +3,16 @@ package local.jarios;
 import local.jarios.database.DatabaseConfig;
 import local.jarios.entity.*;
 import local.jarios.exceptions.MiMailException;
+import local.jarios.exceptions.MiManejadorDeExcepciones;
+import local.jarios.exceptions.MiPropertyFileException;
 import local.jarios.exceptions.MiServiceException;
+import local.jarios.exceptions.MiSessionFactoryProviderException;
 import local.jarios.models.DatosFicheroGc;
 import local.jarios.models.MiMail;
 import local.jarios.models.RegistroGc;
 import local.jarios.enums.DbConfig;
 import local.jarios.enums.Permiso;
 import local.jarios.enums.TipoFinalEjecucion;
-import local.jarios.exceptions.ManejadorDeExcepciones;
 import local.jarios.helpers.*;
 import local.jarios.mapper.MapperToEntity;
 import local.jarios.properties.PropertyConstantes;
@@ -162,10 +164,10 @@ public class ImportFromGc {
             /// Finalizar el programa correctamente
             FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO, ConstantesGenerales.CADENA_VACIA);
 
-        } catch (MiMailException | MiServiceException ex) {
+        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException | MiPropertyFileException ex) {
 
             /// Muestro en el log la información de la excepción
-            ManejadorDeExcepciones.exceptionToLog(ex.getMessage(), ex.getStackTrace());
+            MiManejadorDeExcepciones.exceptionToLog(ex.getMessage(), ex.getStackTrace());
 
             /// Finalizo la ejecución del programa
             FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR, ex.getMessage());

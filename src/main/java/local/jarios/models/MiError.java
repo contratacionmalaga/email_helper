@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Error {
+public class MiError {
 
     private String mensaje;
     private String[] listaStackTraceElements;

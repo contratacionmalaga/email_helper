@@ -1,9 +1,10 @@
 package local.jarios.properties;
 
 import local.jarios.enums.PropertyFile;
+import local.jarios.exceptions.MiPropertyFileException;
 import local.jarios.utils.ConstantesGenerales;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import local.jarios.utils.Mensajes;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,9 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+@Slf4j
 public final class PropertyManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyManager.class);
 
     /// Lista de claves sensibles que no se deben mostrar
     private static final String[] SENSITIVE_KEYS = {
@@ -36,7 +36,7 @@ public final class PropertyManager {
     private static PropertyManager instance;
 
     /// Constructor que carga múltiples archivos de configuración
-    public PropertyManager() {
+    public PropertyManager() throws MiPropertyFileException {
 
         ///
         for (String filePath : CONFIG_FILE) {
@@ -53,9 +53,11 @@ public final class PropertyManager {
 
             } catch (IOException ex) {
 
-                var mensaje = "Error al cargar el archivo de propiedades: " + filePath  + ". Error: " + ex.getMessage();
-                LOGGER.error(mensaje);
-                throw new PropertyFileException(mensaje, ex);
+                /// Registro la excepción
+                log.error(Mensajes.EXCEPTION_ERROR_MIMAIL_ENVIARMAIL, ex.getMessage());
+
+                /// Devuelvo la excepción
+                throw new MiPropertyFileException(ex);
 
             }
         }
@@ -81,7 +83,7 @@ public final class PropertyManager {
     ///
     ///     PATRÓN SINGLETON
     ///
-    public static PropertyManager getInstance() {
+    public static PropertyManager getInstance() throws MiPropertyFileException {
 
         ///
         if (instance == null) {
@@ -141,6 +143,6 @@ public final class PropertyManager {
     private static void imprimirPropiedad(Object key, Object value) {
 
         ///
-        LOGGER.info("{}Propiedad leída: {} = {}", ConstantesGenerales.TABULADOR_1, key, value);
+        log.info("{}Propiedad leída: {} = {}", ConstantesGenerales.TABULADOR_1, key, value);
     }
 }

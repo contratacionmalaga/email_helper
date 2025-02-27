@@ -5,6 +5,7 @@ import local.jarios.database.SessionFactoryProvider;
 import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
 import local.jarios.exceptions.MiServiceException;
+import local.jarios.exceptions.MiSessionFactoryProviderException;
 import local.jarios.models.DatosFicheroGc;
 import local.jarios.properties.PropertyManager;
 import local.jarios.repository.Repository;
@@ -14,8 +15,6 @@ import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -34,7 +33,9 @@ public class ServiceImpl implements Service {
     private final TransactionManager transactionManager;
     private final SessionFactory sessionFactory;
 
-    public ServiceImpl(DatabaseConfig databaseConfig, PropertyManager propertyManager)  {
+    public ServiceImpl(
+            DatabaseConfig databaseConfig,
+            PropertyManager propertyManager) throws MiSessionFactoryProviderException {
 
         this.repository = new RepositoryImpl();
         this.transactionManager = new TransactionManager();

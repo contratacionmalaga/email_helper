@@ -1,7 +1,9 @@
 package local.jarios.database;
 
+import local.jarios.exceptions.MiSessionFactoryProviderException;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
+import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -19,7 +21,7 @@ public class SessionFactoryProvider {
 
     public SessionFactory getSessionFactory(
             DatabaseConfig databaseConfig,
-            PropertyManager propertyManager) throws SessionFactoryProviderException {
+            PropertyManager propertyManager) throws MiSessionFactoryProviderException {
 
         ///
         var properties = HibernateConfiguration.getProperties(databaseConfig);
@@ -40,7 +42,11 @@ public class SessionFactoryProvider {
 
         } catch (HibernateException ex) {
 
-            throw new SessionFactoryProviderException(ex.getMessage(), ex);
+            /// Registro la excepción
+            log.error(Mensajes.EXCEPTION_ERROR_MIMAIL_ENVIARMAIL, ex.getMessage());
+
+            /// Devuelvo la excepción
+            throw new MiSessionFactoryProviderException(ex);
         }
     }
 }

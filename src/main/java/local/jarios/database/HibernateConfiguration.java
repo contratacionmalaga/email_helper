@@ -1,9 +1,9 @@
 package local.jarios.database;
 
 import com.zaxxer.hikari.HikariDataSource;
-import local.jarios.properties.PropertyConstantes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.HikariCPSettings;
 import org.hibernate.cfg.JdbcSettings;
 import org.hibernate.cfg.SchemaToolingSettings;
 import org.hibernate.cfg.TransactionSettings;
@@ -64,11 +64,11 @@ public class HibernateConfiguration {
         properties.put(JdbcSettings.JAKARTA_JDBC_USER, databaseConfig.getUsername());
         properties.put(JdbcSettings.JAKARTA_JDBC_PASSWORD, databaseConfig.getPassword());
 
-        properties.put(JdbcSettings.HIKARI_POOL_NAME, databaseConfig.getHikariConfig().getPoolName());
-        properties.put(JdbcSettings.HIKARI_MAX_LIFETIME, databaseConfig.getHikariConfig().getMaxLifetime());
-        properties.put(JdbcSettings.HIKARI_IDLE_TIMEOUT, databaseConfig.getHikariConfig().getIdleTimeout());
-        properties.put(JdbcSettings.HIKARI_MAX_SIZE, databaseConfig.getHikariConfig().getMaximumPoolSize());
-        properties.put(JdbcSettings.HIKARI_MIN_IDLE_SIZE, databaseConfig.getHikariConfig().getMinimumIdle());
+        properties.put(HikariCPSettings.HIKARI_POOL_NAME, databaseConfig.getHikariConfig().getPoolName());
+        properties.put(HikariCPSettings.HIKARI_MAX_LIFETIME, databaseConfig.getHikariConfig().getMaxLifetime());
+        properties.put(HikariCPSettings.HIKARI_IDLE_TIMEOUT, databaseConfig.getHikariConfig().getIdleTimeout());
+        properties.put(HikariCPSettings.HIKARI_MAX_SIZE, databaseConfig.getHikariConfig().getMaximumPoolSize());
+        properties.put(HikariCPSettings.HIKARI_MIN_IDLE_SIZE, databaseConfig.getHikariConfig().getMinimumIdle());
 
         properties.put(SchemaToolingSettings.HBM2DDL_AUTO, databaseConfig.getHbm2ddl());
 

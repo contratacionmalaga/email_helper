@@ -1,6 +1,6 @@
 package local.jarios.helpers;
 
-import local.jarios.exceptions.ManejadorDeExcepciones;
+import local.jarios.exceptions.MiManejadorDeExcepciones;
 import local.jarios.managers.ManagerGsons;
 import local.jarios.utils.ConstantesGenerales;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public final class ComunHelper {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
             LOGGER.error("Error al obtener el nombre del host. Mensaje error: {}", ex.getMessage());
-            ManejadorDeExcepciones.exceptionToLog (ex.getMessage(), ex.getStackTrace());
+            MiManejadorDeExcepciones.exceptionToLog (ex.getMessage(), ex.getStackTrace());
         }
 
         return hostName;

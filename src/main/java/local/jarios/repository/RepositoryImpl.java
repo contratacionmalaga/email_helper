@@ -43,7 +43,7 @@ public class RepositoryImpl implements Repository {
         try {
 
             ///
-            session.merge(logEntity);
+            session.persist(logEntity);
             log.info("Merge del objeto LogEntity");
 
             ///

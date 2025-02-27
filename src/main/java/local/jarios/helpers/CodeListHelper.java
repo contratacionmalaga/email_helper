@@ -1,5 +1,6 @@
 package local.jarios.helpers;
 
+import local.jarios.exceptions.MiParseException;
 import local.jarios.genericode.CodeList;
 
 import javax.xml.bind.JAXBContext;
@@ -16,7 +17,7 @@ public class CodeListHelper {
 
     private CodeListHelper() { }
 
-    public static CodeList getCodeListFromFile (File file) throws MiParserException {
+    public static CodeList getCodeListFromFile (File file) throws MiParseException {
 
 
         try {
@@ -33,7 +34,7 @@ public class CodeListHelper {
         } catch (JAXBException ex) {
 
             ///
-            throw new MiParserException(ex.getMessage(), ex);
+            throw new MiParseException(ex.getMessage(), ex);
 
         }
     }
