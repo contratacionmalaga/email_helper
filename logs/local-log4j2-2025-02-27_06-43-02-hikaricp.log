@@ -1,0 +1,124 @@
+2025-02-27 06:43:04.349 DEBUG [main] HikariConfig             :1026 - Class org.postgresql.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528
+2025-02-27 06:43:04.355 DEBUG [main] HikariConfig             :1158 - JaRiosHikariCP - configuration:
+2025-02-27 06:43:04.359 DEBUG [main] HikariConfig             :1190 - allowPoolSuspension.............false
+2025-02-27 06:43:04.359 DEBUG [main] HikariConfig             :1190 - autoCommit......................true
+2025-02-27 06:43:04.359 DEBUG [main] HikariConfig             :1190 - catalog.........................none
+2025-02-27 06:43:04.360 DEBUG [main] HikariConfig             :1190 - connectionInitSql...............none
+2025-02-27 06:43:04.360 DEBUG [main] HikariConfig             :1190 - connectionTestQuery.............none
+2025-02-27 06:43:04.360 DEBUG [main] HikariConfig             :1190 - connectionTimeout...............30000
+2025-02-27 06:43:04.360 DEBUG [main] HikariConfig             :1190 - credentials.....................com.zaxxer.hikari.util.Credentials@57ea113a
+2025-02-27 06:43:04.360 DEBUG [main] HikariConfig             :1190 - dataSource......................none
+2025-02-27 06:43:04.361 DEBUG [main] HikariConfig             :1190 - dataSourceClassName.............none
+2025-02-27 06:43:04.361 DEBUG [main] HikariConfig             :1190 - dataSourceJNDI..................none
+2025-02-27 06:43:04.362 DEBUG [main] HikariConfig             :1190 - dataSourceProperties............{password=<masked>}
+2025-02-27 06:43:04.362 DEBUG [main] HikariConfig             :1190 - driverClassName................."org.postgresql.Driver"
+2025-02-27 06:43:04.362 DEBUG [main] HikariConfig             :1190 - exceptionOverride...............none
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - exceptionOverrideClassName......none
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - healthCheckProperties...........{}
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - healthCheckRegistry.............none
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - idleTimeout.....................600000
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - initializationFailTimeout.......1
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - isolateInternalQueries..........false
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - jdbcUrl.........................jdbc:postgresql://localhost:5432/contratacion
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - keepaliveTime...................120000
+2025-02-27 06:43:04.363 DEBUG [main] HikariConfig             :1190 - leakDetectionThreshold..........0
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - maxLifetime.....................1800000
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - maximumPoolSize.................10
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - metricRegistry..................none
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - metricsTrackerFactory...........none
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - minimumIdle.....................5
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - password........................<masked>
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - poolName........................"JaRiosHikariCP"
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - readOnly........................false
+2025-02-27 06:43:04.364 DEBUG [main] HikariConfig             :1190 - registerMbeans..................false
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - scheduledExecutor...............none
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - schema..........................none
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - threadFactory...................internal
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - transactionIsolation............default
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - username........................"postgres"
+2025-02-27 06:43:04.365 DEBUG [main] HikariConfig             :1190 - validationTimeout...............5000
+2025-02-27 06:43:04.371 INFO  [main] HikariDataSource         :79   - JaRiosHikariCP - Starting...
+2025-02-27 06:43:04.388 DEBUG [main] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (d6db3ecb-4243-4edf-b3c0-2e738bb1d53b)
+2025-02-27 06:43:04.590 DEBUG [main] PoolBase                 :377  - JaRiosHikariCP - Established new connection (d6db3ecb-4243-4edf-b3c0-2e738bb1d53b)
+2025-02-27 06:43:04.593 INFO  [main] HikariPool               :576  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@4648ce9
+2025-02-27 06:43:04.595 INFO  [main] HikariDataSource         :81   - JaRiosHikariCP - Start completed.
+2025-02-27 06:43:04.711 DEBUG [JaRiosHikariCP:housekeeper] HikariPool               :418  - JaRiosHikariCP - Before cleanup stats (total=1/10, idle=1/5, active=0, waiting=0)
+2025-02-27 06:43:04.714 DEBUG [JaRiosHikariCP:housekeeper] HikariPool               :418  - JaRiosHikariCP - After cleanup  stats (total=1/10, idle=1/5, active=0, waiting=0)
+2025-02-27 06:43:04.714 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (fc45a35c-c42a-4a52-9117-28b50a12a765)
+2025-02-27 06:43:04.731 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (fc45a35c-c42a-4a52-9117-28b50a12a765)
+2025-02-27 06:43:04.732 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@4929638f
+2025-02-27 06:43:04.769 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=2/10, idle=2/5, active=0, waiting=0)
+2025-02-27 06:43:04.769 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (af7fcac2-cb9f-42b7-86f7-87199eadd99a)
+2025-02-27 06:43:04.785 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (af7fcac2-cb9f-42b7-86f7-87199eadd99a)
+2025-02-27 06:43:04.785 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@43d108ff
+2025-02-27 06:43:04.816 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=3/10, idle=3/5, active=0, waiting=0)
+2025-02-27 06:43:04.816 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (215ed2e3-1cdc-4d05-84e9-1801698a6a9b)
+2025-02-27 06:43:04.834 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (215ed2e3-1cdc-4d05-84e9-1801698a6a9b)
+2025-02-27 06:43:04.834 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@6d39ee1
+2025-02-27 06:43:04.878 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=4/10, idle=4/5, active=0, waiting=0)
+2025-02-27 06:43:04.878 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (b980052b-8f6e-43ac-b3d3-0524f6308527)
+2025-02-27 06:43:04.896 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (b980052b-8f6e-43ac-b3d3-0524f6308527)
+2025-02-27 06:43:04.896 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@4e4a0af
+2025-02-27 06:43:04.916 DEBUG [main] HikariConfig             :1026 - Class org.postgresql.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528
+2025-02-27 06:43:04.916 DEBUG [main] HikariConfig             :1158 - JaRiosHikariCP - configuration:
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - allowPoolSuspension.............false
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - autoCommit......................true
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - catalog.........................none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - connectionInitSql...............none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - connectionTestQuery.............none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - connectionTimeout...............30000
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - credentials.....................com.zaxxer.hikari.util.Credentials@5b94ccbc
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - dataSource......................none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - dataSourceClassName.............none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - dataSourceJNDI..................none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - dataSourceProperties............{password=<masked>}
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - driverClassName................."org.postgresql.Driver"
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - exceptionOverride...............none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - exceptionOverrideClassName......none
+2025-02-27 06:43:04.917 DEBUG [main] HikariConfig             :1190 - healthCheckProperties...........{}
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - healthCheckRegistry.............none
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - idleTimeout.....................600000
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - initializationFailTimeout.......1
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - isolateInternalQueries..........false
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - jdbcUrl.........................jdbc:postgresql://localhost:5432/contratacion
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - keepaliveTime...................120000
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - leakDetectionThreshold..........0
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - maxLifetime.....................1800000
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - maximumPoolSize.................10
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - metricRegistry..................none
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - metricsTrackerFactory...........none
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - minimumIdle.....................5
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - password........................<masked>
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - poolName........................"JaRiosHikariCP"
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - readOnly........................false
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - registerMbeans..................false
+2025-02-27 06:43:04.918 DEBUG [main] HikariConfig             :1190 - scheduledExecutor...............none
+2025-02-27 06:43:04.919 DEBUG [main] HikariConfig             :1190 - schema..........................none
+2025-02-27 06:43:04.919 DEBUG [main] HikariConfig             :1190 - threadFactory...................internal
+2025-02-27 06:43:04.919 DEBUG [main] HikariConfig             :1190 - transactionIsolation............default
+2025-02-27 06:43:04.919 DEBUG [main] HikariConfig             :1190 - username........................"postgres"
+2025-02-27 06:43:04.919 DEBUG [main] HikariConfig             :1190 - validationTimeout...............5000
+2025-02-27 06:43:04.919 INFO  [main] HikariDataSource         :79   - JaRiosHikariCP - Starting...
+2025-02-27 06:43:04.919 DEBUG [main] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (ff183451-4db7-40d1-8041-fc99646c3e7c)
+2025-02-27 06:43:04.935 DEBUG [main] PoolBase                 :377  - JaRiosHikariCP - Established new connection (ff183451-4db7-40d1-8041-fc99646c3e7c)
+2025-02-27 06:43:04.935 INFO  [main] HikariPool               :576  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@4074023c
+2025-02-27 06:43:04.935 INFO  [main] HikariDataSource         :81   - JaRiosHikariCP - Start completed.
+2025-02-27 06:43:04.940 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=5/10, idle=5/5, active=0, waiting=0)
+2025-02-27 06:43:05.049 DEBUG [JaRiosHikariCP:housekeeper] HikariPool               :418  - JaRiosHikariCP - Before cleanup stats (total=1/10, idle=1/5, active=0, waiting=0)
+2025-02-27 06:43:05.049 DEBUG [JaRiosHikariCP:housekeeper] HikariPool               :418  - JaRiosHikariCP - After cleanup  stats (total=1/10, idle=1/5, active=0, waiting=0)
+2025-02-27 06:43:05.050 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (dfcc8808-14d4-4aec-b4d2-5635478cf9ad)
+2025-02-27 06:43:05.062 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (dfcc8808-14d4-4aec-b4d2-5635478cf9ad)
+2025-02-27 06:43:05.062 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@1c1b1c08
+2025-02-27 06:43:05.096 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=2/10, idle=2/5, active=0, waiting=0)
+2025-02-27 06:43:05.096 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (56f78a91-fd6f-48ad-95a5-9f07b88e2f17)
+2025-02-27 06:43:05.108 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (56f78a91-fd6f-48ad-95a5-9f07b88e2f17)
+2025-02-27 06:43:05.109 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@12dce1fb
+2025-02-27 06:43:05.142 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=3/10, idle=3/5, active=0, waiting=0)
+2025-02-27 06:43:05.142 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (46cbc539-55f8-44d8-a994-3f8227ba5c8f)
+2025-02-27 06:43:05.155 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (46cbc539-55f8-44d8-a994-3f8227ba5c8f)
+2025-02-27 06:43:05.156 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@16e37778
+2025-02-27 06:43:05.189 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=4/10, idle=4/5, active=0, waiting=0)
+2025-02-27 06:43:05.189 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :365  - JaRiosHikariCP - Attempting to create/setup new connection (9893d3ab-6279-4e7e-84a4-f0e02c549ea0)
+2025-02-27 06:43:05.203 DEBUG [JaRiosHikariCP:connection-adder] PoolBase                 :377  - JaRiosHikariCP - Established new connection (9893d3ab-6279-4e7e-84a4-f0e02c549ea0)
+2025-02-27 06:43:05.203 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :752  - JaRiosHikariCP - Added connection org.postgresql.jdbc.PgConnection@53e1ebc0
+2025-02-27 06:43:05.236 DEBUG [JaRiosHikariCP:connection-adder] HikariPool               :418  - JaRiosHikariCP - After adding stats (total=5/10, idle=5/5, active=0, waiting=0)
