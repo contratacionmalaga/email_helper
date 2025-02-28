@@ -1,6 +1,7 @@
 package local.jarios.entity;
 
 import jakarta.persistence.*;
+import local.jarios.interfaces.Actualizable;
 import local.jarios.utils.TamanoCampos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +21,12 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor
 @Table(
-        name = "ficheros_gc"
+        name = "ficheros_gc",
+        indexes = {
+                @Index(name = "idx_ficheros_gc_shortname", columnList = "shortName", unique = true)
+        }
 )
-public class FicheroGcEntity extends Auditable {
+public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGcEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,5 +93,20 @@ public class FicheroGcEntity extends Auditable {
                 this.canonicalUri + "; " +
                 this.canonicalVersionUri + "; " +
                 this.locationUri;
+    }
+
+    @Override
+    public String getUniqueKey() {
+        return this.shortName;
+    }
+
+    @Override
+    public void actualizarCon(FicheroGcEntity otro) {
+        /// Actualiza los campos de este objeto con los valores del objeto otro (OcEntity)
+        this.longName = otro.getLongName();
+        this.version = otro.getVersion();
+        this.canonicalUri = otro.getCanonicalUri();
+        this.canonicalVersionUri = otro.getCanonicalVersionUri();
+        this.locationUri = otro.getLocationUri();
     }
 }
