@@ -1,6 +1,5 @@
 package local.jarios.service;
 
-import local.jarios.database.DatabaseConfig;
 import local.jarios.database.SessionFactoryProvider;
 import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
@@ -33,14 +32,12 @@ public class ServiceImpl implements Service {
     private final TransactionManager transactionManager;
     private final SessionFactory sessionFactory;
 
-    public ServiceImpl(
-            DatabaseConfig databaseConfig,
-            PropertyManager propertyManager) throws MiSessionFactoryProviderException {
+    public ServiceImpl(PropertyManager propertyManager) throws MiSessionFactoryProviderException {
 
         this.repository = new RepositoryImpl();
         this.transactionManager = new TransactionManager();
         var sessionFactoryProvider = new SessionFactoryProvider();
-        this.sessionFactory = sessionFactoryProvider.getSessionFactory(databaseConfig, propertyManager);
+        this.sessionFactory = sessionFactoryProvider.getSessionFactory(propertyManager.getHibernateProperties());
     }
 
     @Override

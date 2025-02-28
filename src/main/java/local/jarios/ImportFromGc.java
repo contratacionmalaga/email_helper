@@ -1,6 +1,5 @@
 package local.jarios;
 
-import local.jarios.database.DatabaseConfig;
 import local.jarios.entity.*;
 import local.jarios.exceptions.MiMailException;
 import local.jarios.exceptions.MiManejadorDeExcepciones;
@@ -9,9 +8,6 @@ import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
 import local.jarios.models.DatosFicheroGc;
 import local.jarios.models.MiMail;
-import local.jarios.models.RegistroGc;
-import local.jarios.enums.DbConfig;
-import local.jarios.enums.Permiso;
 import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.helpers.*;
 import local.jarios.mapper.MapperToEntity;
@@ -55,7 +51,7 @@ public class ImportFromGc {
             var propertyManager = PropertyManager.getInstance();
 
             /// Imprimo el contenido de los ficheros asociados a la configuración Local
-            propertyManager.imprimirProperties();
+            propertyManager.imprimirMapProperties();
 
             /// ***** CREO EL OBJETO LogEntity
             var logEntity = new LogEntity();
@@ -68,7 +64,7 @@ public class ImportFromGc {
             ///     INICIO DE LA IMPORTACIÓN DE LOS FICHEROS GC
             ///
 
-            /// 1- OBTENGO LA RUTA DE LOS FICHERO A PARSEAR
+            /// 1- OBTENGO LA RUTA DE LOS FICHEROS A PARSEAR
             var path = propertyManager.getProperty(PropertyConstantes.CONFIG_PATH);
             LOGGER.info(Mensajes.RUTA_FICHEROS, path);
 
@@ -128,15 +124,6 @@ public class ImportFromGc {
             /// ASIGNO LA LISTA DE FICHEROS AL OBJETO logEntity
             logEntity.setFicherosGcEntity(listFicherosGcEntity);
 
-            /// Imprimo el mapa con los ficheros y lista de registros
-            LOGGER.info(Mensajes.IMPRIMIR_MAPA);
-            for (Map.Entry<String, DatosFicheroGc> entry : mapDatosFicherosGc.entrySet()) {
-                LOGGER.info("{}{}", ConstantesGenerales.TABULADOR_1, entry.getValue().getFicheroGcEntity().toString());
-                for (RegistroGc registroGc : entry.getValue().getListRegistroGc()) {
-                    LOGGER.info("{}{}", ConstantesGenerales.TABULADOR_2, registroGc.toString());
-                }
-            }
-
             ///
             ///     ESTABLEZCO LA FECHA Y HORA FINAL DE LA IMPORTACIÓN
             ///
@@ -146,11 +133,12 @@ public class ImportFromGc {
             /// Asigno las estadísticas al objeto LogEntity
             logEntity.setEstadisticaEntity(estadisticaEntity);
 
-            /// Creo la configuración de acceso a la base de datos ORACLE desde donde importamos los datos
-            var dbConfigPrincipal = new DatabaseConfig(DbConfig.PRINCIPAL, Permiso.ESCRITURA, propertyManager);
-
             ///
-            Service service = new ServiceImpl(dbConfigPrincipal, propertyManager);
+            ///     CREACIÓN DEL SERVICIO QUE SE ENCARGARÁ DE PERSISTIR LOS VALORES EN LA BASE DE DATOS
+            ///
+            Service service = new ServiceImpl(propertyManager);
+
+            /// Método encargado de persistir la información en la base de datos
             service.saveLogEntityAndMap(logEntity, mapDatosFicherosGc, propertyManager);
 
             /// Envío un correo con la información de la ejecución del aplicativo

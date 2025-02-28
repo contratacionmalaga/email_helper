@@ -25,6 +25,10 @@ import java.util.Map;
 @Slf4j
 public class RepositoryImpl implements Repository {
 
+    private static String CONFIG_PREFIJO = "";
+
+    private static String CONFIG_ESQUEMA = "";
+
     public RepositoryImpl() {/* CONSTRUCTOR VACÍO */}
 
     /**
@@ -40,6 +44,10 @@ public class RepositoryImpl implements Repository {
             Map<String, DatosFicheroGc> datosFicheroGcMap,
             PropertyManager propertyManager) throws MiRepositoryException  {
 
+        ///
+        cargarVariables(propertyManager);
+
+        ///
         try {
 
             ///
@@ -50,35 +58,29 @@ public class RepositoryImpl implements Repository {
             for (Map.Entry<String, DatosFicheroGc> entry : datosFicheroGcMap.entrySet()) {
 
                 ///
-                var prefijo = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
+                String nombreTablaSinEsquema = CONFIG_PREFIJO + entry.getKey().toLowerCase();
+
+                String nombreTablaConEsquema = CONFIG_ESQUEMA + "." + nombreTablaSinEsquema;
 
                 ///
-                var esquema = propertyManager.getProperty(PropertyConstantes.CONFIG_ESQUEMA);
-
-                ///
-                String nombreTabla = prefijo + entry.getKey().toLowerCase();
-
-                String nombreTablaEsquema = esquema + "." + nombreTabla;
-
-                ///
-                if (tablaExiste(session, nombreTabla)) {
+                if (tablaExiste(session, nombreTablaSinEsquema)) {
 
                     ///
-                    var dropSql = "DROP TABLE " + esquema + "." + nombreTabla;
+                    var dropSql = "DROP TABLE " + nombreTablaConEsquema;
 
                     ///
                     session.createNativeQuery(dropSql).executeUpdate();
-                    log.info("{}Borrada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaEsquema);
+                    log.info("{}Borrada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
 
                 }
 
                 ///
-                crearTabla(session, nombreTablaEsquema);
-                log.info("{}Creada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaEsquema);
+                crearTabla(session, nombreTablaConEsquema);
+                log.info("{}Creada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
 
                 ///
-                insertarRegistrosEnTabla(session, nombreTablaEsquema, entry.getValue().getListRegistroGc());
-                log.info("Insertados {} registros en la tabla: {}", entry.getValue().getListRegistroGc().size(), nombreTablaEsquema);
+                insertarRegistrosEnTabla(session, nombreTablaConEsquema, entry.getValue().getListRegistroGc());
+                log.info("Insertados {} registros en la tabla: {}", entry.getValue().getListRegistroGc().size(), nombreTablaConEsquema);
             }
 
         } catch (HibernateException ex) {
@@ -94,14 +96,14 @@ public class RepositoryImpl implements Repository {
     /**
      * Verificar si la tabla existe en la base de datos.
      */
-    private boolean tablaExiste(Session session, String nombreTabla) {
+    private boolean tablaExiste(Session session, String nombreTablaSinEsquema) {
 
         /// SQL nativo para verificar la existencia de la tabla
-        String sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = :nombreTabla";
+        String sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = :nombreTablaSinEsquema";
 
         ///
         Long count = (Long) session.createNativeQuery(sql)
-                .setParameter("nombreTabla", nombreTabla)
+                .setParameter("nombreTablaSinEsquema", nombreTablaSinEsquema)
                 .getSingleResult();
 
         ///
@@ -111,10 +113,10 @@ public class RepositoryImpl implements Repository {
     /**
      * Crear la tabla si no existe.
      */
-    private void crearTabla(Session session, String nombreTabla) {
+    private void crearTabla(Session session, String nombreTablaConEsquema) {
 
         /// SQL nativo para crear la tabla
-        String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTabla + " (" +
+        String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTablaConEsquema + " (" +
                 "id SERIAL PRIMARY KEY, " +
                 "code VARCHAR(50) NOT NULL, " +
                 "nombre VARCHAR(500)" +
@@ -153,5 +155,14 @@ public class RepositoryImpl implements Repository {
 
         /// Ejecutar la consulta
         session.createNativeQuery(insertSql.toString()).executeUpdate();
+    }
+
+    private static void cargarVariables(PropertyManager propertyManager) {
+
+        ///
+        CONFIG_PREFIJO = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
+
+        ///
+        CONFIG_ESQUEMA = propertyManager.getProperty(PropertyConstantes.CONFIG_ESQUEMA);
     }
 }

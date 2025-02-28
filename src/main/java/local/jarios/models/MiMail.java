@@ -30,7 +30,7 @@ public final class MiMail {
             PropertyManager propertyManager,
             EstadisticaEntity estadisticaEntity) throws MiMailException {
 
-        var properties = propertyManager.getProperties();
+        var properties = propertyManager.getMailProperties();
 
         try {
             var session = getSession(

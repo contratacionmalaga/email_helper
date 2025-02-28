@@ -3,8 +3,7 @@ package local.jarios.helpers;
 import local.jarios.exceptions.MiManejadorDeExcepciones;
 import local.jarios.managers.ManagerGsons;
 import local.jarios.utils.ConstantesGenerales;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,9 +12,8 @@ import java.util.Arrays;
 /**
  * @author Juan Antonio
  */
+@Slf4j
 public final class ComunHelper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComunHelper.class);
 
     private ComunHelper() { }
 
@@ -25,7 +23,7 @@ public final class ComunHelper {
         try {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            LOGGER.error("Error al obtener el nombre del host. Mensaje error: {}", ex.getMessage());
+            log.error("Error al obtener el nombre del host. Mensaje error: {}", ex.getMessage());
             MiManejadorDeExcepciones.exceptionToLog (ex.getMessage(), ex.getStackTrace());
         }
 
@@ -52,6 +50,6 @@ public final class ComunHelper {
                         ManagerGsons
                                 .objectToJsonPretty(object)
                                 .split(ConstantesGenerales.CR))
-                .forEach(LOGGER::info);
+                .forEach(log::info);
     }
 }
