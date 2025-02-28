@@ -1,7 +1,7 @@
 package local.jarios.entity;
 
 import jakarta.persistence.*;
-import local.jarios.utils.ConstantesGenerales;
+import local.jarios.utils.TamanoCampos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,10 +21,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(
-        name = "estadistica",
-        schema = "imp_placsp_gc"
+        name = "estadistica"
 )
 public class EstadisticaEntity extends Auditable {
+
+    private static final int MILESIMAS = 1000;
+    private static final int SEGUNDOS = 60;
+    private static final int MINUTOS = 60;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,15 +41,14 @@ public class EstadisticaEntity extends Auditable {
             name = "log_id",
             nullable = false,
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "fk_estadistica_log",
-                    foreignKeyDefinition =
-                            "FOREIGN KEY (log_id) " +
-                            "REFERENCES " + ConstantesGenerales.ESQUEMA_PRINCIPAL + "log(id) ON DELETE CASCADE"))
+            foreignKey = @ForeignKey(name = "fk_estadistica_log"))
     private LogEntity logEntity;
 
-    @Column(name = "nFicheros")
-    private int nFicheros;
+    @Column(name = "nTotalFicheros")
+    private int nTotalFicheros;
+
+    @Column(name = "nTotalProcesados")
+    private int nTotalProcesados;
 
     @Column(name = "nRregistrosGc")
     private int nRregistrosGc;
@@ -57,7 +59,7 @@ public class EstadisticaEntity extends Auditable {
     @Column(name = "fechaHoraFinal")
     private Timestamp fechaHoraFinal;
 
-    @Column(name = "duracion")
+    @Column(name = "duracion", length = TamanoCampos.TAMANO_FECHA_LARGA)
     private String duracion;
 
     public EstadisticaEntity(LogEntity logEntity) {
@@ -66,28 +68,21 @@ public class EstadisticaEntity extends Auditable {
         this.fechaHoraInicial = Timestamp.valueOf(LocalDateTime.now());
     }
 
+    /**
+     *
+     */
     public void calcularTiempoEjecucion() {
 
         /// Calculamos la diferencia en milisegundos
         long diffInMillis = this.fechaHoraFinal.getTime() - this.fechaHoraInicial.getTime();
 
         /// Calculamos las horas, minutos, segundos y milisegundos
-        long hours = diffInMillis / (1000 * 60 * 60);
-        long minutes = (diffInMillis % (1000 * 60 * 60)) / (1000 * 60);
-        long seconds = (diffInMillis % (1000 * 60)) / 1000;
-        long milliseconds = diffInMillis % 1000;
+        long hours = diffInMillis / (MILESIMAS * SEGUNDOS * MINUTOS);
+        long minutes = (diffInMillis % (MILESIMAS * SEGUNDOS * MINUTOS)) / (MILESIMAS * SEGUNDOS);
+        long seconds = (diffInMillis % (MILESIMAS * SEGUNDOS)) / MILESIMAS;
+        long milliseconds = diffInMillis % MILESIMAS;
 
         /// Devolvemos el tiempo transcurrido en formato "hh:mm:ss:SSS"
-        this.duracion = String.format("%02d:%02d:%02d:%03d", hours, minutes, seconds, milliseconds);
-    }
-
-    public void aumentarNumFicheros() {
-
-        this.nFicheros ++;
-    }
-
-    public void aumentarNumRegistrosGc(int numRegistros) {
-
-        this.nRregistrosGc += numRegistros;
+        this.duracion = String.format("%sh %sm %ss %sml", hours, minutes, seconds, milliseconds);
     }
 }

@@ -1,12 +1,10 @@
 package local.jarios.repository;
 
-import jakarta.transaction.Transactional;
+import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
-import local.jarios.models.DatosFicheroGc;
+import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.RegistroGc;
-import local.jarios.properties.PropertyConstantes;
-import local.jarios.properties.PropertyManager;
 import local.jarios.utils.ConstantesGenerales;
 import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
@@ -31,54 +29,49 @@ public class RepositoryImpl implements Repository {
      *
      * @param session Configuración de la sesión actual con la base de datos
      * @param logEntity Identificador de la ejecución del programa
+     * @param parseoFicherosGc Objeto que contiene el parseo de los ficheros
      */
     @Override
-    @Transactional
-    public void saveLogEntityAndMap(
+    public void persistir(
             Session session,
             LogEntity logEntity,
-            Map<String, DatosFicheroGc> datosFicheroGcMap,
-            PropertyManager propertyManager) throws MiRepositoryException  {
+            ParseoFicherosGc parseoFicherosGc) throws MiRepositoryException {
 
+        ///
         try {
 
             ///
-            session.persist(logEntity);
-            log.info("Merge del objeto LogEntity");
+            session.merge(logEntity);
 
             ///
-            for (Map.Entry<String, DatosFicheroGc> entry : datosFicheroGcMap.entrySet()) {
+            for (Map.Entry<String, List<RegistroGc>> entry : parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
 
                 ///
-                var prefijo = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
+                String CONFIG_PREFIJO = "placsp_gc";
+                String nombreTablaSinEsquema = CONFIG_PREFIJO + entry.getKey().toLowerCase();
+
+                String CONFIG_ESQUEMA = "imp_placsp_gc";
+                String nombreTablaConEsquema = CONFIG_ESQUEMA + "." + nombreTablaSinEsquema;
 
                 ///
-                var esquema = propertyManager.getProperty(PropertyConstantes.CONFIG_ESQUEMA);
-
-                ///
-                String nombreTabla = prefijo + entry.getKey().toLowerCase();
-
-                String nombreTablaEsquema = esquema + "." + nombreTabla;
-
-                ///
-                if (tablaExiste(session, nombreTabla)) {
+                if (tablaExiste(session, nombreTablaSinEsquema)) {
 
                     ///
-                    var dropSql = "DROP TABLE " + esquema + "." + nombreTabla;
+                    var dropSql = "DROP TABLE " + nombreTablaConEsquema;
 
                     ///
                     session.createNativeQuery(dropSql).executeUpdate();
-                    log.info("{}Borrada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaEsquema);
+                    log.info(Mensajes.DROP_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
 
                 }
 
                 ///
-                crearTabla(session, nombreTablaEsquema);
-                log.info("{}Creada la tabla: {}", ConstantesGenerales.TABULADOR_1, nombreTablaEsquema);
+                crearTabla(session, nombreTablaConEsquema);
+                log.info(Mensajes.CREATE_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
 
                 ///
-                insertarRegistrosEnTabla(session, nombreTablaEsquema, entry.getValue().getListRegistroGc());
-                log.info("Insertados {} registros en la tabla: {}", entry.getValue().getListRegistroGc().size(), nombreTablaEsquema);
+                insertarRegistrosEnTabla(session, nombreTablaConEsquema, entry.getValue());
+                log.info(Mensajes.INSERT_RECORDS, ConstantesGenerales.TABULADOR_2, entry.getValue().size(), nombreTablaConEsquema);
             }
 
         } catch (HibernateException ex) {
@@ -92,16 +85,19 @@ public class RepositoryImpl implements Repository {
     }
 
     /**
-     * Verificar si la tabla existe en la base de datos.
+     *
+     * @param session Sessión establecida con la base de datos
+     * @param nombreTablaSinEsquema Nombre de la tabla incluido el esquema
+     * @return boolean Indicando si la tabla existe en la base de datos o no
      */
-    private boolean tablaExiste(Session session, String nombreTabla) {
+    private boolean tablaExiste(Session session, String nombreTablaSinEsquema) {
 
         /// SQL nativo para verificar la existencia de la tabla
-        String sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = :nombreTabla";
+        String sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = :nombreTablaSinEsquema";
 
         ///
         Long count = (Long) session.createNativeQuery(sql)
-                .setParameter("nombreTabla", nombreTabla)
+                .setParameter("nombreTablaSinEsquema", nombreTablaSinEsquema)
                 .getSingleResult();
 
         ///
@@ -109,12 +105,14 @@ public class RepositoryImpl implements Repository {
     }
 
     /**
-     * Crear la tabla si no existe.
+     *
+     * @param session Sessión establecida con la base de datos
+     * @param nombreTablaConEsquema Nombre de la tabla incluido el esquema
      */
-    private void crearTabla(Session session, String nombreTabla) {
+    private void crearTabla(Session session, String nombreTablaConEsquema) {
 
         /// SQL nativo para crear la tabla
-        String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTabla + " (" +
+        String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTablaConEsquema + " (" +
                 "id SERIAL PRIMARY KEY, " +
                 "code VARCHAR(50) NOT NULL, " +
                 "nombre VARCHAR(500)" +
@@ -124,6 +122,12 @@ public class RepositoryImpl implements Repository {
         session.createNativeQuery(createTableSql).executeUpdate();
     }
 
+    /**
+     *
+     * @param session Sessión establecida con la base de datos
+     * @param tableName Tabla en la que se realizará la inserción de los datos (Inserción ÚNICA!!!)
+     * @param listRegistroGc Lista de registros que se insertarán en una única vez
+     */
     private void insertarRegistrosEnTabla(
             Session session,
             String tableName,
@@ -153,5 +157,30 @@ public class RepositoryImpl implements Repository {
 
         /// Ejecutar la consulta
         session.createNativeQuery(insertSql.toString()).executeUpdate();
+    }
+
+    /**
+     * Devuelve la lista de FicherosGc existente en la base de datos
+     * @param session Sessión establecida con la base de datos
+     * @return Lista de FicherosGc desde la base de datos
+     * @throws MiRepositoryException Excepción en caso de error
+     */
+    public List<FicheroGcEntity> getListFicherosGc(Session session) throws MiRepositoryException {
+
+        ///
+        String jpql = "SELECT f FROM FicheroGcEntity f";
+
+        try {
+
+            return session.createQuery(jpql, FicheroGcEntity.class).getResultList();
+
+        } catch (HibernateException ex) {
+
+            /// Registro la excepción
+            log.error(Mensajes.EXCEPTION_ERROR_REPOSITORYIMPL_SAVE, ex.getMessage());
+
+            /// Devuelvo la excepción
+            throw new MiRepositoryException(ex);
+        }
     }
 }

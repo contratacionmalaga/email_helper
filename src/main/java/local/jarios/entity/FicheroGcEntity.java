@@ -1,10 +1,12 @@
 package local.jarios.entity;
 
 import jakarta.persistence.*;
-import local.jarios.utils.ConstantesGenerales;
+import local.jarios.utils.TamanoCampos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Objects;
 
 /**
  * Description: Importaciones de Ficheros Excel desde Internet
@@ -18,8 +20,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @Table(
-        name = "_lista_ficheros_gc",
-        schema = "imp_placsp_gc"
+        name = "ficheros_gc"
 )
 public class FicheroGcEntity extends Auditable {
 
@@ -35,34 +36,58 @@ public class FicheroGcEntity extends Auditable {
             name = "log_id",
             nullable = false,
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "fk_lista_ficheros_gc_log",
-                    foreignKeyDefinition =
-                            "FOREIGN KEY (log_id) " +
-                            "REFERENCES " + ConstantesGenerales.ESQUEMA_PRINCIPAL + "log(id) ON DELETE CASCADE"))
+            foreignKey = @ForeignKey(name = "fk_lista_ficheros_gc_log"))
     private LogEntity logEntity;
 
-    @Column(name = "shortName", nullable = false, length = 500)
+    @Column(name = "shortName", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String shortName;
 
-    @Column(name = "longName", length = 500)
+    @Column(name = "longName", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String longName;
 
-    @Column(name = "version", length = 500)
+    @Column(name = "version", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String version;
 
-    @Column(name = "canonicalUri", length = 500)
+    @Column(name = "canonicalUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String canonicalUri;
 
-    @Column(name = "canonicalVersionUri", length = 500)
+    @Column(name = "canonicalVersionUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String canonicalVersionUri;
 
-    @Column(name = "locationUri", length = 500)
+    @Column(name = "locationUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String locationUri;
 
     @Override
-    public String toString() {
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        FicheroGcEntity that = (FicheroGcEntity) obj;
+        return comparar (that);
+    }
 
-        return "(" + shortName + "," + longName + "," + version + "," + canonicalUri + "," + canonicalVersionUri + "," + locationUri + ")";
+    private boolean comparar (FicheroGcEntity ficheroGcEntity) {
+        return
+                this.shortName.equalsIgnoreCase(ficheroGcEntity.getShortName()) &&
+                this.longName.equalsIgnoreCase(ficheroGcEntity.getLongName()) &&
+                this.version.equalsIgnoreCase(ficheroGcEntity.getVersion()) &&
+                this.canonicalUri.equalsIgnoreCase(ficheroGcEntity.getCanonicalUri()) &&
+                this.canonicalVersionUri.equalsIgnoreCase(ficheroGcEntity.getCanonicalVersionUri()) &&
+                this.locationUri.equalsIgnoreCase(ficheroGcEntity.getLocationUri());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shortName, longName, version, canonicalUri, canonicalVersionUri, locationUri);
+    }
+
+    @Override
+    public String toString() {
+        return
+                this.shortName + "; " +
+                this.longName + "; " +
+                this.version + "; " +
+                this.canonicalUri + "; " +
+                this.canonicalVersionUri + "; " +
+                this.locationUri;
     }
 }

@@ -1,12 +1,12 @@
 package local.jarios.database;
 
 import local.jarios.exceptions.MiSessionFactoryProviderException;
-import local.jarios.properties.PropertyConstantes;
-import local.jarios.properties.PropertyManager;
 import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+
+import java.util.Properties;
 
 /**
  * Description:
@@ -17,23 +17,23 @@ import org.hibernate.SessionFactory;
 @Slf4j
 public class SessionFactoryProvider {
 
+    private static final String CONFIG_PACKAGE_NAME = "local.jarios.entity";
+
     public SessionFactoryProvider() { /* CONSTRUCTOR VACÍO */}
 
-    public SessionFactory getSessionFactory(
-            DatabaseConfig databaseConfig,
-            PropertyManager propertyManager) throws MiSessionFactoryProviderException {
+    public SessionFactory getSessionFactory(Properties hibernateProperties) throws MiSessionFactoryProviderException {
 
-        ///
-        var properties = HibernateConfiguration.getProperties(databaseConfig);
+        /// Creo el objeto HibernateConfigurer con el las propiedades leídas desde los ficheros
+        var hibernateConfigurer = new HibernateConfigurer();
 
-        /// Obtener la configuración de Hibernate con los parámetros de la base de datos
-        var configuration = HibernateConfiguration.getConfiguration(properties, databaseConfig.getHikariDataSource());
+        /// Obtener la configuración de Hibernate particular para la conexión
+        var configuration = hibernateConfigurer.buildConfiguration(hibernateProperties);
 
         /// Aquí podemos agregar el escaneo de entidades y la configuración del DataSource, si es necesario
         var entityScanner = new EntityScanner();
 
         ///
-        entityScanner.scanAndAddEntities(configuration, propertyManager.getProperty(PropertyConstantes.CONFIG_PACKAGE_NAME));
+        entityScanner.scanAndAddEntities(configuration, CONFIG_PACKAGE_NAME);
 
         try {
 

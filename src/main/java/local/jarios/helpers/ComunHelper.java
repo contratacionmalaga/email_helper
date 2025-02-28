@@ -1,10 +1,9 @@
 package local.jarios.helpers;
 
-import local.jarios.exceptions.MiManejadorDeExcepciones;
+import local.jarios.exceptions.MiUnknownHostException;
 import local.jarios.managers.ManagerGsons;
 import local.jarios.utils.ConstantesGenerales;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,35 +12,35 @@ import java.util.Arrays;
 /**
  * @author Juan Antonio
  */
+@Slf4j
 public final class ComunHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComunHelper.class);
-
+    /**
+     * CONSTRUCTOR PRIVADO DE LA CLASE PUESTO QUE ESTA FINAL
+     */
     private ComunHelper() { }
 
-    public static String getHostName () {
+    /**
+     * Devuelve el nombre del equipo que está ejecutando el código
+     * @return String con el nombre del Equipo
+     * @throws MiUnknownHostException Excepción en caso de no poder acceder
+     */
+    public static String getHostName () throws MiUnknownHostException {
 
-        String hostName = null;
+        ///
         try {
-            hostName = InetAddress.getLocalHost().getHostName();
+            ///
+            return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            LOGGER.error("Error al obtener el nombre del host. Mensaje error: {}", ex.getMessage());
-            MiManejadorDeExcepciones.exceptionToLog (ex.getMessage(), ex.getStackTrace());
+            ///
+            log.info(ex.getMessage());
+            ///
+            throw new MiUnknownHostException(ex);
         }
-
-        return hostName;
-    }
-
-    public static String[] getArrayStringFromArrayStackTraceElement(StackTraceElement[] listStackTraceElements) {
-
-        return Arrays.stream(listStackTraceElements)
-                .map(StackTraceElement::toString)
-                .toArray(String[]::new);
     }
 
     /**
      * Función encargada de imprimir un objeto
-     *
      * @param object El objeto que voy a imprimir
      */
     public static void imprimir(Object object) {
@@ -52,6 +51,6 @@ public final class ComunHelper {
                         ManagerGsons
                                 .objectToJsonPretty(object)
                                 .split(ConstantesGenerales.CR))
-                .forEach(LOGGER::info);
+                .forEach(log::info);
     }
 }

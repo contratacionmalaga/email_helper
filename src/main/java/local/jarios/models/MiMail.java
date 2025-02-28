@@ -1,15 +1,11 @@
 package local.jarios.models;
 
-import jakarta.mail.Authenticator;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
+import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import local.jarios.entity.EstadisticaEntity;
 import local.jarios.exceptions.MiMailException;
+import local.jarios.exceptions.MiUnknownHostException;
 import local.jarios.helpers.MiMailHelper;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
@@ -30,7 +26,7 @@ public final class MiMail {
             PropertyManager propertyManager,
             EstadisticaEntity estadisticaEntity) throws MiMailException {
 
-        var properties = propertyManager.getProperties();
+        var properties = propertyManager.getMailProperties();
 
         try {
             var session = getSession(
@@ -46,7 +42,7 @@ public final class MiMail {
                     asunto + MiMailHelper.getAsunto(),
                     MiMailHelper.getCuerpoMensaje(estadisticaEntity));
 
-        } catch (MessagingException ex) {
+        } catch (MessagingException | MiUnknownHostException ex) {
 
             /// Registro la excepción
             log.error(Mensajes.EXCEPTION_ERROR_MIMAIL_MIMAIL, ex.getMessage());

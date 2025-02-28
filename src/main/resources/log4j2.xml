@@ -27,14 +27,8 @@
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %-25c{1}:%-4L - %m%n" />
         </File>
 
-
         <!-- Registro generado por Reflections para obtener las entidades gestionadas por Hibernate -->
         <File name="FileReflections" fileName="logs/local-log4j2-${date:yyyy-MM-dd_HH-mm-ss}-reflection.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %-25c{1}:%-4L - %m%n" />
-        </File>
-
-        <!--  -->
-        <File name="FileLoggerProvider" fileName="logs/local-log4j2-${date:yyyy-MM-dd_HH-mm-ss}-loggerprovider.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %-25c{1}:%-4L - %m%n" />
         </File>
 

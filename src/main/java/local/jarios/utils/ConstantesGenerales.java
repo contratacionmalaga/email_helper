@@ -25,8 +25,6 @@ public final class ConstantesGenerales {
 
     public static final String FORMATO_FECHA = "dd-MM-yyyy HH:mm:ss.SSS";
 
-    public static final String ESQUEMA_PRINCIPAL = "imp_placsp_go.";
-
     private ConstantesGenerales() {}
 
 }

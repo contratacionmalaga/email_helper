@@ -3,12 +3,14 @@ package local.jarios.properties;
 import local.jarios.enums.PropertyFile;
 import local.jarios.exceptions.MiPropertyFileException;
 import local.jarios.utils.ConstantesGenerales;
-import local.jarios.utils.Mensajes;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cfg.JdbcSettings;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -17,132 +19,145 @@ public final class PropertyManager {
 
     /// Lista de claves sensibles que no se deben mostrar
     private static final String[] SENSITIVE_KEYS = {
-            PropertyConstantes.HIBERNATE_PRINCIPAL_USERNAME,
-            PropertyConstantes.HIBERNATE_PRINCIPAL_PASSWORD,
+            JdbcSettings.JAKARTA_JDBC_USER,
+            JdbcSettings.JAKARTA_JDBC_PASSWORD,
             PropertyConstantes.EMAIL_USER,
             PropertyConstantes.EMAIL_PASSWORD
     };
 
-    private static final String[] CONFIG_FILE = {
-            PropertyFile.PROPERTY_CONFIG.getRuta(),
-            PropertyFile.PROPERTY_EMAIL.getRuta(),
-            PropertyFile.PROPERTY_HIBERNATE.getRuta()
-    };
-
     /// Variable para almacenar las propiedades
-    private final Map<String, String> configuraciones = new HashMap<>();
+    private final Map<String, String> mapProperties = new HashMap<>();
+
+    /// Variables que almacenarán las propiedades
+    @Getter
+    private final Properties configProperties = new Properties();
+    @Getter
+    private final Properties hibernateProperties = new Properties();
+    @Getter
+    private final Properties mailProperties = new Properties();
 
     /// Instancia única de la clase (Singleton)
-    private static PropertyManager instance;
+    private static volatile PropertyManager instance;
 
-    /// Constructor que carga múltiples archivos de configuración
-    public PropertyManager() throws MiPropertyFileException {
+    /**
+     * Constructor privado para evitar la creación de instancias fuera de la clase.
+     *
+     * @throws MiPropertyFileException Excepción para controlar los posibles errores durante la carga
+     */
+    private PropertyManager() throws MiPropertyFileException {
+        /// Obtener las rutas de todos los archivos de configuración desde el enum
+        List<String> filePaths = PropertyFile.getAllFilePaths();
 
-        ///
-        for (String filePath : CONFIG_FILE) {
+        /// Cargar las propiedades desde los archivos especificados en el enum
+        Map<String, Properties> propertyFilesMap = new HashMap<>();
+        propertyFilesMap.put(PropertyFile.PROPERTY_CONFIG.getRuta(), configProperties);
+        propertyFilesMap.put(PropertyFile.PROPERTY_HIBERNATE.getRuta(), hibernateProperties);
+        propertyFilesMap.put(PropertyFile.PROPERTY_MAIL.getRuta(), mailProperties);
 
-            ///
-            try (var inputStream = new FileInputStream(filePath)) {
-
-                /// Carga las propiedades desde el archivo
-                Properties properties = new Properties();
-                properties.load(inputStream);
-
-                /// Almacena las propiedades en el Map
-                almacenarPropiedades(properties);
-
-            } catch (IOException ex) {
-
-                /// Registro la excepción
-                log.error(Mensajes.EXCEPTION_ERROR_MIMAIL_ENVIARMAIL, ex.getMessage());
-
-                /// Devuelvo la excepción
-                throw new MiPropertyFileException(ex);
-
+        for (String filePath : filePaths) {
+            Properties properties = propertyFilesMap.get(filePath);
+            if (properties != null) {
+                cargarArchivoPropiedades(properties, filePath);
             }
         }
     }
 
-    public Properties getProperties() {
-
-        var properties = new Properties();
-
-        /// Convertir el Map a Properties
-        for (Map.Entry<String, String> entry : configuraciones.entrySet()) {
-            properties.setProperty(entry.getKey(), entry.getValue());
+    /**
+     * Método que carga un archivo de propiedades y las almacena en el mapa de configuraciones.
+     *
+     * @param properties El objeto Properties donde se cargarán las propiedades
+     * @param filePath   Ruta del archivo de propiedades
+     * @throws MiPropertyFileException Si ocurre un error al cargar el archivo
+     */
+    private void cargarArchivoPropiedades(Properties properties, String filePath) throws MiPropertyFileException {
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
+            /// Carga las propiedades desde el archivo
+            properties.load(inputStream);
+            /// Almacena las propiedades en el Map
+            almacenarPropiedades(properties);
+        } catch (IOException ex) {
+            /// Registro la excepción con información adicional
+            log.error("Error al cargar el archivo de propiedades: {}. Detalles: {}", filePath, ex.getMessage());
+            /// Lanza una excepción personalizada
+            throw new MiPropertyFileException(ex);
         }
-
-        return properties;
     }
 
-    /// Almacena las propiedades en el mapa de configuraciones
+    /**
+     * Almacena las propiedades en el mapa de configuraciones.
+     *
+     * @param properties El objeto Properties que contiene las propiedades a almacenar
+     */
     private void almacenarPropiedades(Properties properties) {
-        properties.forEach((key, value) -> configuraciones.put(key.toString(), value.toString()));
+        properties.forEach((key, value) -> mapProperties.put(key.toString(), value.toString()));
     }
 
-    ///
-    ///     PATRÓN SINGLETON
-    ///
+    /**
+     * Obtiene la instancia Singleton de la clase.
+     *
+     * @return La instancia única de PropertyManager
+     * @throws MiPropertyFileException Si ocurre un error al obtener la instancia
+     */
     public static PropertyManager getInstance() throws MiPropertyFileException {
-
-        ///
         if (instance == null) {
-            instance = new PropertyManager();
+            synchronized (PropertyManager.class) {
+                if (instance == null) {
+                    instance = new PropertyManager();
+                }
+            }
         }
-
-        ///
         return instance;
     }
 
     /**
+     * Obtiene el valor de una propiedad.
      *
-     * @param propertyName Nombre de la propiedad que voy a obtener
-     * @return String con el valor de la propiedad extraído del fichero de config
+     * @param propertyName Nombre de la propiedad que se desea obtener
+     * @return El valor de la propiedad, o un mensaje indicando que no se encontró
      */
     public String getProperty(String propertyName) {
-
-        return configuraciones.getOrDefault(propertyName, "");
+        return mapProperties.getOrDefault(propertyName, "Propiedad no encontrada");
     }
 
     /**
-     *
+     * Imprime las propiedades de forma ordenada, excluyendo las sensibles.
      */
-    public void imprimirProperties () {
-
+    public void imprimirMapProperties() {
         /// Ordenar las claves al momento de imprimirlas (no modificamos el Map original)
-        configuraciones.keySet().stream()
-                .sorted()                           /// Ordenar alfabéticamente
+        mapProperties.keySet().stream()
+                .sorted() // Ordenar alfabéticamente
                 .forEach(key -> {
                     /// Solo imprimir si la clave no es sensible
                     if (!isSensitiveKey(key)) {
                         /// Imprimir la propiedad
-                        imprimirPropiedad(key, configuraciones.get(key));
+                        imprimirPropiedad(key, mapProperties.get(key));
                     }
                 });
     }
 
-    /// Verificar si la clave es sensible
+    /**
+     * Verifica si la clave es sensible.
+     *
+     * @param key Clave a verificar
+     * @return true si la clave es sensible, false en caso contrario
+     */
     private static boolean isSensitiveKey(String key) {
-
-        ///
+        /// Comparar la clave con las claves sensibles
         for (String sensitiveKey : SENSITIVE_KEYS) {
-
-            ///
-            if (key.contains(sensitiveKey)) {
-
-                ///
+            if (key.equals(sensitiveKey)) {
                 return true;
             }
         }
-
-        ///
         return false;
     }
 
-    ///
+    /**
+     * Imprime en el log el nombre de una propiedad y su valor.
+     *
+     * @param key   Nombre de la propiedad
+     * @param value Valor de la propiedad
+     */
     private static void imprimirPropiedad(Object key, Object value) {
-
-        ///
         log.info("{}Propiedad leída: {} = {}", ConstantesGenerales.TABULADOR_1, key, value);
     }
 }

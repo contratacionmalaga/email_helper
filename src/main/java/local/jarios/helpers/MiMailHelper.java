@@ -1,6 +1,7 @@
 package local.jarios.helpers;
 
 import local.jarios.entity.EstadisticaEntity;
+import local.jarios.exceptions.MiUnknownHostException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public final class MiMailHelper {
 
     private MiMailHelper() { }
 
-    public static String getCuerpoMensaje(EstadisticaEntity estadisticaEntity) {
+    public static String getCuerpoMensaje(EstadisticaEntity estadisticaEntity) throws MiUnknownHostException {
 
         return "<!DOCTYPE html>"
                 + "<html lang='es'>"
@@ -54,20 +55,20 @@ public final class MiMailHelper {
                 + "</html>";
     }
 
-    private static String getTablaEstadisticas(EstadisticaEntity estadisticaEntity) {
+    private static String getTablaEstadisticas(EstadisticaEntity estadisticaEntity) throws MiUnknownHostException {
 
         return "<table class='stats-table'>"
                 + "<tr><th>Fecha y Hora del Envio</th><td>" +
                 LocalDateTime.now() + "</td></tr>"
                 + "<tr><th>Equipo desde el que se realiza el Envio</th><td>" +
                 ComunHelper.getHostName() + "</td></tr>"
-                + "<tr><th>Número de ficheros importados</th><td>" +
-                estadisticaEntity.getNFicheros() + "</td></tr>"
-                + "<tr><th>Número de registros GC</th><td>" +
-                estadisticaEntity.getNRregistrosGc() + "</td></tr>"
+                + "<tr><th>Número de ficheros en la carpeta</th><td>" +
+                estadisticaEntity.getNTotalFicheros() + "</td></tr>"
+                + "<tr><th>Número de ficheros procesados</th><td>" +
+                estadisticaEntity.getNTotalProcesados() + "</td></tr>"
                 + "<tr><th>Fecha Hora Inicial</th><td>" +
                 FechaHelper.getFormatoFechaLargo(estadisticaEntity.getFechaHoraInicial()) + "</td></tr>"
-                + "<tr><th>TFecha Hora Final</th><td>" +
+                + "<tr><th>Fecha Hora Final</th><td>" +
                 FechaHelper.getFormatoFechaLargo(estadisticaEntity.getFechaHoraFinal()) + "</td></tr>"
                 + "<tr><th>Tiempo de ejecución</th><td>" +
                 estadisticaEntity.getDuracion() + "</td></tr>"
@@ -79,10 +80,10 @@ public final class MiMailHelper {
      *
      * @return String Asunto del correo
      */
-    public static String getAsunto() {
+    public static String getAsunto() throws MiUnknownHostException {
 
         return String.format (
-                "Reporte de Estadisticas. Equipo: (%s). Fecha y hora: (%s)",
+                " - Reporte de Estadisticas. Equipo: (%s). Fecha y hora: (%s)",
                 ComunHelper.getHostName(),
                 LocalDateTime.now());
     }

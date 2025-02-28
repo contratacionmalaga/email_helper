@@ -1,11 +1,11 @@
 package local.jarios.service;
 
-import local.jarios.entity.*;
+import local.jarios.entity.FicheroGcEntity;
+import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiServiceException;
-import local.jarios.models.DatosFicheroGc;
-import local.jarios.properties.PropertyManager;
+import local.jarios.models.ParseoFicherosGc;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Description: Importación de Ficheros Excel desde Internet
@@ -16,8 +16,7 @@ import java.util.Map;
 
 public interface Service {
 
-    void saveLogEntityAndMap (
-            LogEntity logEntity,
-            Map<String, DatosFicheroGc> datosFicheroGcMap,
-            PropertyManager propertyManager) throws MiServiceException;
+    void persistir(LogEntity logEntity, ParseoFicherosGc parseoFicherosGc) throws MiServiceException;
+
+    List<FicheroGcEntity> getListFicherosGc() throws MiServiceException;
 }

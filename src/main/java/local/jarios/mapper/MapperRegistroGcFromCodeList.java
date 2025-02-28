@@ -1,12 +1,11 @@
-package local.jarios.helpers;
+package local.jarios.mapper;
 
 import local.jarios.models.RegistroGc;
 import local.jarios.genericode.CodeList;
 import local.jarios.genericode.Row;
 import local.jarios.genericode.Value;
 import local.jarios.utils.ConstantesGenerales;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +16,16 @@ import java.util.List;
  * Date: 04/02/2025
  * Team:
  */
-public class RenameGcHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RenameGcHelper.class);
+@Slf4j
+public final class MapperRegistroGcFromCodeList {
 
-    private RenameGcHelper() { }
+    /**
+     * CONSTRUCTOR PRIVADO DE LA CLASE PUESTO QUE ESTA FINAL
+     */
+    private MapperRegistroGcFromCodeList() { }
 
-    public static List<RegistroGc> getListTablaGcEntity (CodeList codeList) {
+    public static List<RegistroGc> getListRegistroGcFromCodeList(CodeList codeList) {
 
         ///
         List<RegistroGc> listaRegistrosGc = new ArrayList<>();
@@ -53,7 +55,7 @@ public class RenameGcHelper {
                                     "NO SE RECOGE LA COLUMNA ColumnRef: (%s) CON VALOR SimpleValue: (%s)",
                                     value.getColumnRef(),
                                     value.getSimpleValue());
-                            LOGGER.info(mensaje);
+                            log.info(mensaje);
                         }
                     }
                 }

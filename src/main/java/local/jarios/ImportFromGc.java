@@ -1,35 +1,25 @@
 package local.jarios;
 
-import local.jarios.database.DatabaseConfig;
 import local.jarios.entity.*;
 import local.jarios.exceptions.MiMailException;
-import local.jarios.exceptions.MiManejadorDeExcepciones;
 import local.jarios.exceptions.MiPropertyFileException;
 import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
-import local.jarios.models.DatosFicheroGc;
+import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.MiMail;
-import local.jarios.models.RegistroGc;
-import local.jarios.enums.DbConfig;
-import local.jarios.enums.Permiso;
 import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.helpers.*;
-import local.jarios.mapper.MapperToEntity;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
 import local.jarios.service.Service;
 import local.jarios.service.ServiceImpl;
 import local.jarios.utils.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Description: Importación de la información de diferentes ficheros de Excel a una base de datos PostgreSQL para
@@ -39,9 +29,8 @@ import java.util.Map;
  * Team: Juan Antonio
  */
 
+@Slf4j
 public class ImportFromGc {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImportFromGc.class);
 
     public static void main(String[] args) {
 
@@ -49,13 +38,13 @@ public class ImportFromGc {
         ///
         try {
 
-            LOGGER.info (Mensajes.PROPERTY_LOG);
+            log.info (Mensajes.PROPERTY_LOG);
 
             /// Cargo los ficheros properties utilizando el patrón SINGLETON
             var propertyManager = PropertyManager.getInstance();
 
             /// Imprimo el contenido de los ficheros asociados a la configuración Local
-            propertyManager.imprimirProperties();
+            propertyManager.imprimirMapProperties();
 
             /// ***** CREO EL OBJETO LogEntity
             var logEntity = new LogEntity();
@@ -65,77 +54,47 @@ public class ImportFromGc {
             var estadisticaEntity = new EstadisticaEntity(logEntity);
 
             ///
-            ///     INICIO DE LA IMPORTACIÓN DE LOS FICHEROS GC
+            ///     CREO LA INSTANCIA DEL SERVICIO ENCARGADO DE INTERACTUAR CO LA BASE DE DATOS
             ///
+            Service service = new ServiceImpl(propertyManager);
 
-            /// 1- OBTENGO LA RUTA DE LOS FICHERO A PARSEAR
+            /// 1. OBTENGO LA LISTA DE ficherosGc EXISTENTES EN LA BASE DE DATOS
+            List<FicheroGcEntity> listFicherosGcEnBaseDatos = service.getListFicherosGc();
+
+            /// 2- OBTENGO LA RUTA DE LOS FICHERO A PARSEAR
             var path = propertyManager.getProperty(PropertyConstantes.CONFIG_PATH);
-            LOGGER.info(Mensajes.RUTA_FICHEROS, path);
+            log.info(Mensajes.RUTA_FICHEROS, path);
 
-            /// 2- LEO TODOS LOS FICHEROS DESDE LA RUTA
-            File[] listaFicherosGC = FileHelper.getListaFicherosFromPath(path);
-            LOGGER.info (Mensajes.LECTURA_FICHEROS, listaFicherosGC.length, path);
+            /// 3- LEO TODOS LOS FICHEROS DESDE LA RUTA
+            File[] arrayFiles = FileHelper.getListaFicherosFromPath(path);
 
-            /// Defino la lista que se asignará al objeto LogEntity
-            List<FicheroGcEntity> listFicherosGcEntity = new ArrayList<>();
+            /// 4.- ALMACENO EN ESTADISTICAS EL NÚMERO DE FICHEROS EXISTENTES EN LA RUTA
+            var nFiles = arrayFiles.length;
+            log.info (Mensajes.NUEMRO_FICHEROS_LEIDOS, nFiles, path);
+            estadisticaEntity.setNTotalFicheros(nFiles);
 
-            /// Defino el Map que se utilizará para almacenar la información parseada
-            Map<String, DatosFicheroGc> mapDatosFicherosGc = new HashMap<>();
+            /// Para no gestionar listas nulas, creo la lista que se rellenará si el número de ficheros es mayor que 0
+            ParseoFicherosGc parseoFicherosGc = new ParseoFicherosGc();
 
-            /// 3- RECORRO LA LISTA PARA PARSEAR LOS FICHEROS
-            for (File file : listaFicherosGC) {
+            /// Unicamente proceso la lista de ficheros si el número de ficheros que contiene el array es mayor que 0
+            if (nFiles > 0) {
 
-                /// Aumento el número de ficheros que son procesados
-                estadisticaEntity.aumentarNumFicheros();
-
-                /// 3.1- COMPRUEBO QUE EL FICHERO ES CORRECTO
-                var ficheroCorrecto = file.exists() && file.canRead() && file.exists();
-                LOGGER.info(Mensajes.VALIDEZ_FICHERO, ConstantesGenerales.TABULADOR_1, file, ficheroCorrecto);
-
-                if (ficheroCorrecto) {
-                    /// FICHERO CORRECTO
-
-                    /// 3.1.1 - OBTENGO EL OBJETO CODELIST A PARTIR DEL FICHERO
-                    var codeList = CodeListHelper.getCodeListFromFile(file);
-
-                    /// 3.1.2 - OBTENGO EL OBJETO FICHEROGCENTITY
-                    var ficheroGcEntity = MapperToEntity.getFicheroGc(logEntity, codeList);
-
-                    /// 3.1.3 - ASIGNO EL logEntity AL FICHERO
-                    ficheroGcEntity.setLogEntity(logEntity);
-
-                    /// 3.1.4 - Asigno el objeto a la lista que posteriormente será añadida al LogEntity
-                    listFicherosGcEntity.add(ficheroGcEntity);
-
-                    /// 3.1.5 - CREO EL OBJETO DatosFicherosGc y le asigno los datos del Fichero que estoy procesando
-                    var datosFicheroGc = new DatosFicheroGc();
-                    datosFicheroGc.setFicheroGcEntity(ficheroGcEntity);
-                    datosFicheroGc.setListRegistroGc(RenameGcHelper.getListTablaGcEntity(codeList));
-
-                    ///
-                    estadisticaEntity.aumentarNumRegistrosGc(RenameGcHelper.getListTablaGcEntity(codeList).size());
-
-                    /// 3.1.6 - AÑADO AL MAP LA LISTA DE REGISTROS GC ASOCIADOS A LA ENTIDAD
-                    mapDatosFicherosGc.put(ficheroGcEntity.getShortName(), datosFicheroGc);
-
-                } else {
-
-                    LOGGER.info(Mensajes.MENSAJE_FICHERO_NO_EXISTE, file.getName());
-
-                }
+                /// Proceso la lista con los ficheros
+                parseoFicherosGc = FileHelper.procesarListaFicherosFromPath(logEntity, arrayFiles);
             }
 
-            /// ASIGNO LA LISTA DE FICHEROS AL OBJETO logEntity
-            logEntity.setFicherosGcEntity(listFicherosGcEntity);
+            /// Establezco las estadísticas con el núnmero de ficheros pendientes de importar
+            int nFicherosProcesados = parseoFicherosGc.getListFicherosGc().size();
+            estadisticaEntity.setNTotalProcesados(nFicherosProcesados);
+            log.info (Mensajes.NUEMRO_FICHEROS_PROCESADOS, nFiles, path);
 
-            /// Imprimo el mapa con los ficheros y lista de registros
-            LOGGER.info(Mensajes.IMPRIMIR_MAPA);
-            for (Map.Entry<String, DatosFicheroGc> entry : mapDatosFicherosGc.entrySet()) {
-                LOGGER.info("{}{}", ConstantesGenerales.TABULADOR_1, entry.getValue().getFicheroGcEntity().toString());
-                for (RegistroGc registroGc : entry.getValue().getListRegistroGc()) {
-                    LOGGER.info("{}{}", ConstantesGenerales.TABULADOR_2, registroGc.toString());
-                }
-            }
+            ///
+            ///     UNIFICO LAS LISTAS (la existente en base de datos y la que está pendiente de importar)
+            ///
+            ListHelper.unificarListasFicherosGc (listFicherosGcEnBaseDatos, parseoFicherosGc.getListFicherosGc());
+
+            /// ASIGNO LA LISTA DE FICHEROS (unificada) AL OBJETO logEntity
+            logEntity.setFicherosGcEntity(listFicherosGcEnBaseDatos);
 
             ///
             ///     ESTABLEZCO LA FECHA Y HORA FINAL DE LA IMPORTACIÓN
@@ -146,28 +105,30 @@ public class ImportFromGc {
             /// Asigno las estadísticas al objeto LogEntity
             logEntity.setEstadisticaEntity(estadisticaEntity);
 
-            /// Creo la configuración de acceso a la base de datos ORACLE desde donde importamos los datos
-            var dbConfigPrincipal = new DatabaseConfig(DbConfig.PRINCIPAL, Permiso.ESCRITURA, propertyManager);
-
             ///
-            Service service = new ServiceImpl(dbConfigPrincipal, propertyManager);
-            service.saveLogEntityAndMap(logEntity, mapDatosFicherosGc, propertyManager);
+            ///     PERSISTENCIA EN LA BASE DE DATOS DEL OBJETO
+            ///
+            service.persistir(logEntity, parseoFicherosGc);
 
             /// Envío un correo con la información de la ejecución del aplicativo
             var miMail = new MiMail(propertyManager, estadisticaEntity);
             miMail.enviarEmail();
 
             /// Imprimir resumen
-            LOGGER.info(Mensajes.RESUMEN_EJECUCION);
-            /// ComunHelper.imprimir(logEntity);
+            log.info(Mensajes.RESUMEN_EJECUCION);
+            ComunHelper.imprimir(logEntity);
 
             /// Finalizar el programa correctamente
             FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO, ConstantesGenerales.CADENA_VACIA);
 
         } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException | MiPropertyFileException ex) {
 
-            /// Muestro en el log la información de la excepción
-            MiManejadorDeExcepciones.exceptionToLog(ex.getMessage(), ex.getStackTrace());
+            log.error(ex.getMessage());
+
+            log.error("INFORMACIÓN CON LA PILA DEL ERROR");
+            for (StackTraceElement stackTraceElement : ex.getStackTrace()) {
+                log.error("{}{}", ConstantesGenerales.TABULADOR_1, stackTraceElement.toString());
+            }
 
             /// Finalizo la ejecución del programa
             FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR, ex.getMessage());
