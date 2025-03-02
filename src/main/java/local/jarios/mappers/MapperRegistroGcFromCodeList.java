@@ -1,4 +1,4 @@
-package local.jarios.mapper;
+package local.jarios.mappers;
 
 import local.jarios.models.RegistroGc;
 import local.jarios.genericode.CodeList;

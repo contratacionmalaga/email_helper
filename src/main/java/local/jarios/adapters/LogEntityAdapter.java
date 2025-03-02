@@ -19,19 +19,20 @@ public record LogEntityAdapter() implements JsonSerializer<LogEntity> {
     @Override
     public JsonElement serialize(LogEntity logEntity, Type typeOfSrc, JsonSerializationContext context) {
 
-        ///
-        var jsonObject = new JsonObject();
+        /// Crear el objeto principal que será "Log"
+        JsonObject jsonObject = new JsonObject();
+
+        /// Crear un objeto para el contenido de "Log"
+        JsonObject logContent = new JsonObject();
 
         ///
-        jsonObject.addProperty("Id", String.valueOf(logEntity.getId()));
+        logContent.addProperty("Id", String.valueOf(logEntity.getId()));
 
         ///
         if (logEntity.getEstadisticaEntity() != null) {
 
             ///
-            jsonObject.add(
-                    "Estadistica",
-                    context.serialize(logEntity.getEstadisticaEntity()));
+            logContent.add("Estadistica", context.serialize(logEntity.getEstadisticaEntity()));
 
         }
 
@@ -39,11 +40,12 @@ public record LogEntityAdapter() implements JsonSerializer<LogEntity> {
         if (!logEntity.getFicherosGcEntity().isEmpty()) {
 
             ///
-            jsonObject.add(
-                    "FicheroGc",
-                    context.serialize(logEntity.getFicherosGcEntity()));
+            logContent.add("FicheroGc", context.serialize(logEntity.getFicherosGcEntity()));
 
         }
+
+        /// Agregar el objeto "Log" que contendrá todos los datos anteriores
+        jsonObject.add("Log", logContent);
 
         ///
         return jsonObject;

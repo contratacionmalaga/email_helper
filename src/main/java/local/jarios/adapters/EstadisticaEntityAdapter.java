@@ -31,11 +31,11 @@ public record EstadisticaEntityAdapter() implements JsonSerializer<EstadisticaEn
 
         ///
         jsonObject.addProperty(
-                "nTotalFicheros", String.valueOf(estadisticaEntity.getNTotalFicheros()));
+                "nTotalFicherosLeidos", String.valueOf(estadisticaEntity.getNTotalFicherosLeidos()));
 
         ///
         jsonObject.addProperty(
-                "nTotalProcesados", String.valueOf(estadisticaEntity.getNTotalProcesados()));
+                "nTotalFicherosProcesados", String.valueOf(estadisticaEntity.getNTotalFicherosProcesados()));
 
         ///
         jsonObject.addProperty(

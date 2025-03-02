@@ -1,4 +1,4 @@
-package local.jarios.mapper;
+package local.jarios.mappers;
 
 import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
@@ -24,7 +24,14 @@ public final class MapperFicheroGcFromCodeList {
      */
     private MapperFicheroGcFromCodeList() {}
 
+    /**
+     *
+     * @param logEntity Objeto logEntity para asignarlo al FicheroGc una vez creado
+     * @param codeList Objeto CodeList que va a ser Mapeado a un FicheroGc
+     * @return Objeto FicheroGc con la información de CodeList
+     */
     public static FicheroGcEntity getFicheroGcFromCodeList(LogEntity logEntity, CodeList codeList) {
+
         /// Obtener la identificación del código, si es null devolver null
         var identification = codeList.getIdentification();
         if (identification == null) {
@@ -39,8 +46,10 @@ public final class MapperFicheroGcFromCodeList {
         String canonicalVersionUri = getOrEmpty(identification, Identification::getCanonicalVersionUri);
         String locationUri = getOrEmpty(identification, Identification::getLocationUri);
 
-        /// Crear y poblar la entidad FicheroGcEntity
+        /// Crear y asignar los valores a la entidad FicheroGcEntity
         var ficheroGcEntity = new FicheroGcEntity();
+
+        /// Asignación de valores
         ficheroGcEntity.setLogEntity(logEntity);
         ficheroGcEntity.setShortName(shortName);
         ficheroGcEntity.setLongName(longName);
@@ -49,10 +58,17 @@ public final class MapperFicheroGcFromCodeList {
         ficheroGcEntity.setCanonicalVersionUri(canonicalVersionUri);
         ficheroGcEntity.setLocationUri(locationUri);
 
+        /// Devuelvo el objeto con todos los campos rellenos (ninguno a NULL)
         return ficheroGcEntity;
     }
 
-    /// Método de utilidad para evitar repetición de código y garantizar que los valores no sean null
+    ///
+    /**
+     * Método de utilidad para evitar repetición de código y garantizar que los valores no sean null
+     * @param identification Objeto Identification dentro de CodeList
+     * @param getter Función
+     * @return Cadena de caracteres con el valor o la CADENA_VACIA (NUNCA devuelve NULL)
+     */
     private static String getOrEmpty(Identification identification, Function<Identification, String> getter) {
         String value = getter.apply(identification);
         return value != null ? value : ConstantesGenerales.CADENA_VACIA;  /// Nunca devolver null, siempre cadena vacía

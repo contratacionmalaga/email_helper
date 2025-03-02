@@ -11,8 +11,8 @@ import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.helpers.*;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
-import local.jarios.service.Service;
-import local.jarios.service.ServiceImpl;
+import local.jarios.services.Service;
+import local.jarios.services.ServiceImpl;
 import local.jarios.utils.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,37 +69,48 @@ public class ImportFromGc {
             File[] arrayFiles = FileHelper.getListaFicherosFromPath(path);
 
             /// 4.- ALMACENO EN ESTADISTICAS EL NÚMERO DE FICHEROS EXISTENTES EN LA RUTA
-            var nFiles = arrayFiles.length;
-            log.info (Mensajes.NUEMRO_FICHEROS_LEIDOS, nFiles, path);
-            estadisticaEntity.setNTotalFicheros(nFiles);
+            var nFilesLeidos = arrayFiles.length;
+            log.info (Mensajes.NUEMRO_FICHEROS_LEIDOS, nFilesLeidos, path);
+            estadisticaEntity.setNTotalFicherosLeidos(nFilesLeidos);
 
             /// Para no gestionar listas nulas, creo la lista que se rellenará si el número de ficheros es mayor que 0
             ParseoFicherosGc parseoFicherosGc = new ParseoFicherosGc();
 
             /// Unicamente proceso la lista de ficheros si el número de ficheros que contiene el array es mayor que 0
-            if (nFiles > 0) {
+            if (nFilesLeidos > 0) {
 
                 /// Proceso la lista con los ficheros
                 parseoFicherosGc = FileHelper.procesarListaFicherosFromPath(logEntity, arrayFiles);
             }
 
-            /// Establezco las estadísticas con el núnmero de ficheros pendientes de importar
-            int nFicherosProcesados = parseoFicherosGc.getListFicherosGc().size();
-            estadisticaEntity.setNTotalProcesados(nFicherosProcesados);
-            log.info (Mensajes.NUEMRO_FICHEROS_PROCESADOS, nFiles, path);
-
             ///
             ///     UNIFICO LAS LISTAS (la existente en base de datos y la que está pendiente de importar)
             ///
-            ListHelper.unificarListasFicherosGc (listFicherosGcEnBaseDatos, parseoFicherosGc.getListFicherosGc());
+            ListHelper.unificarListas(logEntity, listFicherosGcEnBaseDatos, parseoFicherosGc.getListFicherosGc());
 
             /// ASIGNO LA LISTA DE FICHEROS (unificada) AL OBJETO logEntity
             logEntity.setFicherosGcEntity(listFicherosGcEnBaseDatos);
 
             ///
-            ///     ESTABLEZCO LA FECHA Y HORA FINAL DE LA IMPORTACIÓN
+            ///     ESTABLEZCO ESTADÍSTICAS
             ///
+
+            /// Número de ficheros procesados
+            int nFicherosProcesados = parseoFicherosGc.getListFicherosGc().size();
+            estadisticaEntity.setNTotalFicherosProcesados(nFicherosProcesados);
+            log.info (Mensajes.NUEMRO_FICHEROS_PROCESADOS, nFicherosProcesados, path);
+
+            /// Número total de RegistrosGc
+            int nRegistrosGc = parseoFicherosGc.getMapRegistrosGcByFicheroGc().values().stream()
+                    .mapToInt(List::size)  /// Convierte cada lista en su tamaño
+                    .sum();                /// Suma los tamaños de todas las listas
+            estadisticaEntity.setNRregistrosGc(nRegistrosGc);
+            log.info (Mensajes.NUEMRO_REGISTROS_GC, nRegistrosGc);
+
+            /// Establezco la fecha y hora final de la ejeucicón
             estadisticaEntity.setFechaHoraFinal(new Timestamp(System.currentTimeMillis()));
+
+            /// Calculo el tiempo de ejecución con el formato deseado
             estadisticaEntity.calcularTiempoEjecucion();
 
             /// Asigno las estadísticas al objeto LogEntity
@@ -121,7 +132,8 @@ public class ImportFromGc {
             /// Finalizar el programa correctamente
             FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO, ConstantesGenerales.CADENA_VACIA);
 
-        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException | MiPropertyFileException ex) {
+        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException |
+                 MiPropertyFileException ex) {
 
             log.error(ex.getMessage());
 

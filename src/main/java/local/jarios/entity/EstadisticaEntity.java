@@ -44,11 +44,11 @@ public class EstadisticaEntity extends Auditable {
             foreignKey = @ForeignKey(name = "fk_estadistica_log"))
     private LogEntity logEntity;
 
-    @Column(name = "nTotalFicheros")
-    private int nTotalFicheros;
+    @Column(name = "nTotalFicherosLeidos")
+    private int nTotalFicherosLeidos;
 
-    @Column(name = "nTotalProcesados")
-    private int nTotalProcesados;
+    @Column(name = "nTotalFicherosProcesados")
+    private int nTotalFicherosProcesados;
 
     @Column(name = "nRregistrosGc")
     private int nRregistrosGc;

@@ -29,8 +29,7 @@ public class LogEntity extends Auditable {
     @Column(name = "id", updatable = false, nullable = false)
     private int id;
 
-
-    @OneToMany(mappedBy = "logEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "logEntity", orphanRemoval = true)
     private List<FicheroGcEntity> ficherosGcEntity;
 
     @OneToOne(mappedBy = "logEntity", cascade = CascadeType.ALL, orphanRemoval = true)

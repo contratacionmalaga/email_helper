@@ -63,9 +63,9 @@ public final class MiMailHelper {
                 + "<tr><th>Equipo desde el que se realiza el Envio</th><td>" +
                 ComunHelper.getHostName() + "</td></tr>"
                 + "<tr><th>Número de ficheros en la carpeta</th><td>" +
-                estadisticaEntity.getNTotalFicheros() + "</td></tr>"
+                estadisticaEntity.getNTotalFicherosLeidos() + "</td></tr>"
                 + "<tr><th>Número de ficheros procesados</th><td>" +
-                estadisticaEntity.getNTotalProcesados() + "</td></tr>"
+                estadisticaEntity.getNTotalFicherosProcesados() + "</td></tr>"
                 + "<tr><th>Fecha Hora Inicial</th><td>" +
                 FechaHelper.getFormatoFechaLargo(estadisticaEntity.getFechaHoraInicial()) + "</td></tr>"
                 + "<tr><th>Fecha Hora Final</th><td>" +

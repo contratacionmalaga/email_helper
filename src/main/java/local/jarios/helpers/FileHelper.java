@@ -1,10 +1,7 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
-import local.jarios.genericode.CodeList;
-import local.jarios.mapper.MapperFicheroGcFromCodeList;
-import local.jarios.mapper.MapperRegistroGcFromCodeList;
+import local.jarios.mappers.MapperRegistroGcFromCodeList;
 import local.jarios.models.ParseoFicherosGc;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +22,11 @@ public final class FileHelper {
      */
     private FileHelper() { }
 
+    /**
+     * Método que devuelve un Array con los ficheros que se encuentran en una ruta
+     * @param path Ruta desde la que se obtendrán todos los ficheros
+     * @return Array con los Ficheros
+     */
     public static File[] getListaFicherosFromPath (String path) {
 
         File directorio = new File(path);
@@ -41,7 +43,7 @@ public final class FileHelper {
     }
 
     /**
-     *
+     * Método que determina si un fichero es correcto
      * @param file Fichero a analizar
      * @return boolean Indicando si el fichero es correcto o no
      */
@@ -52,32 +54,9 @@ public final class FileHelper {
     }
 
     /**
-     *
-     * @param logEntity Objeto LogEntity
-     * @param codeList Objeto CodeList a Parsear
-     * @return ficheroGcEntity
-     */
-    public static FicheroGcEntity procesarCodeList (LogEntity logEntity, CodeList codeList) {
-
-        /// OBTENGO EL OBJETO FICHEROGCENTITY A PARTIR DEL codeList
-        var ficheroGcEntity = MapperFicheroGcFromCodeList.getFicheroGcFromCodeList(logEntity, codeList);
-
-        /// Analizo si el valor que devuelvo es NULL
-        if (ficheroGcEntity == null) {
-
-            return null;
-        }
-
-        /// ASIGNO EL OBJETO LogEntity AL OBJETO FicheroGcEntity
-        ficheroGcEntity.setLogEntity(logEntity);
-
-        /// DEVUELVO EL OBJETO FicheroGcEntity
-        return ficheroGcEntity;
-
-    }
-
-    /**
-     *
+     * Método utilizado para procesar la lista de ficheros y devolver el objeto ParseoFicherosGc para después contrastar
+     *      la información con la existente en la base de datos, unificar ambas fuentes de información y grabar el
+     *      resultado en la base de datos
      * @param logEntity Objeto LogEntity
      * @param listFiles Lista de Files
      * @return List<FicheroGcEntity>
@@ -97,7 +76,7 @@ public final class FileHelper {
                 var codeList = CodeListHelper.getCodeListFromFile(file);
 
                 /// Obtengo el objeto FicheroGcEntity a partir de un File
-                var ficheroGcEntity = procesarCodeList(logEntity, codeList);
+                var ficheroGcEntity = CodeListHelper.procesarCodeList(logEntity, codeList);
 
                 ///  Únicamente si el objeto FicheroGcEntity no es NULL lo añado a la lista
                 if (ficheroGcEntity != null) {

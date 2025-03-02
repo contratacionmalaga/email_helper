@@ -1,4 +1,4 @@
-package local.jarios.service;
+package local.jarios.services;
 
 import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;

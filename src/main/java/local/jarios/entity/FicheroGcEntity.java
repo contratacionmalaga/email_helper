@@ -34,7 +34,6 @@ public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGc
     private int id;
 
     @ManyToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     @JoinColumn(
             name = "log_id",

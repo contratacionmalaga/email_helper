@@ -1,4 +1,4 @@
-package local.jarios.service;
+package local.jarios.services;
 
 import local.jarios.database.SessionFactoryProvider;
 import local.jarios.entity.FicheroGcEntity;
@@ -8,9 +8,9 @@ import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.properties.PropertyManager;
-import local.jarios.repository.Repository;
-import local.jarios.repository.RepositoryImpl;
-import local.jarios.repository.TransactionManager;
+import local.jarios.repositorys.Repository;
+import local.jarios.repositorys.RepositoryImpl;
+import local.jarios.repositorys.TransactionManager;
 import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -88,8 +88,15 @@ public class ServiceImpl implements Service {
 
             }
 
+            /// Obtener la pila de ejecución
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
+            String className = stackTrace[1].getClassName();    /// Nombre de la clase
+            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
+
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR_SERVICEIMPL_SAVE, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
 
             throw new MiServiceException(ex);
 
@@ -120,8 +127,15 @@ public class ServiceImpl implements Service {
 
         } catch (MiRepositoryException ex) {
 
+            /// Obtener la pila de ejecución
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
+            String className = stackTrace[1].getClassName();    /// Nombre de la clase
+            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
+
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR_SERVICEIMPL_SAVE, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
 
             throw new MiServiceException(ex);
 

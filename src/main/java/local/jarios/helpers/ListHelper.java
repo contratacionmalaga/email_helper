@@ -1,6 +1,5 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
 import local.jarios.interfaces.Actualizable;
 import lombok.extern.slf4j.Slf4j;
@@ -24,43 +23,14 @@ public final class ListHelper {
      */
     private ListHelper() { }
 
-    public static void unificarListasFicherosGc(
-            List<FicheroGcEntity> listFicherosGcEnBaseDatos,
-            List<FicheroGcEntity> listFicherosGcPendientesImportar) {
-
-        /// Crear un mapa para los ficheros en la base de datos, donde la clave es el id
-        Map<String, FicheroGcEntity> mapFicherosEnBaseDatos = new HashMap<>();
-        for (FicheroGcEntity ficheroEnBase : listFicherosGcEnBaseDatos) {
-            mapFicherosEnBaseDatos.put(ficheroEnBase.getCanonicalUri(), ficheroEnBase);
-        }
-
-        /// Iterar sobre los elementos de la lista pendientes de importar
-        for (FicheroGcEntity ficheroPendiente : listFicherosGcPendientesImportar) {
-            FicheroGcEntity ficheroEnBase = mapFicherosEnBaseDatos.get(ficheroPendiente.getCanonicalUri());
-
-            if (ficheroEnBase != null) {
-                /// Si son diferentes, actualizar los valores del fichero en la base de datos
-                if (!ficheroPendiente.equals(ficheroEnBase)) {
-                    ficheroEnBase.setShortName(ficheroPendiente.getShortName());
-                    ficheroEnBase.setLongName(ficheroPendiente.getLongName());
-                    ficheroEnBase.setVersion(ficheroPendiente.getVersion());
-                    ficheroEnBase.setCanonicalUri(ficheroPendiente.getCanonicalUri());
-                    ficheroEnBase.setCanonicalVersionUri(ficheroPendiente.getCanonicalVersionUri());
-                    ficheroEnBase.setLocationUri(ficheroPendiente.getLocationUri());
-                }
-                /// Eliminar el fichero procesado del mapa (para evitar eliminarlo más tarde)
-                mapFicherosEnBaseDatos.remove(ficheroPendiente.getCanonicalUri());
-            } else {
-                /// Si el fichero no existe, agregarlo
-                listFicherosGcEnBaseDatos.add(ficheroPendiente);
-            }
-        }
-
-        /// Eliminar los elementos de la base de datos que no están en la lista de pendientes de importar
-        // listFicherosGcEnBaseDatos.removeIf(ficheroEnBase -> !mapFicherosEnBaseDatos.containsKey(ficheroEnBase.getCanonicalUri()));
-    }
-
-    public static <T extends Actualizable<T>> void unificarListasGenerico(
+    /**
+     * Método encargado de unificar dos listas de un tipo de objeto <T>
+     * @param logEntity Objeto LogEntity necesario para los nuevos registros que se deban añadir a la Lista de BD
+     * @param listElementosEnBaseDatos Lista con los datos existenten en la base de datos
+     * @param listElementosPendientesImportar Lista con los datos que acabo de importar
+     * @param <T> Objeto genérico asociado a ambas listas
+     */
+    public static <T extends Actualizable<T>> void unificarListas(
             LogEntity logEntity,
             List<T> listElementosEnBaseDatos,
             List<T> listElementosPendientesImportar) {
@@ -101,7 +71,7 @@ public final class ListHelper {
         }
 
         /// Eliminar los elementos de la base de datos que no están en la lista de pendientes de importar
-        listElementosEnBaseDatos.removeIf(
-                elementoEnBase -> !mapElementosEnBaseDatos.containsKey(elementoEnBase.getUniqueKey()));
+        /// listElementosEnBaseDatos.removeIf(
+        ///             elementoEnBase -> !mapElementosEnBaseDatos.containsKey(elementoEnBase.getUniqueKey()));
     }
 }

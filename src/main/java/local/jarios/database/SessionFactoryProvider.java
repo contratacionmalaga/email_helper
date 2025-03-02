@@ -42,8 +42,15 @@ public class SessionFactoryProvider {
 
         } catch (HibernateException ex) {
 
+            /// Obtener la pila de ejecución
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
+            String className = stackTrace[1].getClassName();    /// Nombre de la clase
+            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
+
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR_MIMAIL_ENVIARMAIL, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
 
             /// Devuelvo la excepción
             throw new MiSessionFactoryProviderException(ex);

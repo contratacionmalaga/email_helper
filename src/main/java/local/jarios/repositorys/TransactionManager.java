@@ -1,4 +1,4 @@
-package local.jarios.repository;
+package local.jarios.repositorys;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

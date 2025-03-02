@@ -17,6 +17,9 @@ public final class Mensajes {
     public static final String NUEMRO_FICHEROS_PROCESADOS =
             "Se han procesado un total de {} ficheros";
 
+    public static final String NUEMRO_REGISTROS_GC =
+            "Se han procesado un total de {} registros";
+
     public static final String RUTA_FICHEROS =
             "Ruta desde la que se importarán los ficheros: {}";
 
@@ -29,17 +32,8 @@ public final class Mensajes {
     public static final String ENTIDADES =
             "Se han encontrado {} entidades dentro del paquete {}.";
 
-    public static final String EXCEPTION_ERROR_MIMAIL_ENVIARMAIL =
-            "Excepción ocurrida en el método MiMail.enviarMail(). Mensaje: {}";
-
-    public static final String EXCEPTION_ERROR_MIMAIL_MIMAIL =
-            "Excepción ocurrida en el método MiMail.MiMail(). Mensaje: {}";
-
-    public static final String EXCEPTION_ERROR_SERVICEIMPL_SAVE =
-            "Excepción ocurrida en el método ServiceImpl.save(). Mensaje: {}";
-
-    public static final String EXCEPTION_ERROR_REPOSITORYIMPL_SAVE =
-            "Excepción ocurrida en el método RespositoryImpl.save(). Mensaje: {}";
+    public static final String EXCEPTION_ERROR =
+            "Excepción ocurrida en el la clase:{}, método: {}. Mensaje: {}";
 
     public static final String DROP_TABLE =
             "{}Borrada la tabla: {}";

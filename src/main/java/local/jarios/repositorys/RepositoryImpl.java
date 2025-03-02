@@ -1,4 +1,4 @@
-package local.jarios.repository;
+package local.jarios.repositorys;
 
 import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
@@ -41,7 +41,12 @@ public class RepositoryImpl implements Repository {
         try {
 
             ///
-            session.merge(logEntity);
+            session.persist(logEntity);
+
+            ///
+            for (FicheroGcEntity ficheroGcEntity : logEntity.getFicherosGcEntity()) {
+                session.merge(ficheroGcEntity);
+            }
 
             ///
             for (Map.Entry<String, List<RegistroGc>> entry : parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
@@ -72,12 +77,20 @@ public class RepositoryImpl implements Repository {
                 ///
                 insertarRegistrosEnTabla(session, nombreTablaConEsquema, entry.getValue());
                 log.info(Mensajes.INSERT_RECORDS, ConstantesGenerales.TABULADOR_2, entry.getValue().size(), nombreTablaConEsquema);
+
             }
 
         } catch (HibernateException ex) {
 
+            /// Obtener la pila de ejecución
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
+            String className = stackTrace[1].getClassName();    /// Nombre de la clase
+            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
+
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR_REPOSITORYIMPL_SAVE, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
 
             /// Devuelvo la excepción
             throw new MiRepositoryException(ex);
@@ -176,8 +189,15 @@ public class RepositoryImpl implements Repository {
 
         } catch (HibernateException ex) {
 
+            /// Obtener la pila de ejecución
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
+            String className = stackTrace[1].getClassName();    /// Nombre de la clase
+            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
+
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR_REPOSITORYIMPL_SAVE, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
 
             /// Devuelvo la excepción
             throw new MiRepositoryException(ex);
