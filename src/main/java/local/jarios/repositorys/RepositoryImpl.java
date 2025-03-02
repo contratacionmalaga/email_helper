@@ -4,6 +4,7 @@ import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
 import local.jarios.helpers.ExceptionHelper;
+import local.jarios.interfaces.Actualizable;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.RegistroGc;
 import local.jarios.utils.ConstantesGenerales;
@@ -45,13 +46,7 @@ public class RepositoryImpl implements Repository {
             session.persist(logEntity);
 
             ///
-            for (FicheroGcEntity ficheroGcEntity : logEntity.getFicherosGcEntity()) {
-                if (ficheroGcEntity.getId() > 0) {
-                    session.merge(ficheroGcEntity);
-                } else {
-                    session.persist(ficheroGcEntity);
-                }
-            }
+            grabarLista(session, logEntity.getFicherosGcEntity());
 
             ///
             for (Map.Entry<String, List<RegistroGc>> entry : parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
@@ -92,6 +87,17 @@ public class RepositoryImpl implements Repository {
 
             /// Devuelvo la excepción
             throw new MiRepositoryException(ex);
+        }
+    }
+
+    private static <T extends Actualizable<T>> void grabarLista(Session session, List<T> lista) throws HibernateException {
+
+        for (T registro : lista) {
+            if (registro.getId() > 0) {
+                session.merge(registro);
+            } else {
+                session.persist(registro);
+            }
         }
     }
 

@@ -25,6 +25,9 @@ public final class PropertyManager {
             PropertyConstantes.EMAIL_PASSWORD
     };
 
+    /// Instancia única de la clase (Singleton)
+    private static PropertyManager instance;
+
     /// Variable para almacenar las propiedades
     private final Map<String, String> mapProperties = new HashMap<>();
 
@@ -35,9 +38,6 @@ public final class PropertyManager {
     private final Properties hibernateProperties = new Properties();
     @Getter
     private final Properties mailProperties = new Properties();
-
-    /// Instancia única de la clase (Singleton)
-    private static volatile PropertyManager instance;
 
     /**
      * Constructor privado para evitar la creación de instancias fuera de la clase.
@@ -98,13 +98,9 @@ public final class PropertyManager {
      * @return La instancia única de PropertyManager
      * @throws MiPropertyFileException Si ocurre un error al obtener la instancia
      */
-    public static PropertyManager getInstance() throws MiPropertyFileException {
+    public static synchronized PropertyManager getInstance() throws MiPropertyFileException {
         if (instance == null) {
-            synchronized (PropertyManager.class) {
-                if (instance == null) {
-                    instance = new PropertyManager();
-                }
-            }
+            instance = new PropertyManager();
         }
         return instance;
     }
