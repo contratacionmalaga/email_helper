@@ -34,7 +34,6 @@ public class ImportFromGc {
 
     public static void main(String[] args) {
 
-
         ///
         try {
 
@@ -111,7 +110,12 @@ public class ImportFromGc {
             estadisticaEntity.setFechaHoraFinal(new Timestamp(System.currentTimeMillis()));
 
             /// Calculo el tiempo de ejecución con el formato deseado
-            estadisticaEntity.calcularTiempoEjecucion();
+            String duracion = ComunHelper.calcularTiempoEjecucion(
+                    estadisticaEntity.getFechaHoraInicial(),
+                    estadisticaEntity.getFechaHoraFinal());
+
+            /// Asigno la duración al objeto EstadisticaEntity
+            estadisticaEntity.setDuracion(duracion);
 
             /// Asigno las estadísticas al objeto LogEntity
             logEntity.setEstadisticaEntity(estadisticaEntity);

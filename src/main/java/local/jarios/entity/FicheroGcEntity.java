@@ -26,7 +26,7 @@ import java.util.Objects;
                 @Index(name = "idx_ficheros_gc_shortname", columnList = "shortName", unique = true)
         }
 )
-public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGcEntity> {
+public class FicheroGcEntity extends AuditablePlus implements Actualizable<FicheroGcEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,14 +60,32 @@ public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGc
     @Column(name = "locationUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
     private String locationUri;
 
+    /**
+     * Método encargado de devolver si un objeto es igual a la instancia de esta clase
+     * @param obj Objeto que voy a comparar con la clase actual
+     * @return Valor devuelto TRUE | FALSE
+     */
     @Override
     public boolean equals(Object obj) {
+
+        /// Caso base devuelvo TRUE
         if (this == obj) return true;
+
+        /// En caso de que el objeto sea NULL o que no sea de la misma CLASE devuelvo FALSE
         if (obj == null || getClass() != obj.getClass()) return false;
+
+        /// En otro caso realizo un CAST del objeto como un FicheroGcEntity
         FicheroGcEntity that = (FicheroGcEntity) obj;
+
+        /// Devuelvo la comparación
         return comparar (that);
     }
 
+    /**
+     * Metodo utlizado para comparar un objeto FicheroGcEntity con la instancia actual de la clase
+     * @param ficheroGcEntity Objeto que voy a comparar con la instancia actual de la clase
+     * @return Devuelvo TRUE | FALSE si los objetos son iguales
+     */
     private boolean comparar (FicheroGcEntity ficheroGcEntity) {
         return
                 this.shortName.equalsIgnoreCase(ficheroGcEntity.getShortName()) &&
@@ -78,11 +96,19 @@ public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGc
                 this.locationUri.equalsIgnoreCase(ficheroGcEntity.getLocationUri());
     }
 
+    /**
+     *
+     * @return Devuel
+     */
     @Override
     public int hashCode() {
         return Objects.hash(shortName, longName, version, canonicalUri, canonicalVersionUri, locationUri);
     }
 
+    /**
+     * Método que devuelve una cadena de caracteres con la representación del objeto
+     * @return Cadena de caracteres con la representación del objeto
+     */
     @Override
     public String toString() {
         return
@@ -94,13 +120,25 @@ public class FicheroGcEntity extends Auditable implements Actualizable<FicheroGc
                 this.locationUri;
     }
 
+    /**
+     * Método que se tiene que implementar al extender la clase Actualizable. Devuelve el campo único que serivrá como
+     *      Key para el Map
+     * @return Devuelve el valor del campo único
+     */
     @Override
     public String getUniqueKey() {
+
+        /// Devuelve el valor del campo único (tiene definido un índice de tipo UNIQUE)
         return this.shortName;
     }
 
+    /**
+     * Método que actualiza la instancia actual de FicheroGcEntity con otro valor
+     * @param otro El objeto que actualizará la instanacia actual del FicheroGcEntity
+     */
     @Override
     public void actualizarCon(FicheroGcEntity otro) {
+
         /// Actualiza los campos de este objeto con los valores del objeto otro (OcEntity)
         this.longName = otro.getLongName();
         this.version = otro.getVersion();

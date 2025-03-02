@@ -4,9 +4,8 @@ import local.jarios.entity.LogEntity;
 import local.jarios.interfaces.Actualizable;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Description:
@@ -35,43 +34,66 @@ public final class ListHelper {
             List<T> listElementosEnBaseDatos,
             List<T> listElementosPendientesImportar) {
 
-        /// Crear un mapa para los elementos en la base de datos, donde la clave es el id
-        Map<String, T> mapElementosEnBaseDatos = new HashMap<>();
+        ///  DEFINICIÓN DE VARIABLES LOCALES
+        Map<String, T> mapElementosEnBaseDatos = new HashMap<>();   /// Map con los elementos de la Base de Datos
+        Set<String> conjuntoUniqueKeys = new HashSet<>();           /// Conjunto para llevar un registro de las IDs procesadas
 
         /// Itero la lista de elementos en base de datos para generar el Map
-        for (T elementoEnBase : listElementosEnBaseDatos) {
-            mapElementosEnBaseDatos.put(elementoEnBase.getUniqueKey(), elementoEnBase);
+        for (T elementoEnBaseDatos : listElementosEnBaseDatos) {
+            mapElementosEnBaseDatos.put(elementoEnBaseDatos.getUniqueKey(), elementoEnBaseDatos);
         }
 
         /// Itero la lista de los elementos pendientes de importar
-        for (T elementoPendiente : listElementosPendientesImportar) {
+        for (T elementoPendienteImportar : listElementosPendientesImportar) {
 
             ///  Consulto el elemento principal de la clase que he utilizado como key del Map
-            T elementoEnBase = mapElementosEnBaseDatos.get(elementoPendiente.getUniqueKey());
+            T elementoEnBaseDatos = mapElementosEnBaseDatos.get(elementoPendienteImportar.getUniqueKey());
 
+            if (elementoEnBaseDatos != null) {
+                /// Existe el elemento pendiente en el MAP --> Veo si es igual al existente en la base de datos
 
-            if (elementoEnBase != null) {
-                /// Existe el elemento pendiente en el Map
+                ///  Actualizo el conjunto de elementos procesados
+                conjuntoUniqueKeys.add(elementoEnBaseDatos.getUniqueKey());
 
-                if (!elementoPendiente.equals(elementoEnBase)) {
-                    /// Si son diferentes, actualizar los valores del elemento en la base de datos
-                    elementoEnBase.actualizarCon(elementoPendiente);
+                if (!elementoPendienteImportar.equals(elementoEnBaseDatos)) {
+                    /// Son diferentes --> ACTUALIZO
+
+                    /// ACTUALIZO el registro en base de datos con el que está pendiente de importar
+
+                    /// Actualizo el registro
+                    elementoEnBaseDatos.actualizarCon(elementoPendienteImportar);
+                    elementoEnBaseDatos.setLogEntity(logEntity);
+                    elementoEnBaseDatos.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+                    elementoEnBaseDatos.setDeletedAt(null);
                 }
 
                 /// Eliminar el elemento procesado del mapa (para evitar eliminarlo más tarde)
-                mapElementosEnBaseDatos.remove(elementoPendiente.getUniqueKey());
+                /// mapElementosEnBaseDatos.remove(elementoPendienteImportar.getUniqueKey());
 
             } else {
+                /// NO existe el elemento pendiente en el MAP --> INSERTO
 
                 /// Actualizo el pendiente con LogEntity
-                elementoPendiente.setLogEntity(logEntity);
-                /// No existe el elemento pendiente en el Map -> lo agrego
-                listElementosEnBaseDatos.add(elementoPendiente);
+                elementoPendienteImportar.setLogEntity(logEntity);
+
+                /// Lo agrego a la lista
+                listElementosEnBaseDatos.add(elementoPendienteImportar);
             }
         }
 
-        /// Eliminar los elementos de la base de datos que no están en la lista de pendientes de importar
-        /// listElementosEnBaseDatos.removeIf(
-        ///             elementoEnBase -> !mapElementosEnBaseDatos.containsKey(elementoEnBase.getUniqueKey()));
+        /// Establecer fecha de DeletedAt para aquellos registros que figuraban en el map y ahora no figuran en la
+        listElementosEnBaseDatos.forEach(
+             elementoEnBaseDatos ->
+             {
+                 /// Establezco un valor de deletedAt en caso de que el registro en base de datos no contuviese
+                 ///        al elemento de la lista que estoy procesando y será persistido en la base de datos.
+                 ///        SIEMPRE Y CUANDO el elemento ya existiera (NO FUESE NUEVO)
+                 if ((!conjuntoUniqueKeys.contains(elementoEnBaseDatos.getUniqueKey())) &&
+                        (elementoEnBaseDatos.getId() > 0)) {
+                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                     elementoEnBaseDatos.setUpdatedAt(timestamp);
+                     elementoEnBaseDatos.setDeletedAt(timestamp);
+                 }
+             });
     }
 }

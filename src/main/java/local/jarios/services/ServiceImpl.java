@@ -6,12 +6,12 @@ import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
 import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
+import local.jarios.helpers.ExceptionHelper;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.properties.PropertyManager;
 import local.jarios.repositorys.Repository;
 import local.jarios.repositorys.RepositoryImpl;
 import local.jarios.repositorys.TransactionManager;
-import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -88,15 +88,8 @@ public class ServiceImpl implements Service {
 
             }
 
-            /// Obtener la pila de ejecución
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
-            String className = stackTrace[1].getClassName();    /// Nombre de la clase
-            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
-
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
+            ExceptionHelper.logException(ex);
 
             throw new MiServiceException(ex);
 
@@ -127,15 +120,8 @@ public class ServiceImpl implements Service {
 
         } catch (MiRepositoryException ex) {
 
-            /// Obtener la pila de ejecución
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
-            String className = stackTrace[1].getClassName();    /// Nombre de la clase
-            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
-
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
+            ExceptionHelper.logException(ex);
 
             throw new MiServiceException(ex);
 

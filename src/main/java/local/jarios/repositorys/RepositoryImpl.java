@@ -3,6 +3,7 @@ package local.jarios.repositorys;
 import local.jarios.entity.FicheroGcEntity;
 import local.jarios.entity.LogEntity;
 import local.jarios.exceptions.MiRepositoryException;
+import local.jarios.helpers.ExceptionHelper;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.RegistroGc;
 import local.jarios.utils.ConstantesGenerales;
@@ -45,7 +46,11 @@ public class RepositoryImpl implements Repository {
 
             ///
             for (FicheroGcEntity ficheroGcEntity : logEntity.getFicherosGcEntity()) {
-                session.merge(ficheroGcEntity);
+                if (ficheroGcEntity.getId() > 0) {
+                    session.merge(ficheroGcEntity);
+                } else {
+                    session.persist(ficheroGcEntity);
+                }
             }
 
             ///
@@ -82,15 +87,8 @@ public class RepositoryImpl implements Repository {
 
         } catch (HibernateException ex) {
 
-            /// Obtener la pila de ejecución
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
-            String className = stackTrace[1].getClassName();    /// Nombre de la clase
-            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
-
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
+            ExceptionHelper.logException(ex);
 
             /// Devuelvo la excepción
             throw new MiRepositoryException(ex);
@@ -154,8 +152,8 @@ public class RepositoryImpl implements Repository {
             RegistroGc registro = listRegistroGc.get(i);
 
             /// Escapar comillas simples en los valores de texto
-            String code = registro.getCode().replace("'", "''");  // Escapar comillas simples en 'code'
-            String nombre = registro.getNombre().replace("'", "''");  // Escapar comillas simples en 'nombre'
+            String code = registro.getCode().replace("'", "''");      /// Escapar comillas simples en 'code'
+            String nombre = registro.getNombre().replace("'", "''");  /// Escapar comillas simples en 'nombre'
 
             /// Agregar los valores para cada fila
             insertSql.append("(")
@@ -189,15 +187,8 @@ public class RepositoryImpl implements Repository {
 
         } catch (HibernateException ex) {
 
-            /// Obtener la pila de ejecución
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-            /// El primer elemento de stackTrace es getStackTrace(), el segundo es el método actual
-            String className = stackTrace[1].getClassName();    /// Nombre de la clase
-            String methodName = stackTrace[1].getMethodName();  /// Nombre del método
-
             /// Registro la excepción
-            log.error(Mensajes.EXCEPTION_ERROR, className, methodName, ex.getMessage());
+            ExceptionHelper.logException(ex);
 
             /// Devuelvo la excepción
             throw new MiRepositoryException(ex);

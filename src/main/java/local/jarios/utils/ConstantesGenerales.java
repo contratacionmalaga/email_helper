@@ -25,6 +25,8 @@ public final class ConstantesGenerales {
 
     public static final String FORMATO_FECHA = "dd-MM-yyyy HH:mm:ss.SSS";
 
+    public static final String FORMATO_DURACION = "%sh %sm %ss %sml";
+
     private ConstantesGenerales() {}
 
 }

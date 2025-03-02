@@ -2,6 +2,8 @@ package local.jarios.interfaces;
 
 import local.jarios.entity.LogEntity;
 
+import java.sql.Timestamp;
+
 /**
  * Description:
  * Author: juan
@@ -15,8 +17,18 @@ public interface Actualizable<T> {
     /// Método que devuelve el valor único del objeto, usado como clave
     String getUniqueKey();
 
+    /// Método que devuelvel el identificador del registro
+    int getId();
+
     /// Método para actualizar el objeto con los valores de otro
     void actualizarCon(T otro);
 
+    /// Método para aasignar el valor del objeto LogEntity del que hereda
     void setLogEntity(LogEntity logEntity);
+
+    /// Método para asignar el valor DeleteAt al registro (no se borra)
+    void setDeletedAt(Timestamp timestamp);
+
+    /// Método para asignar el valor UpdatedAt al registro (no se borra)
+    void setUpdatedAt(Timestamp timestamp);
 }

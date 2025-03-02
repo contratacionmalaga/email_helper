@@ -25,9 +25,7 @@ import java.time.LocalDateTime;
 )
 public class EstadisticaEntity extends Auditable {
 
-    private static final int MILESIMAS = 1000;
-    private static final int SEGUNDOS = 60;
-    private static final int MINUTOS = 60;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,23 +64,5 @@ public class EstadisticaEntity extends Auditable {
 
         this.logEntity = logEntity;
         this.fechaHoraInicial = Timestamp.valueOf(LocalDateTime.now());
-    }
-
-    /**
-     *
-     */
-    public void calcularTiempoEjecucion() {
-
-        /// Calculamos la diferencia en milisegundos
-        long diffInMillis = this.fechaHoraFinal.getTime() - this.fechaHoraInicial.getTime();
-
-        /// Calculamos las horas, minutos, segundos y milisegundos
-        long hours = diffInMillis / (MILESIMAS * SEGUNDOS * MINUTOS);
-        long minutes = (diffInMillis % (MILESIMAS * SEGUNDOS * MINUTOS)) / (MILESIMAS * SEGUNDOS);
-        long seconds = (diffInMillis % (MILESIMAS * SEGUNDOS)) / MILESIMAS;
-        long milliseconds = diffInMillis % MILESIMAS;
-
-        /// Devolvemos el tiempo transcurrido en formato "hh:mm:ss:SSS"
-        this.duracion = String.format("%sh %sm %ss %sml", hours, minutes, seconds, milliseconds);
     }
 }
