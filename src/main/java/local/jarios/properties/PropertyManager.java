@@ -1,8 +1,9 @@
 package local.jarios.properties;
 
 import local.jarios.enums.PropertyFile;
-import local.jarios.exceptions.MiPropertyFileException;
+import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.utils.ConstantesGenerales;
+import local.jarios.utils.FinalDelPrograma;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cfg.JdbcSettings;
@@ -38,26 +39,44 @@ public final class PropertyManager {
     private final Properties hibernateProperties = new Properties();
     @Getter
     private final Properties mailProperties = new Properties();
+    @Getter
+    private final Properties filterProperties = new Properties();
+    @Getter
+    private final Properties validationProperties = new Properties();
 
     /**
      * Constructor privado para evitar la creación de instancias fuera de la clase.
-     *
-     * @throws MiPropertyFileException Excepción para controlar los posibles errores durante la carga
      */
-    private PropertyManager() throws MiPropertyFileException {
+    private PropertyManager() {
+
         /// Obtener las rutas de todos los archivos de configuración desde el enum
         List<String> filePaths = PropertyFile.getAllFilePaths();
 
         /// Cargar las propiedades desde los archivos especificados en el enum
         Map<String, Properties> propertyFilesMap = new HashMap<>();
+
+        ///
         propertyFilesMap.put(PropertyFile.PROPERTY_CONFIG.getRuta(), configProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_HIBERNATE.getRuta(), hibernateProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_MAIL.getRuta(), mailProperties);
 
+        ///
         for (String filePath : filePaths) {
+
+            ///
             Properties properties = propertyFilesMap.get(filePath);
+
+            ///
             if (properties != null) {
+
+                ///
                 cargarArchivoPropiedades(properties, filePath);
+
+            } else {
+
+                if (log.isDebugEnabled()) {
+                    log.warn("El fichero de propiedades {} no tiene properties.", filePath);
+                }
             }
         }
     }
@@ -67,9 +86,10 @@ public final class PropertyManager {
      *
      * @param properties El objeto Properties donde se cargarán las propiedades
      * @param filePath   Ruta del archivo de propiedades
-     * @throws MiPropertyFileException Si ocurre un error al cargar el archivo
      */
-    private void cargarArchivoPropiedades(Properties properties, String filePath) throws MiPropertyFileException {
+    private void cargarArchivoPropiedades(Properties properties, String filePath) {
+
+        ///
         try (FileInputStream inputStream = new FileInputStream(filePath)) {
             /// Carga las propiedades desde el archivo
             properties.load(inputStream);
@@ -78,8 +98,8 @@ public final class PropertyManager {
         } catch (IOException ex) {
             /// Registro la excepción con información adicional
             log.error("Error al cargar el archivo de propiedades: {}. Detalles: {}", filePath, ex.getMessage());
-            /// Lanza una excepción personalizada
-            throw new MiPropertyFileException(ex);
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
         }
     }
 
@@ -96,9 +116,8 @@ public final class PropertyManager {
      * Obtiene la instancia Singleton de la clase.
      *
      * @return La instancia única de PropertyManager
-     * @throws MiPropertyFileException Si ocurre un error al obtener la instancia
      */
-    public static synchronized PropertyManager getInstance() throws MiPropertyFileException {
+    public static synchronized PropertyManager getInstance() {
         if (instance == null) {
             instance = new PropertyManager();
         }
@@ -112,7 +131,7 @@ public final class PropertyManager {
      * @return El valor de la propiedad, o un mensaje indicando que no se encontró
      */
     public String getProperty(String propertyName) {
-        return mapProperties.getOrDefault(propertyName, "Propiedad no encontrada");
+        return mapProperties.get(propertyName);
     }
 
     /**
@@ -121,8 +140,8 @@ public final class PropertyManager {
     public void imprimirMapProperties() {
         /// Ordenar las claves al momento de imprimirlas (no modificamos el Map original)
         mapProperties.keySet().stream()
-                .sorted() // Ordenar alfabéticamente
-                .forEach(key -> {
+                .sorted()
+                .forEach((String key) -> {
                     /// Solo imprimir si la clave no es sensible
                     if (!isSensitiveKey(key)) {
                         /// Imprimir la propiedad

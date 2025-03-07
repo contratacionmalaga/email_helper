@@ -1,34 +1,26 @@
 package local.jarios.utils;
 
 import local.jarios.enums.TipoFinalEjecucion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Juan Antonio
  */
+@Slf4j
 public final class FinalDelPrograma {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FinalDelPrograma.class);
 
     private FinalDelPrograma() {/* CONSTRUCTOR VACÍO */}
 
-    public static void finalizar (TipoFinalEjecucion tipoFinal, String mensaje) {
-
+    public static void finalizar (TipoFinalEjecucion tipoFinal) {
         ///
         if (tipoFinal == TipoFinalEjecucion.CORRECTO) {
-
             ///
-            LOGGER.info(Mensajes.FINAL_CORRECTO);
-
+            log.info(Mensajes.FINAL_CORRECTO);
             ///
             System.exit(0);
-
         } else {
-
             ///
-            LOGGER.error(mensaje);
-
+            log.error(Mensajes.FINAL_ERROR);
             ///
             System.exit(1);
         }

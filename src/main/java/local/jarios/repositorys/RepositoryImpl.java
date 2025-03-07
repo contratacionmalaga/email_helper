@@ -7,6 +7,8 @@ import local.jarios.helpers.ExceptionHelper;
 import local.jarios.interfaces.Actualizable;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.RegistroGc;
+import local.jarios.properties.PropertyConstantes;
+import local.jarios.properties.PropertyManager;
 import local.jarios.utils.ConstantesGenerales;
 import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,8 @@ public class RepositoryImpl implements Repository {
             LogEntity logEntity,
             ParseoFicherosGc parseoFicherosGc) throws MiRepositoryException {
 
+        PropertyManager propertyManager = PropertyManager.getInstance();
+
         ///
         try {
 
@@ -52,10 +56,10 @@ public class RepositoryImpl implements Repository {
             for (Map.Entry<String, List<RegistroGc>> entry : parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
 
                 ///
-                String CONFIG_PREFIJO = "placsp_gc";
+                String CONFIG_PREFIJO = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
                 String nombreTablaSinEsquema = CONFIG_PREFIJO + entry.getKey().toLowerCase();
 
-                String CONFIG_ESQUEMA = "imp_placsp_gc";
+                String CONFIG_ESQUEMA = propertyManager.getProperty(PropertyConstantes.CONFIG_ESQUEMA);
                 String nombreTablaConEsquema = CONFIG_ESQUEMA + "." + nombreTablaSinEsquema;
 
                 ///

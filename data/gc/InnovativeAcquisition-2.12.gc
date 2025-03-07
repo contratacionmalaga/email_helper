@@ -10,7 +10,7 @@
   <Identification>
     <ShortName>InnovativeAcquisition</ShortName>
     <LongName>Objetivo innovador</LongName>
-    <Version>2.10</Version>
+    <Version>2.12</Version>
     <CanonicalUri>urn:dgpe:names:specification:codice:codelist:gc:InnovativeAcquisition</CanonicalUri>
     <CanonicalVersionUri>urn:dgpe:names:specification:codice:codelist:gc:InnovativeAcquisition-2.12</CanonicalVersionUri>
     <LocationUri>http://contrataciondelestado.es/codice/cl/2.12/InnovativeAcquisition-2.12.gc</LocationUri>

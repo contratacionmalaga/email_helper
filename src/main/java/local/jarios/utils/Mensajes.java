@@ -8,6 +8,18 @@ package local.jarios.utils;
  */
 public final class Mensajes {
 
+    public static final String FINAL_ERROR =
+            "!!!! La ejecución ha finalizado con ERRORES !!!!";
+
+    public static final String EXCEPTION =
+            "***** Excepción ocurrida *****";
+
+    public static final String EXCEPTION_MENSAJE =
+            "{}Mensaje: {}";
+
+    public static final String EXCEPTION_STACK_TRACE =
+            "{}Pila con del error:";
+
     public static final String PROPERTY_LOG =
             "Contenido de las variables definidas en los ficheros properties.";
 

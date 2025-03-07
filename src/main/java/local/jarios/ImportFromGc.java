@@ -1,20 +1,24 @@
 package local.jarios;
 
-import local.jarios.entity.*;
+import local.jarios.entity.EstadisticaEntity;
+import local.jarios.entity.FicheroGcEntity;
+import local.jarios.entity.LogEntity;
+import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.exceptions.MiMailException;
-import local.jarios.exceptions.MiPropertyFileException;
 import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
-import local.jarios.models.ParseoFicherosGc;
+import local.jarios.helpers.ComunHelper;
+import local.jarios.helpers.FileHelper;
+import local.jarios.helpers.ListHelper;
 import local.jarios.models.MiMail;
-import local.jarios.enums.TipoFinalEjecucion;
-import local.jarios.helpers.*;
+import local.jarios.models.ParseoFicherosGc;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
 import local.jarios.services.Service;
 import local.jarios.services.ServiceImpl;
-import local.jarios.utils.*;
-
+import local.jarios.utils.ConstantesGenerales;
+import local.jarios.utils.FinalDelPrograma;
+import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -134,20 +138,22 @@ public class ImportFromGc {
             ComunHelper.imprimir(logEntity);
 
             /// Finalizar el programa correctamente
-            FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO, ConstantesGenerales.CADENA_VACIA);
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO);
 
-        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException |
-                 MiPropertyFileException ex) {
+        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException  ex) {
 
-            log.error(ex.getMessage());
+            /// Registro la excepción
+            log.error(Mensajes.EXCEPTION);
+            log.error(Mensajes.EXCEPTION_MENSAJE, ConstantesGenerales.TABULADOR_1, ex.getMessage());
+            log.error(Mensajes.EXCEPTION_STACK_TRACE, ConstantesGenerales.TABULADOR_1);
 
-            log.error("INFORMACIÓN CON LA PILA DEL ERROR");
+            ///
             for (StackTraceElement stackTraceElement : ex.getStackTrace()) {
-                log.error("{}{}", ConstantesGenerales.TABULADOR_1, stackTraceElement.toString());
+                log.error("{}{}", ConstantesGenerales.TABULADOR_2, stackTraceElement.toString());
             }
 
             /// Finalizo la ejecución del programa
-            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR, ex.getMessage());
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
 
         }
     }
