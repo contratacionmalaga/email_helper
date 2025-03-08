@@ -7,6 +7,7 @@ import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.exceptions.MiMailException;
 import local.jarios.exceptions.MiServiceException;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
+import local.jarios.exceptions.MiUnknownHostException;
 import local.jarios.helpers.ComunHelper;
 import local.jarios.helpers.FileHelper;
 import local.jarios.helpers.ListHelper;
@@ -140,7 +141,7 @@ public class ImportFromGc {
             /// Finalizar el programa correctamente
             FinalDelPrograma.finalizar(TipoFinalEjecucion.CORRECTO);
 
-        } catch (MiMailException | MiServiceException | MiSessionFactoryProviderException  ex) {
+        } catch (MiMailException | MiServiceException | MiUnknownHostException | MiSessionFactoryProviderException ex) {
 
             /// Registro la excepción
             log.error(Mensajes.EXCEPTION);

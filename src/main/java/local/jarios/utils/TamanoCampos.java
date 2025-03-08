@@ -12,9 +12,7 @@ package local.jarios.utils;
  */
 public final class TamanoCampos {
 
-    public static final int TAMANO_CAMPOS_FICHERO = 500;
-
-    public static final int TAMANO_FECHA_LARGA = 100;
+    public static final int TAMANO_100 = 100;
 
     private TamanoCampos() {}
 

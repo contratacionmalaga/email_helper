@@ -1,6 +1,8 @@
 package local.jarios.entity;
 
 import jakarta.persistence.*;
+import local.jarios.exceptions.MiUnknownHostException;
+import local.jarios.helpers.ComunHelper;
 import local.jarios.utils.TamanoCampos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,8 +27,6 @@ import java.time.LocalDateTime;
 )
 public class EstadisticaEntity extends Auditable {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
@@ -41,6 +41,9 @@ public class EstadisticaEntity extends Auditable {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_estadistica_log"))
     private LogEntity logEntity;
+
+    @Column(name = "equipo", nullable = false, length = TamanoCampos.TAMANO_100)
+    private String equipo;
 
     @Column(name = "nTotalFicherosLeidos")
     private int nTotalFicherosLeidos;
@@ -57,12 +60,13 @@ public class EstadisticaEntity extends Auditable {
     @Column(name = "fechaHoraFinal")
     private Timestamp fechaHoraFinal;
 
-    @Column(name = "duracion", length = TamanoCampos.TAMANO_FECHA_LARGA)
+    @Column(name = "duracion", length = TamanoCampos.TAMANO_100)
     private String duracion;
 
-    public EstadisticaEntity(LogEntity logEntity) {
+    public EstadisticaEntity(LogEntity logEntity) throws MiUnknownHostException {
 
         this.logEntity = logEntity;
         this.fechaHoraInicial = Timestamp.valueOf(LocalDateTime.now());
+        this.equipo = ComunHelper.getHostName();
     }
 }
