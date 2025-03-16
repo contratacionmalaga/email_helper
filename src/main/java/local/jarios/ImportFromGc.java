@@ -59,7 +59,7 @@ public class ImportFromGc {
 
             /// ***** CREO EL OBJETO LogEntity
             Log miLog = new Log();
-            log.info(Mensajes.LOG_CREACION);
+            log.info(Mensajes.LOG_CREACION, miLog);
 
             /// Creo el objeto EstadisticaEntity que se inicializa con el LogEntity anteriormente creado y con la
             ///         el valor Timestamp.valueOf(LocalDateTime.now()) para el campo fechaHoraInicial
@@ -113,7 +113,7 @@ public class ImportFromGc {
             ListHelper.unificarListas(miLog, listFicherosGcEnBaseDatos, parseoFicherosGc.getListFicherosGc());
 
             /// ASIGNO LA LISTA DE FICHEROS (unificada) AL OBJETO logEntity
-            miLog.setFicherosGcEntity(listFicherosGcEnBaseDatos);
+            miLog.setFicherosGc(listFicherosGcEnBaseDatos);
 
             ///
             ///     OBTENGO LAS ESTADÍSTICAS DE DURACIÓN DEL PARSEO

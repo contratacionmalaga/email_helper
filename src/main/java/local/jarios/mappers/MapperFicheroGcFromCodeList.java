@@ -70,7 +70,11 @@ public final class MapperFicheroGcFromCodeList {
      * @return Cadena de caracteres con el valor o la CADENA_VACIA (NUNCA devuelve NULL)
      */
     private static String getOrEmpty(Identification identification, Function<Identification, String> getter) {
+
+        ///
         String value = getter.apply(identification);
+
+        ///
         return value != null ? value : ConstantesGenerales.CADENA_VACIA;  /// Nunca devolver null, siempre cadena vacía
     }
 }

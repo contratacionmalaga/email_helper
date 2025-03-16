@@ -29,18 +29,18 @@ public record LogEntityAdapter() implements JsonSerializer<Log> {
         logContent.addProperty("Id", String.valueOf(logEntity.getId()));
 
         ///
-        if (logEntity.getEstadisticaEntity() != null) {
+        if (logEntity.getEstadistica() != null) {
 
             ///
-            logContent.add("Estadistica", context.serialize(logEntity.getEstadisticaEntity()));
+            logContent.add("Estadistica", context.serialize(logEntity.getEstadistica()));
 
         }
 
         ///
-        if (!logEntity.getFicherosGcEntity().isEmpty()) {
+        if (!logEntity.getFicherosGc().isEmpty()) {
 
             ///
-            logContent.add("FicheroGc", context.serialize(logEntity.getFicherosGcEntity()));
+            logContent.add("FicheroGc", context.serialize(logEntity.getFicherosGc()));
 
         }
 

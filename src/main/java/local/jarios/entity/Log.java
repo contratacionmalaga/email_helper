@@ -29,10 +29,16 @@ public class Log extends Auditable {
     private UUID id;
 
     @OneToMany(mappedBy = "logEntity", orphanRemoval = true)
-    private List<FicheroGc> ficherosGcEntity;
+    private List<FicheroGc> ficherosGc;
 
-    @OneToOne(mappedBy = "logEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Estadistica estadisticaEntity;
+    @OneToOne(mappedBy = "logEntity", orphanRemoval = true)
+    private Estadistica estadistica;
+
+    @Override
+    public String toString() {
+
+        return this.id.toString();
+    }
 
     public Log() {
 

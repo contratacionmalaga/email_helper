@@ -234,8 +234,8 @@ public class RepositoryImpl implements Repository {
 
         /// SQL nativo para crear la tabla
         String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTablaConEsquema + " (" +
-                "id UUID PRIMARY KEY, " +
-                "code VARCHAR(50) NOT NULL, " +
+                "id UUID NOT NULL, " +
+                "code VARCHAR(50) NOT NULL PRIMARY KEY, " +
                 "nombre VARCHAR(500)" +
                 ")";
 
@@ -255,7 +255,7 @@ public class RepositoryImpl implements Repository {
             List<RegistroGc> listRegistroGc) {
 
         /// Usar StringBuilder para construir la consulta de inserción
-        StringBuilder insertSql = new StringBuilder("INSERT INTO " + tableName + " (code, nombre) VALUES ");
+        StringBuilder insertSql = new StringBuilder("INSERT INTO " + tableName + " (id, code, nombre) VALUES ");
 
         /// Crear los valores para insertar
         for (int i = 0; i < listRegistroGc.size(); i++) {

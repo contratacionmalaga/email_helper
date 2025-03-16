@@ -60,7 +60,7 @@ public final class Mensajes {
             "Creación del objeto Estadística correctamente.";
 
     public static final String LOG_CREACION =
-            "Creación del objeto Log correctamente.";
+            "Creación del objeto Log correctamente. Id: {}";
 
     public static final String VERSION_APP =
             "Versión del aplicativo: {}";

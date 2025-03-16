@@ -25,14 +25,6 @@ public class AuditablePlus {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
-    /// Getters y Setters
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
-
-    /// Getters y Setters
-    @Column(name = "deleted_at")
-    private Timestamp deletedAt;
-
     @PrePersist
     protected void onCreate() {
         createdAt = new Timestamp(System.currentTimeMillis());

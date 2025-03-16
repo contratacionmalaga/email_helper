@@ -34,7 +34,6 @@ public class Estadistica extends Auditable {
     private UUID id;
 
     @OneToOne(
-            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     @JoinColumn(
             name = "log_id",

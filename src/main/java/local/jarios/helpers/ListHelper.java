@@ -4,7 +4,6 @@ import local.jarios.entity.Log;
 import local.jarios.interfaces.Actualizable;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -63,8 +62,6 @@ public final class ListHelper {
                     /// Actualizo el registro
                     elementoEnBaseDatos.actualizarCon(elementoPendienteImportar);
                     elementoEnBaseDatos.setLogEntity(logEntity);
-                    elementoEnBaseDatos.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-                    elementoEnBaseDatos.setDeletedAt(null);
                 }
 
                 /// Eliminar el elemento procesado del mapa (para evitar eliminarlo más tarde)
@@ -80,20 +77,5 @@ public final class ListHelper {
                 listElementosEnBaseDatos.add(elementoPendienteImportar);
             }
         }
-
-        /// Establecer fecha de DeletedAt para aquellos registros que figuraban en el map y ahora no figuran en la
-        listElementosEnBaseDatos.forEach(
-             elementoEnBaseDatos ->
-             {
-                 /// Establezco un valor de deletedAt en caso de que el registro en base de datos no contuviese
-                 ///        al elemento de la lista que estoy procesando y será persistido en la base de datos.
-                 ///        SIEMPRE Y CUANDO el elemento ya existiera (NO FUESE NUEVO)
-                 if ((!conjuntoUniqueKeys.contains(elementoEnBaseDatos.getUniqueKey())) &&
-                        (elementoEnBaseDatos.getId() != null)) {
-                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                     elementoEnBaseDatos.setUpdatedAt(timestamp);
-                     elementoEnBaseDatos.setDeletedAt(timestamp);
-                 }
-             });
     }
 }
