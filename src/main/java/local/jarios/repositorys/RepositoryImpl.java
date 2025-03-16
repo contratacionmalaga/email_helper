@@ -140,35 +140,32 @@ public class RepositoryImpl implements Repository {
                     parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
 
                 ///
-                String CONFIG_PREFIJO = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
-                String nombreTablaSinEsquema = CONFIG_PREFIJO + entry.getKey().toLowerCase();
-
-                String CONFIG_ESQUEMA = propertyManager.getProperty(PropertyConstantes.CONFIG_ESQUEMA);
-                String nombreTablaConEsquema = CONFIG_ESQUEMA + "." + nombreTablaSinEsquema;
+                String configPrefijo = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
+                String nombreTablaSinEsquema = configPrefijo + entry.getKey().toLowerCase();
 
                 ///
                 if (tablaExiste(session, nombreTablaSinEsquema)) {
 
                     ///
-                    var dropSql = "DROP TABLE " + nombreTablaConEsquema;
+                    var dropSql = "DROP TABLE " + nombreTablaSinEsquema;
 
                     ///
                     session.createNativeQuery(dropSql).executeUpdate();
-                    log.info(Mensajes.DROP_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
+                    log.info(Mensajes.DROP_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaSinEsquema);
 
                 }
 
                 ///
-                crearTabla(session, nombreTablaConEsquema);
-                log.info(Mensajes.CREATE_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaConEsquema);
+                crearTabla(session, nombreTablaSinEsquema);
+                log.info(Mensajes.CREATE_TABLE, ConstantesGenerales.TABULADOR_1, nombreTablaSinEsquema);
 
                 ///
-                insertarRegistrosEnTabla(session, nombreTablaConEsquema, entry.getValue());
+                insertarRegistrosEnTabla(session, nombreTablaSinEsquema, entry.getValue());
                 log.info(
                         Mensajes.INSERT_RECORDS,
                         ConstantesGenerales.TABULADOR_2,
                         entry.getValue().size(),
-                        nombreTablaConEsquema);
+                        nombreTablaSinEsquema);
 
             }
 

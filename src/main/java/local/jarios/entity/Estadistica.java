@@ -39,7 +39,8 @@ public class Estadistica extends Auditable {
             name = "log_id",
             nullable = false,
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_estadistica_log"))
+            foreignKey = @ForeignKey(name = "fk_estadistica_log",
+                    foreignKeyDefinition = "FOREIGN KEY (log_id) REFERENCES log(id) ON DELETE CASCADE"))
     private Log logEntity;
 
     @Column(name = "equipo", nullable = false, length = TamanoCampos.TAMANO_250)

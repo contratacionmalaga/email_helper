@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 /**
@@ -81,5 +83,14 @@ public final class ComunHelper {
 
         /// Devolvemos el tiempo transcurrido en formato "hh:mm:ss:SSS"
         return String.format(formatoDuracion, hours, minutes, seconds, milliseconds);
+    }
+
+    public static String getFechaHoraFormateada(Timestamp fechaHora) {
+
+        /// Usar LocalDateTime.now() si el timestamp es null
+        LocalDateTime fecha = (fechaHora != null) ? fechaHora.toLocalDateTime() : LocalDateTime.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return fecha.format(formatter);
     }
 }

@@ -19,8 +19,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(
-        name = "log",
-        schema = "imp_placsp_gc"
+        name = "log"
 )
 public class Log extends Auditable {
 

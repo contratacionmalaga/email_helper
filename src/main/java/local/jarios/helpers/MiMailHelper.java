@@ -2,6 +2,8 @@ package local.jarios.helpers;
 
 import local.jarios.entity.Estadistica;
 import local.jarios.exceptions.MiUnknownHostException;
+import local.jarios.properties.PropertyConstantes;
+import local.jarios.properties.PropertyManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -57,11 +59,15 @@ public final class MiMailHelper {
 
     private static String getTablaEstadisticas(Estadistica estadistica) throws MiUnknownHostException {
 
+        var propertyManager = PropertyManager.getInstance();
+
         return "<table class='stats-table'>"
-                + "<tr><th>Fecha y Hora del Envio</th><td>" +
-                LocalDateTime.now() + "</td></tr>"
+                + "<tr><th>Fecha y Hora del Envio del correo</th><td>" +
+                ComunHelper.getFechaHoraFormateada(null) + "</td></tr>"
                 + "<tr><th>Equipo desde el que se realiza el Envio</th><td>" +
                 ComunHelper.getHostName() + "</td></tr>"
+                + "<tr><th>URl de la conexión la base de datos Local</th><td>" +
+                propertyManager.getProperty(PropertyConstantes.LOCAL_URL) + "</td></tr>"
                 + "<tr><th>Número de ficheros en la carpeta</th><td>" +
                 estadistica.getNTotalFicherosLeidos() + "</td></tr>"
                 + "<tr><th>Número de ficheros procesados</th><td>" +

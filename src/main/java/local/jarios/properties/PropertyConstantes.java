@@ -14,6 +14,9 @@ public final class PropertyConstantes {
     public static final String EMAIL_FROM = "mail.from";
     public static final String EMAIL_TO = "mail.to";
 
+    /* */
+    public static final String LOCAL_URL = "jakarta.persistence.jdbc.url";
+
     /* Nombre de las propiedades del fichero release.properties */
     public static final String SCM_TAG = "scm.tag";
 

@@ -38,7 +38,8 @@ public class FicheroGc extends AuditablePlus implements Actualizable<FicheroGc> 
             name = "log_id",
             nullable = false,
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_lista_ficheros_gc_log"))
+            foreignKey = @ForeignKey(name = "fk_ficherosgc_log",
+                    foreignKeyDefinition = "FOREIGN KEY (log_id) REFERENCES log(id) ON DELETE CASCADE"))
     private Log logEntity;
 
     @Column(name = "shortName", nullable = false, length = TamanoCampos.TAMANO_250)
