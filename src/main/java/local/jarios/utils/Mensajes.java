@@ -8,6 +8,66 @@ package local.jarios.utils;
  */
 public final class Mensajes {
 
+    public static final String PERSISTIDO_ESTADISTICA =
+            "Se ha persistido correctamente, la entidad Estadistica en la base de datos.";
+
+    public static final String PERSISTIDO_FICHEROS_GC =
+            "Se han persistido correctamente, los ficheros GC en la base de datos.";
+
+    public static final String PERSISTIDO_PARSEO_FICHEROS_GC =
+            "Se ha persistido correctamente, el objeto ParseoFicherosGc en la base de datos.";
+
+    public static final String PERSISTIDO_LOG =
+            "Se ha persistido correctamente, la entidad Log en la base de datos.";
+
+    public static final String ASIGN_FECHA_HORA_INICIAL_PARSEO_TO_ESTADISTICA =
+            "Asignada la fecha y hora de inicio del parseo al objeto Estadísitica. {}";
+
+    public static final String ASIGN_FECHA_HORA_FINAL_PARSEO_TO_ESTADISTICA =
+            "Asignada la fecha y hora final del parseo al objeto Estadísitica. {}";
+
+    public static final String ASIGN_FECHA_HORA_INICIAL_BASE_DATOS_TO_ESTADISTICA =
+            "Asignada la fecha y hora de inicio de la persistencia en base de datos al objeto Estadísitica. {}";
+
+    public static final String ASIGN_FECHA_HORA_FINAL_BASE_DATOS_TO_ESTADISTICA =
+            "Asignada la fecha y hora final de la persistencia en base de datos al objeto Estadísitica. {}";
+
+    public static final String ASIGN_LIST_FEED_TO_LOG =
+            "Asignado de la Lista de Feeds parseados al objeto Log correctamente.";
+
+    public static final String ASIGN_LIST_ORGANOS_CONTRATACION_TO_LOG =
+            "Asignado de la Lista de Órganos de Contratación al Log.";
+
+    public static final String ASIGN_DURACION_PARSEO =
+            "Asignada la duración del parseo en memoria al objeto Estadística correctamente.";
+
+    public static final String ASIGN_DURACION_BASE_DATOS =
+            "Asignada la duración de la persistencia en base de datos al objeto Estadística correctamente.";
+
+    public static final String MAIL_CREACION =
+            "Creación del objeto Mail a partir del objeto Estadistica correctamente.";
+
+    public static final String MAIL_ENVIADO =
+            "Enviado Mail con los datos estadísticos de la ejecución.";
+
+    public static final String SERVICE_CREACION_INICIO =
+            "Inicio de la creación del Servicio de conexión con la base de datos.";
+
+    public static final String SERVICE_CREACION_CREADO =
+            "Servicio de conexión con la base de datos creado correctamente.";
+
+    public static final String ESTADISTICA_CREACION =
+            "Creación del objeto Estadística correctamente.";
+
+    public static final String LOG_CREACION =
+            "Creación del objeto Log correctamente.";
+
+    public static final String VERSION_APP =
+            "Versión del aplicativo: {}";
+
+    public static final String INICIO =
+            "**** Inicio de la ejecución del programa ****";
+
     public static final String FINAL_ERROR =
             "!!!! La ejecución ha finalizado con ERRORES !!!!";
 

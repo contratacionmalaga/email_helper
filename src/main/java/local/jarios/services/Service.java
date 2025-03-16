@@ -1,8 +1,8 @@
 package local.jarios.services;
 
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
-import local.jarios.exceptions.MiServiceException;
+import local.jarios.entity.Estadistica;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
 import local.jarios.models.ParseoFicherosGc;
 
 import java.util.List;
@@ -16,7 +16,13 @@ import java.util.List;
 
 public interface Service {
 
-    void persistir(LogEntity logEntity, ParseoFicherosGc parseoFicherosGc) throws MiServiceException;
+    void persistir(Log miLog);
 
-    List<FicheroGcEntity> getListFicherosGc() throws MiServiceException;
+    void persistir(List<FicheroGc> listFicherosGc);
+
+    void persistir(ParseoFicherosGc parseoFicherosGc);
+
+    void persistir(Estadistica estadistica);
+
+    List<FicheroGc> getListFicherosGc();
 }

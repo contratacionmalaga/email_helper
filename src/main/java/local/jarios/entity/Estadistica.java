@@ -1,5 +1,6 @@
 package local.jarios.entity;
 
+import com.fasterxml.uuid.Generators;
 import jakarta.persistence.*;
 import local.jarios.exceptions.MiUnknownHostException;
 import local.jarios.helpers.ComunHelper;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Description: Importaciones de Ficheros Excel desde Internet
@@ -25,12 +27,11 @@ import java.time.LocalDateTime;
 @Table(
         name = "estadistica"
 )
-public class EstadisticaEntity extends Auditable {
+public class Estadistica extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private UUID id;
 
     @OneToOne(
             cascade = CascadeType.ALL,
@@ -40,9 +41,9 @@ public class EstadisticaEntity extends Auditable {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_estadistica_log"))
-    private LogEntity logEntity;
+    private Log logEntity;
 
-    @Column(name = "equipo", nullable = false, length = TamanoCampos.TAMANO_100)
+    @Column(name = "equipo", nullable = false, length = TamanoCampos.TAMANO_250)
     private String equipo;
 
     @Column(name = "nTotalFicherosLeidos")
@@ -54,19 +55,29 @@ public class EstadisticaEntity extends Auditable {
     @Column(name = "nRregistrosGc")
     private int nRregistrosGc;
 
-    @Column(name = "fechaHoraInicial")
-    private Timestamp fechaHoraInicial;
+    @Column(name = "fechaHoraInicialParseo", nullable = false)
+    private Timestamp fechaHoraInicialParseo;
 
-    @Column(name = "fechaHoraFinal")
-    private Timestamp fechaHoraFinal;
+    @Column(name = "fechaHoraFinalParseo", nullable = false)
+    private Timestamp fechaHoraFinalParseo;
 
-    @Column(name = "duracion", length = TamanoCampos.TAMANO_100)
-    private String duracion;
+    @Column(name = "fechaHoraInicialBaseDatos", nullable = false)
+    private Timestamp fechaHoraInicialBaseDatos;
 
-    public EstadisticaEntity(LogEntity logEntity) throws MiUnknownHostException {
+    @Column(name = "fechaHoraFinalBaseDatos", nullable = false)
+    private Timestamp fechaHoraFinalBaseDatos;
 
+    @Column(name = "duracionParseo", nullable = false, length = TamanoCampos.TAMANO_250)
+    private String duracionParseo;
+
+    @Column(name = "duracionBaseDatos", nullable = false, length = TamanoCampos.TAMANO_250)
+    private String duracionBaseDatos;
+
+    public Estadistica(Log logEntity) throws MiUnknownHostException {
+
+        this.id = Generators.timeBasedEpochGenerator().generate();
         this.logEntity = logEntity;
-        this.fechaHoraInicial = Timestamp.valueOf(LocalDateTime.now());
+        this.fechaHoraInicialParseo = Timestamp.valueOf(LocalDateTime.now());
         this.equipo = ComunHelper.getHostName();
     }
 }

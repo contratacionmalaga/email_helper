@@ -1,6 +1,6 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.EstadisticaEntity;
+import local.jarios.entity.Estadistica;
 import local.jarios.exceptions.MiUnknownHostException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +14,7 @@ public final class MiMailHelper {
 
     private MiMailHelper() { }
 
-    public static String getCuerpoMensaje(EstadisticaEntity estadisticaEntity) throws MiUnknownHostException {
+    public static String getCuerpoMensaje(Estadistica estadisticaEntity) throws MiUnknownHostException {
 
         return "<!DOCTYPE html>"
                 + "<html lang='es'>"
@@ -55,7 +55,7 @@ public final class MiMailHelper {
                 + "</html>";
     }
 
-    private static String getTablaEstadisticas(EstadisticaEntity estadisticaEntity) throws MiUnknownHostException {
+    private static String getTablaEstadisticas(Estadistica estadistica) throws MiUnknownHostException {
 
         return "<table class='stats-table'>"
                 + "<tr><th>Fecha y Hora del Envio</th><td>" +
@@ -63,15 +63,13 @@ public final class MiMailHelper {
                 + "<tr><th>Equipo desde el que se realiza el Envio</th><td>" +
                 ComunHelper.getHostName() + "</td></tr>"
                 + "<tr><th>Número de ficheros en la carpeta</th><td>" +
-                estadisticaEntity.getNTotalFicherosLeidos() + "</td></tr>"
+                estadistica.getNTotalFicherosLeidos() + "</td></tr>"
                 + "<tr><th>Número de ficheros procesados</th><td>" +
-                estadisticaEntity.getNTotalFicherosProcesados() + "</td></tr>"
-                + "<tr><th>Fecha Hora Inicial</th><td>" +
-                FechaHelper.getFormatoFechaLargo(estadisticaEntity.getFechaHoraInicial()) + "</td></tr>"
-                + "<tr><th>Fecha Hora Final</th><td>" +
-                FechaHelper.getFormatoFechaLargo(estadisticaEntity.getFechaHoraFinal()) + "</td></tr>"
-                + "<tr><th>Tiempo de ejecución</th><td>" +
-                estadisticaEntity.getDuracion() + "</td></tr>"
+                estadistica.getNTotalFicherosProcesados() + "</td></tr>"
+                + "<tr><th>Tiempo de ejecución Parseo</th><td>" +
+                estadistica.getDuracionParseo() + "</td></tr>"
+                + "<tr><th>Tiempo de ejecución persistencia en Base de Datos</th><td>" +
+                estadistica.getDuracionBaseDatos() + "</td></tr>"
                 + "</table>";
     }
 

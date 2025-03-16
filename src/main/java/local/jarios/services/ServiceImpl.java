@@ -1,12 +1,10 @@
 package local.jarios.services;
 
 import local.jarios.database.SessionFactoryProvider;
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
-import local.jarios.exceptions.MiRepositoryException;
-import local.jarios.exceptions.MiServiceException;
+import local.jarios.entity.Estadistica;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
 import local.jarios.exceptions.MiSessionFactoryProviderException;
-import local.jarios.helpers.ExceptionHelper;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.properties.PropertyManager;
 import local.jarios.repositorys.Repository;
@@ -49,83 +47,122 @@ public class ServiceImpl implements Service {
     /**
      *
      * @param logEntity Objeto Logentity que será persistido
-     * @param parseoFicherosGc Información con los datos del parseo de los ficheros existentes en el path
-     * @throws MiServiceException Excepción en caso de error
      */
     @Override
-    public void persistir (LogEntity logEntity, ParseoFicherosGc parseoFicherosGc) throws MiServiceException {
+    public void persistir (Log logEntity)  {
+
+        /// Obtengo el objeto Session
+        Session session = transactionManager.getSession(sessionFactory);
+
+        /// Inicio la transacción dentro de la Session
+        Transaction transaction = transactionManager.beginTransaction(session);
 
         ///
-        Transaction transaction = null;
+        repository.persistir(session, transaction, logEntity);
 
-        /// Declaramos la sesión fuera del try-with-resources
-        Session session = null;
+        /// Finalizar la transacción
+        transactionManager.commitTransaction(transaction);
 
-        try {
+        /// Cierro la sesión
+        transactionManager.closeSession(session);
 
-            /// Obtengo el objeto Session
-            session = transactionManager.getSession(sessionFactory);
+        /// Aquí asegúrate de que la sesión se cierre correctamente.
+        transactionManager.closeSession(session);
+    }
 
-            /// Inicio la transacción dentro de la Session
-            transaction = transactionManager.beginTransaction(session);
+    /**
+     *
+     * @param listFicherosGc Objeto Logentity que será persistido
+     */
+    @Override
+    public void persistir (List<FicheroGc> listFicherosGc)  {
 
-            ///
-            repository.persistir(session, logEntity, parseoFicherosGc);
+        /// Obtengo el objeto Session
+        Session session = transactionManager.getSession(sessionFactory);
 
-            /// Finalizar la transacción
-            transactionManager.commitTransaction(transaction);
+        /// Inicio la transacción dentro de la Session
+        Transaction transaction = transactionManager.beginTransaction(session);
 
-            /// Cierro la sesión
-            transactionManager.closeSession(session);
+        ///
+        repository.persistir(session, transaction, listFicherosGc);
 
-        } catch (MiRepositoryException ex) {
+        /// Finalizar la transacción
+        transactionManager.commitTransaction(transaction);
 
-            ///
-            if (transaction != null) {
+        /// Cierro la sesión
+        transactionManager.closeSession(session);
 
-                ///
-                transactionManager.rollbackTransaction(transaction);
+        /// Aquí asegúrate de que la sesión se cierre correctamente.
+        transactionManager.closeSession(session);
+    }
 
-            }
+    /**
+     *
+     * @param parseoFicherosGc Información con los datos del parseo de los ficheros existentes en el path
+     */
+    @Override
+    public void persistir (ParseoFicherosGc parseoFicherosGc)  {
 
-            /// Registro la excepción
-            ExceptionHelper.logException(ex);
+        /// Obtengo el objeto Session
+        Session session = transactionManager.getSession(sessionFactory);
 
-            throw new MiServiceException(ex);
+        /// Inicio la transacción dentro de la Session
+        Transaction transaction = transactionManager.beginTransaction(session);
 
-        } finally {
+        ///
+        repository.persistir(session, transaction, parseoFicherosGc);
 
-            /// Aquí asegúrate de que la sesión se cierre correctamente.
-            transactionManager.closeSession(session);
-        }
+        /// Finalizar la transacción
+        transactionManager.commitTransaction(transaction);
+
+        /// Cierro la sesión
+        transactionManager.closeSession(session);
+
+        /// Aquí asegúrate de que la sesión se cierre correctamente.
+        transactionManager.closeSession(session);
+
+    }
+
+    /**
+     *
+     * @param estadistica Objeto Logentity que será persistido
+     */
+    @Override
+    public void persistir (Estadistica estadistica)  {
+
+        /// Obtengo el objeto Session
+        Session session = transactionManager.getSession(sessionFactory);
+
+        /// Inicio la transacción dentro de la Session
+        Transaction transaction = transactionManager.beginTransaction(session);
+
+        ///
+        repository.persistir(session, transaction, estadistica);
+
+        /// Finalizar la transacción
+        transactionManager.commitTransaction(transaction);
+
+        /// Cierro la sesión
+        transactionManager.closeSession(session);
+
+        /// Aquí asegúrate de que la sesión se cierre correctamente.
+        transactionManager.closeSession(session);
     }
 
     /**
      *
      * @return Lista de FicherosGc existentes en la base de datos
-     * @throws MiServiceException Excepción en caso de error
      */
     @Override
-    public List<FicheroGcEntity> getListFicherosGc () throws MiServiceException {
+    public List<FicheroGc> getListFicherosGc () {
 
-        List<FicheroGcEntity> listFicherosGc;
+        /// Obtengo el objeto Session
+        Session session = transactionManager.getSession(sessionFactory);
 
-        try (
-                /// Obtengo el objeto Session
-                var session = transactionManager.getSession(sessionFactory)
-        ){
+        List<FicheroGc> listFicherosGc = repository.getListFicherosGc(session);
 
-            ///
-            listFicherosGc = repository.getListFicherosGc(session);
-
-        } catch (MiRepositoryException ex) {
-
-            /// Registro la excepción
-            ExceptionHelper.logException(ex);
-
-            throw new MiServiceException(ex);
-
-        }
+        /// Aquí asegúrate de que la sesión se cierre correctamente.
+        transactionManager.closeSession(session);
 
         ///
         return listFicherosGc;

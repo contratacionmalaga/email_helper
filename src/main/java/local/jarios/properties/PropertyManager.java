@@ -40,9 +40,7 @@ public final class PropertyManager {
     @Getter
     private final Properties mailProperties = new Properties();
     @Getter
-    private final Properties filterProperties = new Properties();
-    @Getter
-    private final Properties validationProperties = new Properties();
+    private final Properties releaseProperties = new Properties();
 
     /**
      * Constructor privado para evitar la creación de instancias fuera de la clase.
@@ -59,6 +57,7 @@ public final class PropertyManager {
         propertyFilesMap.put(PropertyFile.PROPERTY_CONFIG.getRuta(), configProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_HIBERNATE.getRuta(), hibernateProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_MAIL.getRuta(), mailProperties);
+        propertyFilesMap.put(PropertyFile.PROPERTY_RELEASE.getRuta(), releaseProperties);
 
         ///
         for (String filePath : filePaths) {

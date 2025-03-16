@@ -6,8 +6,31 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>local.jarios</groupId>
     <artifactId>import-from-gc</artifactId>
-    <version>1.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <name>ImportFromOpendata</name>
+    <description>Cliente que parsea los datos abiertos de la Plataforma de Contratación del Sector Público</description>
+
+    <scm>
+        <connection>scm:git:git://github.com/contratacionmalaga/ImportFromGc.git</connection>
+        <developerConnection>scm:git:ssh://github.com/contratacionmalaga/ImportFromGc.git</developerConnection>
+        <url>https://github.com/contratacionmalaga/ImportFromGc</url>
+        <tag>v1.2.2</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github-releases</id>
+            <!-- Cambié la URL a la correcta para GitHub Packages -->
+            <url>https://maven.pkg.github.com/contratacionmalaga/ImportFromGc</url>
+        </repository>
+        <snapshotRepository>
+            <id>github-snapshots</id>
+            <!-- Cambié la URL a la correcta para GitHub Packages -->
+            <url>https://maven.pkg.github.com/contratacionmalaga/ImportFromGc</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,11 +40,7 @@
         <jackson.version>2.18.3</jackson.version>
     </properties>
 
-    <name>ImportFromGc</name>
-    <description>Importaciones de los ficheros GC utilizados por PLACSP en una base de datos PostgreSQL</description>
-
     <dependencies>
-
         <!-- Fichero JAXB -->
 
         <dependency>
@@ -35,20 +54,6 @@
             <artifactId>jaxb-impl</artifactId>
             <version>2.3.1</version>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>4.0.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>4.0.5</version>
-        </dependency>
-        -->
 
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -66,14 +71,14 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.6.9.Final</version>
+            <version>6.6.10.Final</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-hikaricp -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-hikaricp</artifactId>
-            <version>6.6.9.Final</version>
+            <version>6.6.10.Final</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -161,18 +166,54 @@
             <version>6.2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
 
             <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.9.2.0</version>
+                <configuration>
+                    <includeFilterFile>src/main/resources/spotbugs-security-include.xml</includeFilterFile>
+                    <excludeFilterFile>src/main/resources/spotbugs-security-exclude.xml</excludeFilterFile>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.12.0</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <autoVersionSubmodules>false</autoVersionSubmodules>
+                    <!-- Usar la versión correcta del proyecto como tag -->
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <!-- releaseProfiles configuration will actually force a Maven profile
+                        – the `releases` profile – to become active during the Release process. -->
+                    <!-- Ejecutar un comando git para taggear el release -->
+                    <goals>
+                        <goal>prepare</goal>
+                        <goal>perform</goal>
+                    </goals>
+
                 </configuration>
+                <dependencies>
+
+                </dependencies>
             </plugin>
 
             <plugin>

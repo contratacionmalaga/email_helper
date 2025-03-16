@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import local.jarios.entity.EstadisticaEntity;
+import local.jarios.entity.Estadistica;
 
 import java.lang.reflect.Type;
 
@@ -14,11 +14,11 @@ import java.lang.reflect.Type;
  * Date: 09/07/2024
  * Team: Juan
  */
-public record EstadisticaEntityAdapter() implements JsonSerializer<EstadisticaEntity> {
+public record EstadisticaEntityAdapter() implements JsonSerializer<Estadistica> {
 
     @Override
     public JsonElement serialize(
-            EstadisticaEntity estadisticaEntity,
+            Estadistica estadistica,
             Type typeOfSrc,
             JsonSerializationContext context) {
 
@@ -27,31 +27,27 @@ public record EstadisticaEntityAdapter() implements JsonSerializer<EstadisticaEn
 
         ///
         jsonObject.addProperty(
-                "Id", String.valueOf(estadisticaEntity.getId()));
+                "Id", String.valueOf(estadistica.getId()));
 
         ///
         jsonObject.addProperty(
-                "nTotalFicherosLeidos", String.valueOf(estadisticaEntity.getNTotalFicherosLeidos()));
+                "nTotalFicherosLeidos", String.valueOf(estadistica.getNTotalFicherosLeidos()));
 
         ///
         jsonObject.addProperty(
-                "nTotalFicherosProcesados", String.valueOf(estadisticaEntity.getNTotalFicherosProcesados()));
+                "nTotalFicherosProcesados", String.valueOf(estadistica.getNTotalFicherosProcesados()));
 
         ///
         jsonObject.addProperty(
-                "nRregistrosGc", String.valueOf(estadisticaEntity.getNRregistrosGc()));
+                "nRregistrosGc", String.valueOf(estadistica.getNRregistrosGc()));
 
-        ///
         jsonObject.addProperty(
-                "fechaHoraInicial", String.valueOf(estadisticaEntity.getFechaHoraInicial()));
+                "duraciónParseo",
+                estadistica.getDuracionParseo());
 
-        ///
         jsonObject.addProperty(
-                "fechaHoraFinal", String.valueOf(estadisticaEntity.getFechaHoraFinal()));
-
-        ///
-        jsonObject.addProperty(
-                "duracion", estadisticaEntity.getDuracion());
+                "duraciónPersistenciaEnBaseDatos",
+                estadistica.getDuracionBaseDatos());
 
         ///
         return jsonObject;

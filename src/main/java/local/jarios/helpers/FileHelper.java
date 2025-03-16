@@ -1,6 +1,6 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.Log;
 import local.jarios.mappers.MapperRegistroGcFromCodeList;
 import local.jarios.models.ParseoFicherosGc;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public final class FileHelper {
      * @param listFiles Lista de Files
      * @return List<FicheroGcEntity>
      */
-    public static ParseoFicherosGc procesarListaFicherosFromPath(LogEntity logEntity, File[] listFiles) {
+    public static ParseoFicherosGc procesarListaFicherosFromPath(Log logEntity, File[] listFiles) {
 
         /// Creo un objeto del tipo ParseoFicherosGc que a su vez crea los objetos hijos --> NO SON NULOS
         ParseoFicherosGc parseoFicherosGc = new ParseoFicherosGc();

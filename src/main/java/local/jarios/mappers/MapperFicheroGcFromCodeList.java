@@ -1,7 +1,7 @@
 package local.jarios.mappers;
 
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
 import local.jarios.genericode.CodeList;
 import local.jarios.genericode.Identification;
 import local.jarios.utils.ConstantesGenerales;
@@ -30,7 +30,7 @@ public final class MapperFicheroGcFromCodeList {
      * @param codeList Objeto CodeList que va a ser Mapeado a un FicheroGc
      * @return Objeto FicheroGc con la información de CodeList
      */
-    public static FicheroGcEntity getFicheroGcFromCodeList(LogEntity logEntity, CodeList codeList) {
+    public static FicheroGc getFicheroGcFromCodeList(Log logEntity, CodeList codeList) {
 
         /// Obtener la identificación del código, si es null devolver null
         var identification = codeList.getIdentification();
@@ -47,7 +47,7 @@ public final class MapperFicheroGcFromCodeList {
         String locationUri = getOrEmpty(identification, Identification::getLocationUri);
 
         /// Crear y asignar los valores a la entidad FicheroGcEntity
-        var ficheroGcEntity = new FicheroGcEntity();
+        var ficheroGcEntity = new FicheroGc();
 
         /// Asignación de valores
         ficheroGcEntity.setLogEntity(logEntity);

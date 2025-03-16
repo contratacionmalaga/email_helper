@@ -12,7 +12,7 @@ package local.jarios.utils;
  */
 public final class TamanoCampos {
 
-    public static final int TAMANO_100 = 100;
+    public static final int TAMANO_250 = 250;
 
     private TamanoCampos() {}
 

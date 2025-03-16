@@ -4,9 +4,9 @@ import com.google.gson.GsonBuilder;
 import local.jarios.adapters.EstadisticaEntityAdapter;
 import local.jarios.adapters.FicheroGcEntityAdapter;
 import local.jarios.adapters.LogEntityAdapter;
-import local.jarios.entity.EstadisticaEntity;
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.Estadistica;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
 
 public class ManagerGsons {
 
@@ -25,13 +25,13 @@ public class ManagerGsons {
         gsonBuilder.setPrettyPrinting().disableHtmlEscaping();
 
         /// EstadisticaEntityAdapter
-        gsonBuilder.registerTypeAdapter(EstadisticaEntity.class, new EstadisticaEntityAdapter());
+        gsonBuilder.registerTypeAdapter(Estadistica.class, new EstadisticaEntityAdapter());
 
         /// LogEntityAdapter
-        gsonBuilder.registerTypeAdapter(LogEntity.class, new LogEntityAdapter());
+        gsonBuilder.registerTypeAdapter(Log.class, new LogEntityAdapter());
 
         /// HistoricoOcEntityAdapter
-        gsonBuilder.registerTypeAdapter(FicheroGcEntity.class, new FicheroGcEntityAdapter());
+        gsonBuilder.registerTypeAdapter(FicheroGc.class, new FicheroGcEntityAdapter());
 
         ///
         var gson = gsonBuilder.create();

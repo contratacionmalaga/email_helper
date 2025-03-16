@@ -1,6 +1,6 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.Log;
 import local.jarios.interfaces.Actualizable;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public final class ListHelper {
      * @param <T> Objeto genérico asociado a ambas listas
      */
     public static <T extends Actualizable<T>> void unificarListas(
-            LogEntity logEntity,
+            Log logEntity,
             List<T> listElementosEnBaseDatos,
             List<T> listElementosPendientesImportar) {
 
@@ -89,7 +89,7 @@ public final class ListHelper {
                  ///        al elemento de la lista que estoy procesando y será persistido en la base de datos.
                  ///        SIEMPRE Y CUANDO el elemento ya existiera (NO FUESE NUEVO)
                  if ((!conjuntoUniqueKeys.contains(elementoEnBaseDatos.getUniqueKey())) &&
-                        (elementoEnBaseDatos.getId() > 0)) {
+                        (elementoEnBaseDatos.getId() != null)) {
                      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                      elementoEnBaseDatos.setUpdatedAt(timestamp);
                      elementoEnBaseDatos.setDeletedAt(timestamp);

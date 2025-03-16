@@ -1,13 +1,14 @@
 package local.jarios.entity;
 
+import com.fasterxml.uuid.Generators;
 import jakarta.persistence.*;
 import local.jarios.interfaces.Actualizable;
 import local.jarios.utils.TamanoCampos;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Description: Importaciones de Ficheros Excel desde Internet
@@ -19,19 +20,17 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 @Table(
         name = "ficheros_gc",
         indexes = {
                 @Index(name = "idx_ficheros_gc_shortname", columnList = "shortName", unique = true)
         }
 )
-public class FicheroGcEntity extends AuditablePlus implements Actualizable<FicheroGcEntity> {
+public class FicheroGc extends AuditablePlus implements Actualizable<FicheroGc> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private UUID id;
 
     @ManyToOne(
             fetch = FetchType.LAZY)
@@ -40,24 +39,24 @@ public class FicheroGcEntity extends AuditablePlus implements Actualizable<Fiche
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_lista_ficheros_gc_log"))
-    private LogEntity logEntity;
+    private Log logEntity;
 
-    @Column(name = "shortName", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "shortName", nullable = false, length = TamanoCampos.TAMANO_250)
     private String shortName;
 
-    @Column(name = "longName", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "longName", nullable = false, length = TamanoCampos.TAMANO_250)
     private String longName;
 
-    @Column(name = "version", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "version", nullable = false, length = TamanoCampos.TAMANO_250)
     private String version;
 
-    @Column(name = "canonicalUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "canonicalUri", nullable = false, length = TamanoCampos.TAMANO_250)
     private String canonicalUri;
 
-    @Column(name = "canonicalVersionUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "canonicalVersionUri", nullable = false, length = TamanoCampos.TAMANO_250)
     private String canonicalVersionUri;
 
-    @Column(name = "locationUri", nullable = false, length = TamanoCampos.TAMANO_CAMPOS_FICHERO)
+    @Column(name = "locationUri", nullable = false, length = TamanoCampos.TAMANO_250)
     private String locationUri;
 
     /**
@@ -75,7 +74,7 @@ public class FicheroGcEntity extends AuditablePlus implements Actualizable<Fiche
         if (obj == null || getClass() != obj.getClass()) return false;
 
         /// En otro caso realizo un CAST del objeto como un FicheroGcEntity
-        FicheroGcEntity that = (FicheroGcEntity) obj;
+        FicheroGc that = (FicheroGc) obj;
 
         /// Devuelvo la comparación
         return comparar (that);
@@ -86,7 +85,7 @@ public class FicheroGcEntity extends AuditablePlus implements Actualizable<Fiche
      * @param ficheroGcEntity Objeto que voy a comparar con la instancia actual de la clase
      * @return Devuelvo TRUE | FALSE si los objetos son iguales
      */
-    private boolean comparar (FicheroGcEntity ficheroGcEntity) {
+    private boolean comparar (FicheroGc ficheroGcEntity) {
         return
                 this.shortName.equalsIgnoreCase(ficheroGcEntity.getShortName()) &&
                 this.longName.equalsIgnoreCase(ficheroGcEntity.getLongName()) &&
@@ -137,7 +136,7 @@ public class FicheroGcEntity extends AuditablePlus implements Actualizable<Fiche
      * @param otro El objeto que actualizará la instanacia actual del FicheroGcEntity
      */
     @Override
-    public void actualizarCon(FicheroGcEntity otro) {
+    public void actualizarCon(FicheroGc otro) {
 
         /// Actualiza los campos de este objeto con los valores del objeto otro (OcEntity)
         this.longName = otro.getLongName();
@@ -145,5 +144,10 @@ public class FicheroGcEntity extends AuditablePlus implements Actualizable<Fiche
         this.canonicalUri = otro.getCanonicalUri();
         this.canonicalVersionUri = otro.getCanonicalVersionUri();
         this.locationUri = otro.getLocationUri();
+    }
+
+    public FicheroGc() {
+
+        this.id = Generators.timeBasedEpochGenerator().generate();
     }
 }

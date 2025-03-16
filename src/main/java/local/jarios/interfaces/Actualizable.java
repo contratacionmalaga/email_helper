@@ -1,8 +1,9 @@
 package local.jarios.interfaces;
 
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.Log;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Description:
@@ -18,13 +19,13 @@ public interface Actualizable<T> {
     String getUniqueKey();
 
     /// Método que devuelvel el identificador del registro
-    int getId();
+    UUID getId();
 
     /// Método para actualizar el objeto con los valores de otro
     void actualizarCon(T otro);
 
     /// Método para aasignar el valor del objeto LogEntity del que hereda
-    void setLogEntity(LogEntity logEntity);
+    void setLogEntity(Log logEntity);
 
     /// Método para asignar el valor DeleteAt al registro (no se borra)
     void setDeletedAt(Timestamp timestamp);

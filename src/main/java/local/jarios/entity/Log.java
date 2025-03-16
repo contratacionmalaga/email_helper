@@ -1,11 +1,12 @@
 package local.jarios.entity;
 
+import com.fasterxml.uuid.Generators;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Description: LogEntity
@@ -17,22 +18,25 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 @Table(
         name = "log",
         schema = "imp_placsp_gc"
 )
-public class LogEntity extends Auditable {
+public class Log extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private UUID id;
 
     @OneToMany(mappedBy = "logEntity", orphanRemoval = true)
-    private List<FicheroGcEntity> ficherosGcEntity;
+    private List<FicheroGc> ficherosGcEntity;
 
     @OneToOne(mappedBy = "logEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private EstadisticaEntity estadisticaEntity;
+    private Estadistica estadisticaEntity;
+
+    public Log() {
+
+        this.id = Generators.timeBasedEpochGenerator().generate();
+    }
 
 }

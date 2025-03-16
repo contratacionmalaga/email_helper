@@ -1,22 +1,27 @@
 package local.jarios.repositorys;
 
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
-import local.jarios.exceptions.MiRepositoryException;
-import local.jarios.helpers.ExceptionHelper;
+import com.fasterxml.uuid.Generators;
+import local.jarios.entity.Estadistica;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
+import local.jarios.enums.TipoFinalEjecucion;
 import local.jarios.interfaces.Actualizable;
 import local.jarios.models.ParseoFicherosGc;
 import local.jarios.models.RegistroGc;
 import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
 import local.jarios.utils.ConstantesGenerales;
+import local.jarios.utils.FinalDelPrograma;
 import local.jarios.utils.Mensajes;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Description: Importación de Ficheros Excel desde Internet
@@ -30,16 +35,100 @@ public class RepositoryImpl implements Repository {
     public RepositoryImpl() {/* CONSTRUCTOR VACÍO */}
 
     /**
+     * Recibe como parámetro una instancia del objeto Estadistica.
+     * <p>Este objeto se utiliza para almacenar las estadísticas de la ejecución del aplicativo, de forma
+     * que al finalizar la ejecución del aplicativo puedan ser enviadas por email.</p>
+     *
+     * @param miLog Objeto que contiene la información estadística de la ejecución del aplicativo
+     */
+    @Override
+    public void persistir(Session session, Transaction transaction, Log miLog) {
+
+        try {
+
+            /// Persistir el log
+            session.persist(miLog);
+            log.info("Persistidas las siguientes entidades: Log, Configuracion, Feeds");
+
+        } catch (HibernateException ex) {
+
+            /// Registro la excepción con información adicional
+            log.error("Error en el método: persistirLog(). Error: {}", ex.getMessage());
+
+            /// Deshago los cambios de la transacción en la base de datos
+            transaction.rollback();
+
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
+
+        }
+    }
+
+    /**
+     * Recibe como parámetro una instancia del objeto Estadistica.
+     * <p>Este objeto se utiliza para almacenar las estadísticas de la ejecución del aplicativo, de forma
+     * que al finalizar la ejecución del aplicativo puedan ser enviadas por email.</p>
+     *
+     * @param listFicherosGc Objeto que contiene la información estadística de la ejecución del aplicativo
+     */
+    @Override
+    public void persistir(Session session, Transaction transaction, List<FicheroGc> listFicherosGc) {
+
+        try {
+
+            /// Persistir la lista de ficherosGc
+            grabarLista(session, listFicherosGc);
+
+        } catch (HibernateException ex) {
+
+            /// Registro la excepción con información adicional
+            log.error("Error en el método: persistirListFicherosGc(). Error: {}", ex.getMessage());
+
+            /// Deshago los cambios de la transacción en la base de datos
+            transaction.rollback();
+
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
+
+        }
+    }
+
+    /**
+     * @param session Configuración de la sesión actual con la base de datos
+     * @param transaction Identificador de la ejecución del programa
+     * @param estadistica Objeto que contiene la información estadística de la ejecución del aplicativo
+     */
+    @Override
+    public void persistir(Session session, Transaction transaction, Estadistica estadistica) {
+
+        try {
+
+            /// Persistir estadistica
+            session.persist(estadistica);
+            log.info("Persistidas la entidad: Estadistica");
+
+        } catch (HibernateException ex) {
+
+            /// Registro la excepción con información adicional
+            log.error("Error en el método: persistirEstadistica(). Error: {}", ex.getMessage());
+
+            /// Deshago los cambios de la transacción en la base de datos
+            transaction.rollback();
+
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
+
+        }
+    }
+
+    /**
      *
      * @param session Configuración de la sesión actual con la base de datos
-     * @param logEntity Identificador de la ejecución del programa
+     * @param transaction Identificador de la ejecución del programa
      * @param parseoFicherosGc Objeto que contiene el parseo de los ficheros
      */
     @Override
-    public void persistir(
-            Session session,
-            LogEntity logEntity,
-            ParseoFicherosGc parseoFicherosGc) throws MiRepositoryException {
+    public void persistir(Session session, Transaction transaction, ParseoFicherosGc parseoFicherosGc) {
 
         PropertyManager propertyManager = PropertyManager.getInstance();
 
@@ -47,13 +136,8 @@ public class RepositoryImpl implements Repository {
         try {
 
             ///
-            session.persist(logEntity);
-
-            ///
-            grabarLista(session, logEntity.getFicherosGcEntity());
-
-            ///
-            for (Map.Entry<String, List<RegistroGc>> entry : parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
+            for (Map.Entry<String, List<RegistroGc>> entry :
+                    parseoFicherosGc.getMapRegistrosGcByFicheroGc().entrySet()) {
 
                 ///
                 String CONFIG_PREFIJO = propertyManager.getProperty(PropertyConstantes.CONFIG_PREFIJO);
@@ -80,26 +164,42 @@ public class RepositoryImpl implements Repository {
 
                 ///
                 insertarRegistrosEnTabla(session, nombreTablaConEsquema, entry.getValue());
-                log.info(Mensajes.INSERT_RECORDS, ConstantesGenerales.TABULADOR_2, entry.getValue().size(), nombreTablaConEsquema);
+                log.info(
+                        Mensajes.INSERT_RECORDS,
+                        ConstantesGenerales.TABULADOR_2,
+                        entry.getValue().size(),
+                        nombreTablaConEsquema);
 
             }
 
         } catch (HibernateException ex) {
 
-            /// Registro la excepción
-            ExceptionHelper.logException(ex);
+            /// Registro la excepción con información adicional
+            log.error("Error en el método: persistir(). Error: {}", ex.getMessage());
 
-            /// Devuelvo la excepción
-            throw new MiRepositoryException(ex);
+            /// Deshago los cambios de la transacción en la base de datos
+            transaction.rollback();
+
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
         }
     }
 
-    private static <T extends Actualizable<T>> void grabarLista(Session session, List<T> lista) throws HibernateException {
+    private static <T extends Actualizable<T>> void grabarLista(
+            Session session, List<T> lista) throws HibernateException {
 
+        ///
         for (T registro : lista) {
-            if (registro.getId() > 0) {
+
+            ///
+            if (registro.getId() != null) {
+
+                ///
                 session.merge(registro);
+
             } else {
+
+                ///
                 session.persist(registro);
             }
         }
@@ -134,7 +234,7 @@ public class RepositoryImpl implements Repository {
 
         /// SQL nativo para crear la tabla
         String createTableSql = "CREATE TABLE IF NOT EXISTS " + nombreTablaConEsquema + " (" +
-                "id SERIAL PRIMARY KEY, " +
+                "id UUID PRIMARY KEY, " +
                 "code VARCHAR(50) NOT NULL, " +
                 "nombre VARCHAR(500)" +
                 ")";
@@ -162,11 +262,13 @@ public class RepositoryImpl implements Repository {
             RegistroGc registro = listRegistroGc.get(i);
 
             /// Escapar comillas simples en los valores de texto
+            UUID id = Generators.timeBasedEpochGenerator().generate();
             String code = registro.getCode().replace("'", "''");      /// Escapar comillas simples en 'code'
             String nombre = registro.getNombre().replace("'", "''");  /// Escapar comillas simples en 'nombre'
 
             /// Agregar los valores para cada fila
             insertSql.append("(")
+                    .append("'").append(id).append("'").append(", ")
                     .append("'").append(code).append("'").append(", ")
                     .append("'").append(nombre).append("'").append(")");
 
@@ -184,24 +286,28 @@ public class RepositoryImpl implements Repository {
      * Devuelve la lista de FicherosGc existente en la base de datos
      * @param session Sessión establecida con la base de datos
      * @return Lista de FicherosGc desde la base de datos
-     * @throws MiRepositoryException Excepción en caso de error
      */
-    public List<FicheroGcEntity> getListFicherosGc(Session session) throws MiRepositoryException {
+    public List<FicheroGc> getListFicherosGc(Session session) {
 
         ///
-        String jpql = "SELECT f FROM FicheroGcEntity f";
+        String jpql = "SELECT f FROM FicheroGc f";
+
+        List<FicheroGc> listFicherosGc = new ArrayList<>();
 
         try {
 
-            return session.createQuery(jpql, FicheroGcEntity.class).getResultList();
+            listFicherosGc = session.createQuery(jpql, FicheroGc.class).getResultList();
 
         } catch (HibernateException ex) {
 
-            /// Registro la excepción
-            ExceptionHelper.logException(ex);
+            /// Registro la excepción con información adicional
+            log.error("Error en el método: getListFicherosGc(). Error: {}", ex.getMessage());
 
-            /// Devuelvo la excepción
-            throw new MiRepositoryException(ex);
+            /// Finaliza la ejecución del programa
+            FinalDelPrograma.finalizar(TipoFinalEjecucion.ERROR);
         }
+
+        ///
+        return listFicherosGc;
     }
 }

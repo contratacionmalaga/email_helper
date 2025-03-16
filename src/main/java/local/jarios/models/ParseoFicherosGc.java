@@ -1,7 +1,7 @@
 package local.jarios.models;
 
 import local.jarios.entity.Auditable;
-import local.jarios.entity.FicheroGcEntity;
+import local.jarios.entity.FicheroGc;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,7 @@ import java.util.Map;
 @Getter
 public class ParseoFicherosGc extends Auditable {
 
-    private List<FicheroGcEntity> listFicherosGc;
+    private List<FicheroGc> listFicherosGc;
     private Map<String, List<RegistroGc>> mapRegistrosGcByFicheroGc;
 
     public ParseoFicherosGc() {

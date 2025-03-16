@@ -1,7 +1,7 @@
 package local.jarios.helpers;
 
-import local.jarios.entity.FicheroGcEntity;
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.FicheroGc;
+import local.jarios.entity.Log;
 import local.jarios.exceptions.MiParseException;
 import local.jarios.genericode.CodeList;
 import local.jarios.mappers.MapperFicheroGcFromCodeList;
@@ -54,7 +54,7 @@ public class CodeListHelper {
      * @param codeList Objeto CodeList con la información que voy a mapear a un FicheroGc -> NINGÚN campo es NULL
      * @return ficheroGcEntity
      */
-    public static FicheroGcEntity procesarCodeList (LogEntity logEntity, CodeList codeList) {
+    public static FicheroGc procesarCodeList (Log logEntity, CodeList codeList) {
 
         /// OBTENGO EL OBJETO FICHEROGCENTITY A PARTIR DEL codeList
         var ficheroGcEntity = MapperFicheroGcFromCodeList.getFicheroGcFromCodeList(logEntity, codeList);

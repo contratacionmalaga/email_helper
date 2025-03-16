@@ -3,7 +3,7 @@ package local.jarios.models;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import local.jarios.entity.EstadisticaEntity;
+import local.jarios.entity.Estadistica;
 import local.jarios.exceptions.MiMailException;
 import local.jarios.exceptions.MiUnknownHostException;
 import local.jarios.helpers.MiMailHelper;
@@ -24,7 +24,7 @@ public final class MiMail {
 
     public MiMail(
             PropertyManager propertyManager,
-            EstadisticaEntity estadisticaEntity) throws MiMailException {
+            Estadistica estadisticaEntity) throws MiMailException {
 
         var properties = propertyManager.getMailProperties();
 

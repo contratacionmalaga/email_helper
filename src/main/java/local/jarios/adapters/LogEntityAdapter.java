@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import local.jarios.entity.LogEntity;
+import local.jarios.entity.Log;
 
 import java.lang.reflect.Type;
 
@@ -14,10 +14,10 @@ import java.lang.reflect.Type;
  * Date: 09/07/2024
  * Team: Juan
  */
-public record LogEntityAdapter() implements JsonSerializer<LogEntity> {
+public record LogEntityAdapter() implements JsonSerializer<Log> {
 
     @Override
-    public JsonElement serialize(LogEntity logEntity, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Log logEntity, Type typeOfSrc, JsonSerializationContext context) {
 
         /// Crear el objeto principal que será "Log"
         JsonObject jsonObject = new JsonObject();

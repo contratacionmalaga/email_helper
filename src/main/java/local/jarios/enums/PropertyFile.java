@@ -21,7 +21,10 @@ public enum PropertyFile {
     PROPERTY_HIBERNATE("config/hibernate.properties"),
 
     ///
-    PROPERTY_MAIL("config/mail.properties");
+    PROPERTY_MAIL("config/mail.properties"),
+
+    ///
+    PROPERTY_RELEASE("release.properties");
 
     ///
     private final String ruta;
