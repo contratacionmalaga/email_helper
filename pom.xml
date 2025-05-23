@@ -174,8 +174,10 @@
     </dependencies>
 
     <build>
-        <plugins>
 
+        <finalName>import-from-gc</finalName>
+
+        <plugins>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
@@ -276,7 +278,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>local.jarios.ImporFromGc</mainClass>
+                            <mainClass>local.jarios.ImportFromGc</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

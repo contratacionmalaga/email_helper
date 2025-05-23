@@ -39,8 +39,6 @@ public final class PropertyManager {
     private final Properties hibernateProperties = new Properties();
     @Getter
     private final Properties mailProperties = new Properties();
-    @Getter
-    private final Properties releaseProperties = new Properties();
 
     /**
      * Constructor privado para evitar la creación de instancias fuera de la clase.
@@ -57,13 +55,12 @@ public final class PropertyManager {
         propertyFilesMap.put(PropertyFile.PROPERTY_CONFIG.getRuta(), configProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_HIBERNATE.getRuta(), hibernateProperties);
         propertyFilesMap.put(PropertyFile.PROPERTY_MAIL.getRuta(), mailProperties);
-        propertyFilesMap.put(PropertyFile.PROPERTY_RELEASE.getRuta(), releaseProperties);
 
         ///
         for (String filePath : filePaths) {
 
             ///
-            Properties properties = propertyFilesMap.get(filePath);
+            var properties = propertyFilesMap.get(filePath);
 
             ///
             if (properties != null) {
@@ -89,7 +86,7 @@ public final class PropertyManager {
     private void cargarArchivoPropiedades(Properties properties, String filePath) {
 
         ///
-        try (FileInputStream inputStream = new FileInputStream(filePath)) {
+        try (var inputStream = new FileInputStream(filePath)) {
             /// Carga las propiedades desde el archivo
             properties.load(inputStream);
             /// Almacena las propiedades en el Map
