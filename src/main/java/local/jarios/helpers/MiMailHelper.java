@@ -6,8 +6,6 @@ import local.jarios.properties.PropertyConstantes;
 import local.jarios.properties.PropertyManager;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-
 /**
  * @author Juan Antonio
  */
@@ -89,6 +87,6 @@ public final class MiMailHelper {
         return String.format (
                 " - Reporte de Estadisticas. Equipo: (%s). Fecha y hora: (%s)",
                 ComunHelper.getHostName(),
-                LocalDateTime.now());
+                ComunHelper.getFechaHoraFormateada(null));
     }
 }

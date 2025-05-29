@@ -157,7 +157,9 @@ public class ImportFromGc {
             /// Establecer fecha de inicio de la persistencia en base de datos
             timestamp = Timestamp.valueOf(LocalDateTime.now());
             estadistica.setFechaHoraInicialBaseDatos(timestamp);
-            log.info(Mensajes.ASIGN_FECHA_HORA_INICIAL_BASE_DATOS_TO_ESTADISTICA, timestamp);
+            log.info(
+                    Mensajes.ASIGN_FECHA_HORA_INICIAL_BASE_DATOS_TO_ESTADISTICA,
+                    ComunHelper.getFechaHoraFormateada(timestamp));
 
             /// Persisto el objeto Log
             service.persistir(miLog);
@@ -174,7 +176,9 @@ public class ImportFromGc {
             /// Establecer fecha final de la persistencia en base de datos
             timestamp = Timestamp.valueOf(LocalDateTime.now());
             estadistica.setFechaHoraFinalBaseDatos(timestamp);
-            log.info(Mensajes.ASIGN_FECHA_HORA_FINAL_BASE_DATOS_TO_ESTADISTICA, timestamp);
+            log.info(
+                    Mensajes.ASIGN_FECHA_HORA_FINAL_BASE_DATOS_TO_ESTADISTICA,
+                    ComunHelper.getFechaHoraFormateada(timestamp));
 
             ///
             ///     OBTENGO LAS ESTADÍSTICAS DE DURACIÓN
