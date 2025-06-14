@@ -3,29 +3,29 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>local.jarios</groupId>
     <artifactId>eemail-helper</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>email-helper</name>
-    <description>Servicio de envío de correos para aplicaciones desarrolladas en Java</description>
+    <description>Servicio de envío de email-helpers para aplicaciones desarrolladas en Java</description>
 
     <scm>
-        <connection>scm:git:https://github.com/contratacionmalaga/correo.git</connection>
-        <developerConnection>scm:git:git@github.com:contratacionmalaga/correo.git</developerConnection>
-        <url>https://github.com/contratacionmalaga/correo</url>
-        <tag>v1.0.1</tag>
+        <connection>scm:git:https://github.com/contratacionmalaga/email-helper.git</connection>
+        <developerConnection>scm:git:git@github.com:contratacionmalaga/email-helper.git</developerConnection>
+        <url>https://github.com/contratacionmalaga/email-helper</url>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
         <repository>
             <id>github-releases</id>
             <!-- Cambié la URL a la correcta para GitHub Packages -->
-            <url>https://maven.pkg.github.com/contratacionmalaga/correo</url>
+            <url>https://maven.pkg.github.com/contratacionmalaga/email-helper</url>
         </repository>
         <snapshotRepository>
             <id>github-snapshots</id>
             <!-- Cambié la URL a la correcta para GitHub Packages -->
-            <url>https://maven.pkg.github.com/contratacionmalaga/correo</url>
+            <url>https://maven.pkg.github.com/contratacionmalaga/email-helper</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -72,7 +72,6 @@
             <version>2.24.3</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
         <dependency>
             <groupId>jakarta.mail</groupId>
@@ -107,7 +106,7 @@
 
     <build>
 
-        <finalName>correo</finalName>
+        <finalName>email-helper</finalName>
 
         <plugins>
             <plugin>
@@ -151,6 +150,14 @@
                     <show>private</show>
                     <nohelp>true</nohelp>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -211,7 +218,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>local.jarios.correo</mainClass>
+                            <mainClass>local.jarios.email-helper</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
