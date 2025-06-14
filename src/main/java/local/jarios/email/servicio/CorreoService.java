@@ -1,4 +1,8 @@
 package local.jarios.email.servicio;
 
-public class CorreoService {
+import java.util.List;
+
+public interface CorreoService {
+
+    void enviarCorreo(String remitente, List<String> destinatarios, String asunto, String cuerpo);
 }

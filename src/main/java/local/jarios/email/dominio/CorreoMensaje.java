@@ -1,23 +1,29 @@
-package local.jarios.dominio;
+package local.jarios.email.dominio;
 
 import java.util.List;
 
-public class CorreoMensaje {
-    private final String remitente;
-    private final List<String> destinatarios;
-    private final String asunto;
-    private final String cuerpo;
-
-    public CorreoMensaje(String remitente, List<String> destinatarios, String asunto, String cuerpo) {
-        this.remitente = remitente;
-        this.destinatarios = destinatarios;
-        this.asunto = asunto;
-        this.cuerpo = cuerpo;
-    }
-
-    public String getRemitente() { return remitente; }
-    public List<String> getDestinatarios() { return destinatarios; }
-    public String getAsunto() { return asunto; }
-    public String getCuerpo() { return cuerpo; }
+/**
+ * Representa un mensaje de correo electrónico con la información básica necesaria para su envío.
+ *
+ * <p>Contiene los siguientes datos:</p>
+ * <ul>
+ *     <li><b>remitente</b>: dirección de correo del remitente</li>
+ *     <li><b>destinatarios</b>: lista de direcciones de correo de los destinatarios</li>
+ *     <li><b>asunto</b>: asunto del mensaje</li>
+ *     <li><b>cuerpo</b>: contenido del mensaje (puede ser texto plano o HTML)</li>
+ * </ul>
+ *
+ * <p>Este record puede ser utilizado como DTO para transportar la información necesaria
+ * en el envío de correos dentro del sistema.</p>
+ *
+ * @param remitente dirección de correo del emisor
+ * @param destinatarios lista de correos electrónicos de los receptores
+ * @param asunto título o tema del correo
+ * @param cuerpo contenido principal del mensaje
+ *
+ * @author Juan
+ * @since 1.0
+ */
+public record CorreoMensaje(String remitente, List<String> destinatarios, String asunto, String cuerpo) {
 }
 
