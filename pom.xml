@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>local.jarios.email-helper</exec.mainClass>
+        <exec.mainClass>local.jarios.EmailDemo</exec.mainClass>
     </properties>
 
     <dependencies>
@@ -102,6 +102,13 @@
             <artifactId>encrypt-helper</artifactId>
             <version>1.0.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>local.jarios</groupId>
+            <artifactId>version-from-manifest</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -218,7 +225,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>local.jarios.email-helper</mainClass>
+                            <mainClass>local.jarios.EmailDemo</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                     <descriptorRefs>

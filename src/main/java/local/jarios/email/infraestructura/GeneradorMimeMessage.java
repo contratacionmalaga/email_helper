@@ -1,6 +1,6 @@
 package local.jarios.email.infraestructura;
 
-import local.jarios.email.dominio.CorreoMensaje;
+import local.jarios.email.dominio.EmailMensaje;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Clase encargada de construir instancias de {@link MimeMessage} a partir
- * de objetos de dominio {@link CorreoMensaje}.
+ * de objetos de dominio {@link EmailMensaje}.
  *
  * <p>Encapsula la lógica de construcción y asignación de campos necesarios
  * para el envío de correos mediante JavaMail.</p>
@@ -30,14 +30,21 @@ import lombok.extern.slf4j.Slf4j;
 public class GeneradorMimeMessage {
 
     /**
-     * Genera un objeto {@link MimeMessage} con los datos del {@link CorreoMensaje}.
+     * Constructor vacío
+     */
+    public GeneradorMimeMessage() {
+        // Constructor vacío
+    }
+
+    /**
+     * Genera un objeto {@link MimeMessage} con los datos del {@link EmailMensaje}.
      *
      * @param session la sesión de JavaMail configurada (incluye propiedades SMTP, autenticación, etc.)
      * @param correoMensaje objeto con los datos necesarios para construir el correo
      * @return instancia de {@link MimeMessage} lista para ser enviada
      * @throws MessagingException si ocurre un error durante la construcción del mensaje
      */
-    public MimeMessage generarMensaje(Session session, CorreoMensaje correoMensaje) throws MessagingException {
+    public MimeMessage generarMensaje(Session session, EmailMensaje correoMensaje) throws MessagingException {
         log.debug("Generando MimeMessage desde {}", correoMensaje);
 
         MimeMessage mensaje = new MimeMessage(session);
@@ -48,7 +55,7 @@ public class GeneradorMimeMessage {
                 InternetAddress.parse(String.join(",", correoMensaje.destinatarios()))
         );
         mensaje.setSubject(correoMensaje.asunto());
-        mensaje.setText(correoMensaje.cuerpo());
+        mensaje.setContent(correoMensaje.cuerpo(), "text/html; charset=UTF-8");
 
         log.debug("MimeMessage generado correctamente con asunto: '{}'", correoMensaje.asunto());
 

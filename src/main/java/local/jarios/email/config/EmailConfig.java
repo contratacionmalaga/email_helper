@@ -29,14 +29,34 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public class CorreoConfig {
+public class EmailConfig {
 
-
-
+    /**
+     * Dirección del servidor SMTP (por ejemplo, smtp.gmail.com).
+     */
     private String host;
+
+    /**
+     * Puerto del servidor SMTP (por ejemplo, 587 para TLS o 465 para SSL).
+     */
     private int port;
+
+    /**
+     * Nombre de usuario utilizado para autenticarse en el servidor SMTP.
+     */
     private String user;
+
+    /**
+     * Contraseña asociada al usuario SMTP. Puede estar cifrada y ser descifrada durante la carga.
+     */
     private String password;
+
+    /**
+     * Constructor vacío
+     */
+    public EmailConfig() {
+        // Constructor vacío
+    }
 
     /**
      * Carga la configuración de correo desde un archivo `.properties`.
@@ -52,10 +72,10 @@ public class CorreoConfig {
         try {
             var propertyManager = PropertiesManager.getInstance();
 
-            this.host = propertyManager.getProperty(Constantes.FICHERO_PROPERTIES, "mail.smtp.host");
-            this.port = Integer.parseInt(propertyManager.getProperty(Constantes.FICHERO_PROPERTIES, "mail.smtp.port"));
-            this.user = propertyManager.getProperty(Constantes.FICHERO_PROPERTIES, "mail.smtp.user");
-            String claveCifrada = propertyManager.getProperty(Constantes.FICHERO_PROPERTIES, "mail.smtp.password");
+            this.host = propertyManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.host");
+            this.port = Integer.parseInt(propertyManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.port"));
+            this.user = propertyManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.user");
+            String claveCifrada = propertyManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.password");
 
             log.info("Configuración cargada: host={}, port={}, usuario={}", host, port, user);
 

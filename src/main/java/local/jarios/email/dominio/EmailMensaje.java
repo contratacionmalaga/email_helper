@@ -24,6 +24,6 @@ import java.util.List;
  * @author Juan
  * @since 1.0
  */
-public record CorreoMensaje(String remitente, List<String> destinatarios, String asunto, String cuerpo) {
+public record EmailMensaje(String remitente, List<String> destinatarios, String asunto, String cuerpo) {
 }
 

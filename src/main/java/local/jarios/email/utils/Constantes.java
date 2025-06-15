@@ -1,14 +1,28 @@
-package local.jarios.email.utils;
+package local.jarios.email.utils;/**
 
-/**
- * Description:
- * Author: juan
- * Date: 14/06/2025
- * Team:
+ /**
+ * Clase que contiene constantes generales utilizadas a lo largo de la aplicación.
+ * <p>
+ * Contiene cadenas comunes, formatos de fecha y caracteres de control,
+ * para evitar el uso de valores mágicos en el código.
+ * </p>
+ *
+ * <p><b>Author:</b> Juan Antonio</p>
+ * <p><b>Date:</b> 04/06/2024</p>
+ * <p><b>Team:</b> Juan Antonio</p>
  */
-public class Constantes {
+public final class Constantes {
 
-    public static final String FICHERO_PROPERTIES = "email";
+    /** Nombre sin extensión del fichero config.properties */
+    public static final String CONFIG_PROPERTIES = "config";
 
-    private Constantes() { /*   */ }
+    /** Nombre sin extensión del fichero config.properties */
+    public static final String EMAIL_PROPERTIES = "email";
+
+    /**
+     * Constructor privado para evitar instanciación.
+     */
+    private Constantes() {
+        // No instanciable
+    }
 }

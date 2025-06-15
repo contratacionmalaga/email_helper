@@ -1,6 +1,6 @@
 package local.jarios.email.infraestructura;
 
-import local.jarios.email.config.CorreoConfig;
+import local.jarios.email.config.EmailConfig;
 import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
@@ -13,14 +13,14 @@ import java.util.Properties;
 
 /**
  * Fábrica responsable de crear sesiones de correo autenticadas utilizando
- * los datos proporcionados por {@link CorreoConfig}.
+ * los datos proporcionados por {@link EmailConfig}.
  *
  * <p>Esta clase encapsula la configuración de autenticación necesaria para
  * establecer una conexión SMTP segura mediante JavaMail.</p>
  *
  * <p>La configuración se basa en {@link java.util.Properties} cargadas con
  * {@code PropertiesManager}, y complementadas con credenciales de acceso
- * recuperadas (y posiblemente descifradas) desde {@link CorreoConfig}.</p>
+ * recuperadas (y posiblemente descifradas) desde {@link EmailConfig}.</p>
  *
  * <p>Ejemplo de uso:</p>
  * <pre>{@code
@@ -36,13 +36,20 @@ import java.util.Properties;
 public class SesionCorreoFactory {
 
     /**
+     * Constructor vacío
+     */
+    public SesionCorreoFactory() {
+        // Constructor vacío
+    }
+
+    /**
      * Crea una nueva instancia de {@link Session} autenticada con usuario y clave.
      *
-     * @param config configuración de correo previamente cargada con {@link CorreoConfig}
+     * @param config configuración de correo previamente cargada con {@link EmailConfig}
      * @return instancia de sesión JavaMail autenticada
      * @throws EmailException si ocurre un error al cargar las propiedades
      */
-    public Session crearSesion(CorreoConfig config) {
+    public Session crearSesion(EmailConfig config) {
         log.debug("Creando sesión de correo para el host: {}", config.getHost());
 
         try {

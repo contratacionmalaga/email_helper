@@ -29,6 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CorreoSender {
 
     /**
+     * Constructor vacío
+     */
+    public CorreoSender() {
+        // Constructor vacío
+    }
+
+    /**
      * Envía el mensaje de correo especificado usando la clase {@link Transport}.
      *
      * @param mensaje mensaje de correo ya configurado (destinatario, asunto, contenido, etc.)
