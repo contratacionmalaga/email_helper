@@ -1,12 +1,12 @@
 package local.jarios;
 
-import local.jarios.email.config.EmailConfig;
 import local.jarios.email.dominio.EmailMensaje;
-import local.jarios.email.exception.EmailException;
+import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.servicio.EmailServiceImpl;
 import local.jarios.email.utils.Constantes;
 import local.jarios.properties.config.PropertiesManager;
 import local.jarios.properties.exception.PropertiesLoadException;
+import local.jarios.versionfrommanifest.exception.VersionFromManifestException;
 import local.jarios.versionfrommanifest.service.VersionFromManifestServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +28,11 @@ import java.util.Set;
  */
 @Slf4j
 public class EmailDemo {
+
+    /**
+     * Directorio config
+     */
+    private final static String DIRECTORIO_CONFIG = "config";
 
     /**
      * Clave maestra
@@ -72,79 +77,59 @@ public class EmailDemo {
 
         try {
 
-            // Obtiene el singleton para propiedades
-            var propertiesManager = PropertiesManager.getInstance();
-            log.info("Creado el objeto PropertiesManager correctamente.");
-
-            var versionFromManifestService = new VersionFromManifestServiceImpl();
-            log.info("Creado el objeto VersionFromManifestService correctamente.");
-
-            String appName = propertiesManager.getProperty(Constantes.CONFIG_PROPERTIES, "config.name");
-            log.info("AppName: {}", appName);
-
-            String appVersion = versionFromManifestService.getVersion(EmailDemo.class);
-            log.info("AppVersion: {}", appVersion);
+            // Obtener la instancia singleton
+            PropertiesManager propertiesManager = PropertiesManager.getInstance();
+            log.info("Instancia PropertiesManager obtenida correctamente.");
 
             // === Configuración inicial ===
             Set<String> clavesSensibles = Set.of("password");
             propertiesManager.setSensitiveKeys(clavesSensibles);  // Ahora se aplica sobre la instancia
             log.info("Establezco el conjunto de claves Sensibles: {}", clavesSensibles);
 
-            // Listado de todos los ficheros cargados
-            log.info("=== LISTA DE FICHEROS CARGADOS ===");
-            propertiesManager.getAllProperties().keySet().forEach(file -> log.info("Fichero cargado: {}", file));
+            // Cargar todas las propiedades desde el directorio de configuración
+            propertiesManager.loadAllProperties(local.jarios.utils.Constantes.CONFIG_DIR);
+            log.info("Ficheros .properties cargados desde /{} correctamente", local.jarios.utils.Constantes.CONFIG_DIR);
 
-            // Obtener y mostrar las propiedades de un fichero específico
-            log.info("=== PROPIEDADES DE TODOS LOS FICHEROS ===");
-            propertiesManager.printAllProperties();
+            var versionFromManifestService = new VersionFromManifestServiceImpl();
+            log.info("Creado el objeto VersionFromManifestService correctamente.");
 
-            // Carga configuración de correo
-            EmailConfig emailConfig = new EmailConfig();
-            log.info("Creado el objeto EmailConfig correctamente.");
+            String appName = propertiesManager.getProperty(local.jarios.utils.Constantes.APP_PROPERTIES, "app.name");
+            log.info("AppName: {}", appName);
 
+            String appDescripcion = propertiesManager.getProperty(local.jarios.utils.Constantes.APP_PROPERTIES, "app.descripcion");
+            log.info("AppDescripcion: {}", appDescripcion);
 
-            try {
-                emailConfig.cargarConfiguracion(Constantes.EMAIL_PROPERTIES, CLAVE_MAESTRA);
-                log.debug("Configuración de correo cargada correctamente.");
-                propertiesManager.printProperties(Constantes.EMAIL_PROPERTIES);
-            } catch (PropertiesLoadException ple) {
-                log.error("No se pudo cargar la configuración del fichero properties: {}", ple.getMessage(), ple);
-                // Aquí decides si quieres abortar o continuar con valores por defecto
-                return; // Salimos porque la configuración es crítica
-            }
-
-            // Crea el servicio de correo
-            var emailService = new EmailServiceImpl(emailConfig);
-            log.info("Creado el objeto EmailService correctamente.");
+            String appVersion = versionFromManifestService.getVersion(PropertiesDemo.class);
+            log.info("AppVersion: {}", appVersion);
 
             String asuntoFinal = String.format("[%s - v%s] %s", appName, appVersion, ASUNTO);
 
             // Crea el objeto EmailMensaje
             var emailMensaje = new EmailMensaje(
-                    emailConfig.getUser(),
+                    propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.from"),
                     List.of(propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.to")),
                     asuntoFinal,
                     MENSAJE);
             log.info("Creado el objeto EmailMensaje correctamente.");
 
-            // Envía el correo
-            try {
-                emailService.enviarCorreo(emailMensaje);
-            } catch (EmailException ee) {
-                log.error("Error al enviar el correo: {}", ee.getMessage(), ee);
-            }
+            // Creo el objeto EmailService
+            var emailService = new EmailServiceImpl();
 
+            // Envío el correo
+            emailService.enviarCorreo(propertiesManager, emailMensaje);
             log.info("Correo enviado correctamente.");
+
+        } catch (EmailServiceException e) {
+
+            log.error("Error al enviar el correo: {}", e.getMessage(), e);
+
+        } catch (VersionFromManifestException e) {
+
+            log.error("Error al obtener la versión del fichero JAR.", e);
 
         } catch (PropertiesLoadException e) {
 
-            log.error("Error al obtener la versión del fichero.");
-            throw e; // <- Repropagar al consumidor del módulo
-
-        } catch (EmailException e) {
-
-            log.error("Error al intentar enviar el correo.");
-            throw e; // <- Repropagar al consumidor del módulo
+            log.error("Error al cargar los ficheros properties.", e);
 
         } finally {
 

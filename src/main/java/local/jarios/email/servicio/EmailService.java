@@ -1,6 +1,8 @@
 package local.jarios.email.servicio;
 
 import local.jarios.email.dominio.EmailMensaje;
+import local.jarios.email.exception.EmailServiceException;
+import local.jarios.properties.config.PropertiesManager;
 
 /**
  * Servicio para el envío de correos electrónicos.
@@ -19,10 +21,14 @@ public interface EmailService {
      * Envía un correo electrónico basado en la información proporcionada
      * en el objeto {@link EmailMensaje}.
      *
+     * @param propertiesManager objeto que contiene las propiedades asociadas al proyecto
      * @param emailMensaje objeto que contiene
      *                     el remitente, destinatarios, asunto y el cuerpo asocicados al mensaje.
      * @throws IllegalArgumentException si alguno de los campos requeridos es inválido o nulo.
-     * @throws local.jarios.email.exception.EmailException si ocurre un error al intentar enviar el correo.
+     * @throws EmailServiceException si ocurre un error al intentar enviar el correo.
      */
-    void enviarCorreo(EmailMensaje emailMensaje);
+    void enviarCorreo(
+            PropertiesManager propertiesManager,
+            EmailMensaje emailMensaje
+    ) throws EmailServiceException;
 }

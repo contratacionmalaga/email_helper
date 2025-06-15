@@ -13,10 +13,13 @@ package local.jarios.email.utils;/**
  */
 public final class Constantes {
 
-    /** Nombre sin extensión del fichero config.properties */
-    public static final String CONFIG_PROPERTIES = "config";
+    /** Ruta del directorio con los ficheros properties */
+    public static final String CONFIG_DIR = "config";
 
-    /** Nombre sin extensión del fichero config.properties */
+    /** Nombre sin extensión del fichero app.properties */
+    public static final String APP_PROPERTIES = "app";
+
+    /** Nombre sin extensión del fichero app.properties */
     public static final String EMAIL_PROPERTIES = "email";
 
     /**

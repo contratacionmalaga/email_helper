@@ -1,23 +1,22 @@
 package local.jarios.email.servicio;
 
-import local.jarios.email.config.EmailConfig;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.Session;
 import local.jarios.email.dominio.EmailMensaje;
-import local.jarios.email.exception.EmailException;
-import local.jarios.email.infraestructura.*;
-
-import jakarta.mail.*;
+import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailSessionFactoryException;
+import local.jarios.email.infraestructura.EmailMimeMessage;
+import local.jarios.email.infraestructura.EmailSender;
+import local.jarios.email.infraestructura.EmailSessionFactory;
+import local.jarios.email.utils.Constantes;
+import local.jarios.properties.config.PropertiesManager;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 /**
  * Implementación del servicio de envío de correos electrónicos.
- * <p>
- * Utiliza la configuración proporcionada mediante {@link EmailConfig}, genera el mensaje
- * en formato MIME y lo envía usando {@link jakarta.mail.Transport}.
- * </p>
  *
  * <p>Este servicio admite múltiples destinatarios y permite especificar el remitente manualmente.</p>
+ * <p>Utiliza un {@link EmailSender} configurado con un {@link TransportSender} para realizar el envío.</p>
  *
  * @author Juan
  * @since 1.0
@@ -26,74 +25,79 @@ import java.util.List;
 public class EmailServiceImpl implements EmailService {
 
     /**
-     * Configuración del servidor SMTP para el envío de correos.
-     * Incluye parámetros como host, puerto, usuario y contraseña.
+     * Fábrica responsable de crear instancias de {@link Session}
+     * configuradas con los parámetros SMTP definidos en el fichero properties.
      */
-    private final EmailConfig config;
+    private final EmailSessionFactory emailSesionFactory;
 
     /**
-     * Fábrica responsable de crear instancias de {@link jakarta.mail.Session}
-     * configuradas con los parámetros SMTP definidos en {@link EmailConfig}.
-     */
-    private final SesionCorreoFactory sesionFactory;
-
-    /**
-     * Generador de objetos {@link jakarta.mail.internet.MimeMessage} a partir
+     * Generador de objetos {@link MimeMessage} a partir
      * de la información contenida en un {@code EmailMensaje}.
      */
-    private final GeneradorMimeMessage generadorMensaje;
+    private final EmailMimeMessage enmailMimeMessage;
 
     /**
-     * Encapsula la lógica de envío de correos electrónicos utilizando
-     * una instancia de {@link jakarta.mail.Transport}.
+     * Servicio responsable de enviar mensajes de correo electrónico.
      */
-    private final CorreoSender sender;
-
+    private final EmailSender enmailSender;
 
     /**
-     * Constructor que inicializa los componentes necesarios para el envío de correos.
+     * Constructor que inicializa los componentes necesarios para el envío de correos,
+     * usando una implementación por defecto de {@link TransportSender}.
+     */
+    public EmailServiceImpl() {
+        this.emailSesionFactory = new EmailSessionFactory();
+        this.enmailMimeMessage = new EmailMimeMessage();
+        this.enmailSender = new EmailSender(new TransportSenderImpl());
+    }
+
+    /**
+     * Constructor que permite inyectar un {@link TransportSender} personalizado.
      *
-     * @param config configuración SMTP ya cargada
+     * @param transportSender implementación concreta de {@link TransportSender} para envío.
      */
-    public EmailServiceImpl(EmailConfig config) {
-        this.config = config;
-        this.sesionFactory = new SesionCorreoFactory();
-        this.generadorMensaje = new GeneradorMimeMessage();
-        this.sender = new CorreoSender();
+    public EmailServiceImpl(TransportSender transportSender) {
+        this.emailSesionFactory = new EmailSessionFactory();
+        this.enmailMimeMessage = new EmailMimeMessage();
+        this.enmailSender = new EmailSender(transportSender);
     }
 
     /**
      * Envía un correo electrónico con los parámetros especificados.
      *
-     * @param emailMensaje     Mensaje de email
-     * @throws EmailException si ocurre un error durante el proceso de envío
+     * @param propertiesManager objeto que contiene las propiedades asociadas al proyecto
+     * @param emailMensaje      mensaje de email (remitente, destinatarios, asunto y cuerpo del mensaje)
+     * @throws EmailServiceException si ocurre un error durante el proceso de envío
      */
     @Override
-    public void enviarCorreo(EmailMensaje emailMensaje) {
-        String remitente = emailMensaje.remitente();
-        List<String> destinatarios = emailMensaje.destinatarios();
-        String asunto = emailMensaje.asunto();
-        String cuerpo = emailMensaje.cuerpo();
-        log.debug("Preparando envío de correo desde [{}] a [{}]", remitente, String.join(", ", destinatarios));
+    public void enviarCorreo(
+            PropertiesManager propertiesManager,
+            EmailMensaje emailMensaje
+    ) throws EmailServiceException {
+        log.debug("[enviarCorreo] - Enviar correo: {}", emailMensaje);
+
         try {
+            // Obtengo usuario y password para autenticación
+            String user = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.user");
+            log.debug("[enviarCorreo] - Usuario para la autenticación en el servidor: {}", user);
+
+            String password = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.password");
+            log.debug("[enviarCorreo] - Password para la autenticación en el servidor: {}", password);
+
             // Crear sesión SMTP autenticada
-            Session sesion = sesionFactory.crearSesion(config);
+            Session sesion = emailSesionFactory.getSession(propertiesManager, user, password);
             log.debug("Sesión SMTP creada correctamente.");
 
-            // Crear objeto de dominio del mensaje
-            EmailMensaje mensaje = new EmailMensaje(remitente, destinatarios, asunto, cuerpo);
-            log.debug("CorreoMensaje creado con asunto: '{}'", asunto);
-
             // Generar mensaje MIME listo para enviar
-            Message mimeMessage = generadorMensaje.generarMensaje(sesion, mensaje);
+            MimeMessage mimeMessage = enmailMimeMessage.getMimeMessage(sesion, emailMensaje);
             log.debug("Mensaje MIME generado correctamente.");
 
             // Enviar el mensaje
-            sender.enviar(mimeMessage);
+            enmailSender.enviarEmail(mimeMessage);
 
-        } catch (MessagingException e) {
+        } catch (EmailSessionFactoryException e) {
             log.error("Error al enviar el correo electrónico: {}", e.getMessage(), e);
-            throw new EmailException("Error al enviar el correo", e);
+            throw new EmailServiceException("Error al enviar el correo", e);
         }
     }
 }
