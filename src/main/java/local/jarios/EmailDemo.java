@@ -11,6 +11,7 @@ import local.jarios.versionfrommanifest.service.VersionFromManifestServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -87,16 +88,16 @@ public class EmailDemo {
             log.info("Establezco el conjunto de claves Sensibles: {}", clavesSensibles);
 
             // Cargar todas las propiedades desde el directorio de configuración
-            propertiesManager.loadAllProperties(local.jarios.utils.Constantes.CONFIG_DIR);
-            log.info("Ficheros .properties cargados desde /{} correctamente", local.jarios.utils.Constantes.CONFIG_DIR);
+            propertiesManager.loadAllProperties(Constantes.CONFIG_DIR);
+            log.info("Ficheros .properties cargados desde /{} correctamente", Constantes.CONFIG_DIR);
 
             var versionFromManifestService = new VersionFromManifestServiceImpl();
             log.info("Creado el objeto VersionFromManifestService correctamente.");
 
-            String appName = propertiesManager.getProperty(local.jarios.utils.Constantes.APP_PROPERTIES, "app.name");
+            String appName = propertiesManager.getProperty(Constantes.APP_PROPERTIES, "app.name");
             log.info("AppName: {}", appName);
 
-            String appDescripcion = propertiesManager.getProperty(local.jarios.utils.Constantes.APP_PROPERTIES, "app.descripcion");
+            String appDescripcion = propertiesManager.getProperty(Constantes.APP_PROPERTIES, "app.descripcion");
             log.info("AppDescripcion: {}", appDescripcion);
 
             String appVersion = versionFromManifestService.getVersion(PropertiesDemo.class);
@@ -115,8 +116,15 @@ public class EmailDemo {
             // Creo el objeto EmailService
             var emailService = new EmailServiceImpl();
 
+            //
+            Properties properties = propertiesManager.getProperties(Constantes.EMAIL_PROPERTIES);
+
+            //
+            String user = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.user");
+            String password = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.password");
+
             // Envío el correo
-            emailService.enviarCorreo(propertiesManager, emailMensaje);
+            emailService.enviarEmail(properties, user, password, emailMensaje);
             log.info("Correo enviado correctamente.");
 
         } catch (EmailServiceException e) {

@@ -5,8 +5,6 @@ import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.exception.EmailSessionFactoryException;
-import local.jarios.email.utils.Constantes;
-import local.jarios.properties.config.PropertiesManager;
 import local.jarios.properties.exception.PropertiesLoadException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,26 +43,20 @@ public class EmailSessionFactory {
     /**
      * Crea una nueva instancia de {@link Session} autenticada con usuario y clave.
      *
-     * @param propertiesManager objeto que contiene las propiedades asociadas al proyecto
+     * @param properties objeto que contiene las propiedades asociadas al envío de emails
      * @param user usuario con el que nos autenticamos para obtener la sesión
      * @param password clave utilizada para la autenticación y posteriorobtención de la sesión
      * @return instancia de sesión JavaMail autenticada
      * @throws EmailServiceException si ocurre un error al cargar las propiedades
      */
     public Session getSession(
-            PropertiesManager propertiesManager,
+            Properties properties,
             String user,
             String password
     ) throws EmailSessionFactoryException {
         log.debug("[getSession] - Obteniendo una sesió para el usuario: {}", user);
 
         try {
-
-            Properties properties = propertiesManager.getProperties(Constantes.EMAIL_PROPERTIES);
-            log.debug("[getSession] - Obtenidas las propiedades del fichero: {}", Constantes.EMAIL_PROPERTIES);
-
-            log.debug("[getSession] - Impresión de las propiedades del fichero: {}", Constantes.EMAIL_PROPERTIES);
-            propertiesManager.printProperties(properties);
 
             Session session = Session.getInstance(properties, new Authenticator() {
                 @Override

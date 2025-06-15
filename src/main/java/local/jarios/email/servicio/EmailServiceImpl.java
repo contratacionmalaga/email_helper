@@ -8,9 +8,9 @@ import local.jarios.email.exception.EmailSessionFactoryException;
 import local.jarios.email.infraestructura.EmailMimeMessage;
 import local.jarios.email.infraestructura.EmailSender;
 import local.jarios.email.infraestructura.EmailSessionFactory;
-import local.jarios.email.utils.Constantes;
-import local.jarios.properties.config.PropertiesManager;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Properties;
 
 /**
  * Implementación del servicio de envío de correos electrónicos.
@@ -65,27 +65,23 @@ public class EmailServiceImpl implements EmailService {
     /**
      * Envía un correo electrónico con los parámetros especificados.
      *
-     * @param propertiesManager objeto que contiene las propiedades asociadas al proyecto
+     * @param properties objeto que contiene las propiedades asociadas al proyecto
      * @param emailMensaje      mensaje de email (remitente, destinatarios, asunto y cuerpo del mensaje)
      * @throws EmailServiceException si ocurre un error durante el proceso de envío
      */
     @Override
-    public void enviarCorreo(
-            PropertiesManager propertiesManager,
+    public void enviarEmail(
+            Properties properties,
+            String user,
+            String password,
             EmailMensaje emailMensaje
     ) throws EmailServiceException {
         log.debug("[enviarCorreo] - Enviar correo: {}", emailMensaje);
 
         try {
-            // Obtengo usuario y password para autenticación
-            String user = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.user");
-            log.debug("[enviarCorreo] - Usuario para la autenticación en el servidor: {}", user);
-
-            String password = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.password");
-            log.debug("[enviarCorreo] - Password para la autenticación en el servidor: {}", password);
 
             // Crear sesión SMTP autenticada
-            Session sesion = emailSesionFactory.getSession(propertiesManager, user, password);
+            Session sesion = emailSesionFactory.getSession(properties, user, password);
             log.debug("Sesión SMTP creada correctamente.");
 
             // Generar mensaje MIME listo para enviar

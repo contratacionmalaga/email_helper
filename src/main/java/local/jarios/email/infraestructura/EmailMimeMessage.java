@@ -47,40 +47,40 @@ public class EmailMimeMessage {
      * Genera un objeto {@link MimeMessage} con los datos del {@link EmailMensaje}.
      *
      * @param session la sesión de JavaMail configurada (incluye propiedades SMTP, autenticación, etc.)
-     * @param correoMensaje objeto con los datos necesarios para construir el correo
+     * @param emailMensaje objeto con los datos necesarios para construir el correo
      * @return instancia de {@link MimeMessage} lista para ser enviada
      */
     public MimeMessage getMimeMessage(
             Session session,
-            EmailMensaje correoMensaje
+            EmailMensaje emailMensaje
     ) throws EmailMimeMessageException {
-        log.debug("[getMimeMessage] -- Generando MimeMessage{}", correoMensaje);
+        log.debug("[getMimeMessage] -- Generando MimeMessage{}", emailMensaje);
 
         MimeMessage mensaje = new MimeMessage(session);
 
         // VALIDAR DIRECCIÓN DE EMAIL DE REMITENTE
         // Validar que no sea nula y vacía
-        if (correoMensaje.remitente() == null || correoMensaje.remitente().isBlank()) {
+        if (emailMensaje.remitente() == null || emailMensaje.remitente().isBlank()) {
             throw new EmailServiceException("Remitente no puede estar vacío");
         }
 
         // Validar que sea válida(en lista con un solo elemento para reutilizar método)
-        validarDireccionesRegex(List.of(correoMensaje.remitente()));
+        validarDireccionesRegex(List.of(emailMensaje.remitente()));
 
         // VALIDAR DIRECCIONES DE LOS DESTINATARIOS
         // Validar remitente (en lista con un solo elemento para reutilizar método)
-        if (correoMensaje.destinatarios() == null || correoMensaje.destinatarios().isEmpty()) {
+        if (emailMensaje.destinatarios() == null || emailMensaje.destinatarios().isEmpty()) {
             throw new EmailServiceException("Debe haber al menos un destinatario");
         }
 
         // Validar destinatarios
-        validarDireccionesRegex(correoMensaje.destinatarios());
+        validarDireccionesRegex(emailMensaje.destinatarios());
 
         try {
 
-            InternetAddress remitente = new InternetAddress(correoMensaje.remitente());
+            InternetAddress remitente = new InternetAddress(emailMensaje.remitente());
             InternetAddress[] destinatarios =
-                    InternetAddress.parse(String.join(",", correoMensaje.destinatarios()));
+                    InternetAddress.parse(String.join(",", emailMensaje.destinatarios()));
 
             mensaje.setFrom(remitente);
             log.debug("[getMimeMessage] -- Asignado remitente a MimeMessage: {}", remitente);
@@ -90,11 +90,11 @@ public class EmailMimeMessage {
                     "[getMimeMessage] -- Asignado destinatarios a MimeMessage: {}",
                     Arrays.stream(destinatarios).map(InternetAddress::toUnicodeString).toList());
 
-            mensaje.setSubject(correoMensaje.asunto());
-            log.debug("[getMimeMessage] -- Asignado asunto a MimeMessage: {}", correoMensaje.asunto());
+            mensaje.setSubject(emailMensaje.asunto());
+            log.debug("[getMimeMessage] -- Asignado asunto a MimeMessage: {}", emailMensaje.asunto());
 
-            mensaje.setContent(correoMensaje.cuerpo(), "text/html; charset=UTF-8");
-            log.debug("[getMimeMessage] -- Asignado cuerpo del mensaje a MimeMessage: {}", correoMensaje.cuerpo());
+            mensaje.setContent(emailMensaje.cuerpo(), "text/html; charset=UTF-8");
+            log.debug("[getMimeMessage] -- Asignado cuerpo del mensaje a MimeMessage: {}", emailMensaje.cuerpo());
 
             return mensaje;
 
