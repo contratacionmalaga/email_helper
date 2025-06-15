@@ -6,6 +6,8 @@ import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.servicio.TransportSender;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+
 /**
  * Servicio responsable de enviar mensajes de correo electrónico mediante la API de JavaMail.
  * <p>
@@ -50,11 +52,21 @@ public class EmailSender {
     public void enviarEmail(
             Message mensaje
     ) throws EmailSenderException {
+        log.debug("[enviarMail] - Datos del mensaje que se desea envair.");
         try {
+            log.debug("[enviarMail] - From: {}", (Object) mensaje.getFrom());
+            log.debug("[enviarMail] - AllRecipients: {}", (Object) mensaje.getAllRecipients());
+            log.debug("[enviarMail] - Subject: {}", mensaje.getSubject());
+            log.debug("[enviarMail] - Subject: {}", mensaje.getContent());
             transportSender.send(mensaje);
         } catch (MessagingException e) {
-            log.error("Error al enviar el mensaje", e);
-            throw new EmailSenderException("Error al enviar el correo electrónico", e);
+            String msgError = "Error al realizar el envío";
+            log.error(msgError, e);
+            throw new EmailSenderException(msgError, e);
+        } catch (IOException e) {
+            String msgError = "Error en el contenido del mensaje";
+            log.error(msgError, e);
+            throw new EmailSenderException(msgError, e);
         }
     }
 }
