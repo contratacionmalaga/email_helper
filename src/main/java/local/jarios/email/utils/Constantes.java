@@ -22,6 +22,15 @@ public final class Constantes {
     /** Nombre sin extensión del fichero app.properties */
     public static final String EMAIL_PROPERTIES = "email";
 
+    /** Clave maestra */
+    public final static String CLAVE_MAESTRA = "Malaga$$2025";
+
+    /** Key mail.user */
+    public final static String KEY_USER = "mail.user";
+
+    /** Key mail.password */
+    public final static String KEY_PASSWORD = "mail.password";
+
     /**
      * Constructor privado para evitar instanciación.
      */

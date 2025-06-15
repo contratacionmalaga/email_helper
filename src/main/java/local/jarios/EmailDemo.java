@@ -30,15 +30,7 @@ import java.util.Set;
 @Slf4j
 public class EmailDemo {
 
-    /**
-     * Directorio config
-     */
-    private final static String DIRECTORIO_CONFIG = "config";
 
-    /**
-     * Clave maestra
-     */
-    private final static String CLAVE_MAESTRA = "Malaga$$2025";
 
     /**
      * Clave maestra
@@ -49,7 +41,6 @@ public class EmailDemo {
      * Clave maestra
      */
     private final static String MENSAJE = "Cuerpo de ejemplo";
-
 
     /**
      * Mensaje que indica el inicio de la ejecución del programa.
@@ -118,10 +109,16 @@ public class EmailDemo {
 
             //
             Properties properties = propertiesManager.getProperties(Constantes.EMAIL_PROPERTIES);
+            if (log.isDebugEnabled()) {
+                printProperties(properties);
+            }
 
             //
-            String user = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.user");
-            String password = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, "mail.smtp.password");
+            String user = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, Constantes.KEY_USER);
+            log.debug("User: {}", user);
+
+            String password = propertiesManager.getProperty(Constantes.EMAIL_PROPERTIES, Constantes.KEY_PASSWORD);
+            log.debug("Password: {}", password);
 
             // Envío el correo
             emailService.enviarEmail(properties, user, password, emailMensaje);
@@ -143,6 +140,12 @@ public class EmailDemo {
 
             log.info(FINAL);
         }
+    }
+
+    public static void printProperties(Properties props) {
+        props.forEach((key, value) -> {
+            log.info("{} = {}", key, value);
+        });
     }
 }
 
