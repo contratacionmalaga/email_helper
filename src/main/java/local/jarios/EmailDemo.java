@@ -142,6 +142,23 @@ public class EmailDemo {
         }
     }
 
+    /**
+     * Imprime todas las propiedades clave-valor contenidas en el objeto {@link Properties}.
+     *
+     * <p>Este método recorre cada entrada del conjunto de propiedades y la imprime
+     * en el log utilizando el nivel {@code INFO}.</p>
+     *
+     * <p>El formato de salida para cada propiedad será: {@code clave = valor}.</p>
+     *
+     * <p>Es útil para depurar o verificar dinámicamente la configuración cargada desde
+     * un fichero de propiedades, como los utilizados en configuraciones de correo,
+     * conexión a base de datos, etc.</p>
+     *
+     * @param props objeto {@link Properties} cuyas entradas se desean imprimir en el log.
+     *              Si es {@code null}, no se imprimirá nada y no se lanzará excepción.
+     *
+     * @see java.util.Properties
+     */
     public static void printProperties(Properties props) {
         props.forEach((key, value) -> {
             log.info("{} = {}", key, value);
