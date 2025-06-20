@@ -24,6 +24,9 @@ public final class Constantes {
     /** Nombre sin extensión del fichero app.properties */
     public static final Pattern EMAIL_PATTERN =Pattern.compile(EMAIL_REGEX);
 
+    /** PATTERNS DE FECHA **/
+    public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
+
     /**
      * Constructor privado para evitar instanciación.
      */

@@ -136,4 +136,61 @@ public final class EmailHelper {
         return
                 "<tr><th>" + key + "</th><td>" + value + "</td></tr>";
     }
+
+    /**
+     * Crea el asunto del correo de notificación de ejecución.
+     *
+     * <p>Incluye el nombre de la aplicación, versión, equipo, estado de la ejecución
+     * (con o sin errores) y la fecha/hora actual formateada.</p>
+     *
+     * @param appName     the name of the application, not null
+     * @param appVersion  the version of the application, not null
+     * @param equipo      the identifier of the host or team executing the import, not null
+     * @param success     indicates if execution succeeded (true) or failed (false)
+     * @return the formatted subject line, never null
+     */
+    public static String getAsunto(String appName, String appVersion, String equipo, boolean success) {
+        String status = success ? "Ejecución SIN ERRORES" : "Ejecución CON ERRORES";
+        return String.format("[%s-%s] - %s - %s - %s",
+                appName, appVersion, equipo, status, ComunHelper.getFechaHoraFormateada(null));
+    }
+
+    /**
+     * Construye el cuerpo del correo electrónico de notificación de ejecución.
+     *
+     * <p>Dependiendo del estado de {@code success}, se genera un cuerpo HTML con las estadísticas
+     * de ejecución o con los detalles de la excepción.</p>
+     *
+     * @param estadistica  matriz bidimensional con los datos de las estadísticas de ejecución
+     * @param excepcion    matriz con los detalles de la excepción en caso de error
+     * @param success      indica si la ejecución fue exitosa ({@code true}) o con errores ({@code false})
+     * @return el contenido HTML del cuerpo del correo; nunca {@code null}
+     */
+    public static String getBody(String[][] estadistica, String[] excepcion, boolean success) {
+        StringBuilder cuerpo = new StringBuilder();
+
+        // Cabecera HTML común
+        cuerpo.append(EmailHelper.getCabeceraHtml())
+                .append(EmailHelper.getHead())
+                .append(EmailHelper.getCabeceraBody("Estadísticas de la ejecución"))
+                .append(EmailHelper.getInicioTable());
+
+        // Contenido específico según el estado de success
+        if (success) {
+            for (String[] fila : estadistica) {
+                cuerpo.append(EmailHelper.getFila(fila[0], fila[1]));
+            }
+        } else {
+            for (String detalle : excepcion) {
+                cuerpo.append(getFila(detalle, null));
+            }
+        }
+
+        // Pie de la tabla y del HTML
+        cuerpo.append(EmailHelper.getPieTable())
+                .append(EmailHelper.getPieBody())
+                .append(EmailHelper.getPieHtml());
+
+        return cuerpo.toString();
+    }
 }

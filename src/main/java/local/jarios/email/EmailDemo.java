@@ -97,7 +97,7 @@ public class EmailDemo {
             EmailService emailService = new EmailServiceImpl();
             log.info("Creación del servicio EmailService correctamente.");
 
-            String asunto = "[EmailDemo]. Asunto de prueba";
+            String asunto = EmailHelper.getAsunto("email_helper", "1.6.0", "localhost", true);
             log.info("Creación del asunto asociado al correo: {}.", asunto);
 
             String cuerpo =
@@ -118,7 +118,7 @@ public class EmailDemo {
                     cuerpo);
             log.info("Correo enviado correctamente.");
 
-            finalizar (FINAL_CORRECTO, 1);
+            finalizar (FINAL_CORRECTO, 0);
 
         } catch (EmailServiceException e) {
 
