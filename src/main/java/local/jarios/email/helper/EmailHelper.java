@@ -166,7 +166,7 @@ public final class EmailHelper {
      * @param success      indica si la ejecución fue exitosa ({@code true}) o con errores ({@code false})
      * @return el contenido HTML del cuerpo del correo; nunca {@code null}
      */
-    public static String getBody(String[][] estadistica, String[] excepcion, boolean success) {
+    public static String getCuerpo(String[][] estadistica, String[] excepcion, boolean success) {
         StringBuilder cuerpo = new StringBuilder();
 
         // Cabecera HTML común

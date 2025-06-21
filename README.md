@@ -1,38 +1,60 @@
 # 📧 Helper para el envío de Emails utilizando jakarta.mail-api<
 
-Proyecto Java para **cargar configuración desde archivos `.properties`**, gestionar valores sensibles cifrados y **enviar correos electrónicos** mediante una configuración centralizada y segura.
+Herramienta Java para el envío de correos electrónicos mediante SMTP de forma sencilla, robusta y extensible.  
+Ideal para proyectos que requieren auditoría, monitoreo o notificaciones automatizadas.
 
 > **Autor:** Juan Antonio  
 > **Fecha de inicio:** 04/06/2024
 
 ---
 
-## 🔧 Funcionalidades principales
+## 🧩 Características
 
-- ✅ Carga de configuración desde ficheros `.properties`
-- ✅ Lectura segura de valores sensibles (`password`, `token`, etc.)
-- ✅ Cifrado y descifrado de propiedades con `Jasypt`
-- ✅ Envío de correos electrónicos con `JavaMail`
-- ✅ Validación y trazabilidad vía `SLF4J` / `Logback`
-- ✅ Estructura modular y extensible
-- ✅ Uso de jakarta.mail.api
+- Envío de correos vía SMTP autenticado con TLS
+- Validación de direcciones de correo (`RFC 5322`)
+- Cuerpo del email soporta HTML con estructuras dinámicas (tablas, secciones, etc.)
+- Separación clara de responsabilidades: modelo, servicio, helper
+- Manejo centralizado de errores personalizados
 
 ---
 
 ## 📁 Estructura del proyecto
 
 ```
-├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── local.jarios/
-│ │ │ ├── PruebaEmail.java # Clase principal
-│ │ │ ├── properties/ # Módulo de configuración
-│ │ │ └── email/ # Módulo de envío de correo
-│ │ └── resources/
-│ │ └── config/
-│ │ └── email.properties # Fichero de configuración
+src/
+└── main/
+    └── java/
+        └── local/
+            └── jarios/
+                ├── email/                          # Punto de entrada y clases de ejemplo/demo
+                │   ├── EmailDemo.java              # Clase con el método main para ejecutar una prueba de envío
+                │
+                ├── api/                            # API pública del servicio de correo
+                │   ├── EmailService.java           # Interfaz del servicio de envío de correo
+                │   └── EmailServiceImpl.java       # Implementación SMTP del servicio de envío
+                │
+                ├── model/                          # Modelos de datos relacionados con el correo
+                │   └── EmailData.java              # Record que encapsula from, to, subject y body
+                │
+                ├── helper/                         # Clases utilitarias para construir correos en HTML
+                │   └── EmailHelper.java            # Métodos estáticos para componer el cuerpo del correo
+                │
+                ├── exception/                      # Manejo de errores personalizados
+                │   └── EmailServiceException.java  # Excepción específica para errores de envío
+                │
+                └── common/                         # Utilidades y constantes compartidas
+                    └── util/
+                        ├── Constantes.java         # Constantes como claves de properties SMTP
+                        └── EmailValidator.java     # Validaciones RFC para direcciones de email
+test/
+└── main/
+    └── java/
+        └── local/
+            └── jarios/
+                ├── email/
+                    PENDIENTE                
 └── README.md
+└── pom.xml
 ```
 
 ---
@@ -46,31 +68,100 @@ Proyecto Java para **cargar configuración desde archivos `.properties`**, gesti
 
 ---
 
-## 🔐 Cifrado seguro con `Jasypt`
+## 🔐 Clases principales
 
-Este proyecto utiliza **Jasypt (`BasicTextEncryptor`)** para cifrar claves sensibles como contraseñas. Los valores cifrados se almacenan así:
+✅ EmailService (interface)
 
+```
+void enviarEmail(Properties props, EmailData emailData) throws EmailServiceException;
+```
+
+✅ EmailServiceImpl
+
+Implementación concreta que utiliza JavaMail (jakarta.mail) para enviar emails mediante SMTP.
+
+- Valida campos obligatorios
+- Realiza autenticación
+- Permite log extendido en debug
+- Soporta HTML
+
+✅ EmailData (record)
+
+Contenedor inmutable que representa los datos del email:
+
+```
+public record EmailData(String from, String to, String subject, String body) {}
+```
+
+✅ EmailHelper
+
+Utilidades para generar partes del HTML del correo: cabecera, tablas, pie, asunto dinámico, etc.
+
+✅ EmailServiceException
+Excepción personalizada que encapsula los errores del servicio de correo.
+
+✅ EmailDemo
+Clase de ejemplo que muestra el flujo completo:
+
+1. Carga propiedades SMTP
+2. Construye EmailData
+3. Envía el correo con EmailServiceImpl
+
+⚙️ Configuración SMTP (ejemplo)
 ```properties
-mail.password=ENC(xxxxxxx)
+mail.smtp.host=
+mail.smtp.auth=
+mail.smtp.port=
+mail.smtp.user=
+mail.smtp.password=
+mail.smtp.starttls.enable=
+mail.smtp.trust=
+mail.smtp.protocols=
 ```
 
-## 🛡 Cómo cifrar una clave
+🚀 Ejemplo de uso
+```
+Properties smtpProps = new Properties();
+// ... set propiedades SMTP como en ejemplo
 
-```
-BasicTextEncryptor encryptor = new BasicTextEncryptor();
-encryptor.setPassword("MI_CLAVE_MAESTRA");
-String valorCifrado = "ENC(" + encryptor.encrypt("mi_clave") + ")";
+EmailData data = new EmailData(
+    "origen@dominio.com",
+    "destino@dominio.com",
+    "Asunto de prueba",
+    EmailHelper.getCabeceraHtml() +
+    EmailHelper.getHead() +
+    EmailHelper.getCabeceraBody("Mensaje de prueba") +
+    EmailHelper.getInicioTable() +
+    EmailHelper.getFila("Campo", "Valor") +
+    EmailHelper.getPieTable() +
+    EmailHelper.getPieBody() +
+    EmailHelper.getPieHtml()
+);
+
+EmailService emailService = new EmailServiceImpl();
+emailService.enviarEmail(smtpProps, data);
 ```
 
-## 📝 Formato de email.properties
+🛠️ Requisitos
 
-```
-mail.smtp.host=smtp.servidor.com
-mail.smtp.port=587
-mail.user=usuario@ejemplo.com
-mail.password=ENC(VALOR_CIFRADO)
-mail.to=destinatario@ejemplo.com
-mail.from=remitente@ejemplo.com
-mail.smtp.auth=true
-mail.smtp.starttls.enable=true
-```
+- Java 21 o superior
+- Jakarta Mail (jakarta.mail:jakarta.mail-api)
+- Lombok (opcional)
+
+📝 Notas
+
+- Si quieres desacoplar la configuración SMTP, puedes externalizarla en un .properties o .yaml.
+- En producción, nunca incluyas contraseñas directamente en código. Usa vaults, variables de entorno o cifrado.
+- El código está preparado para ser migrado a un servicio más complejo, incluyendo colas o APIs REST.
+
+✨ Futuras mejoras
+
+- Plantillas de HTML parametrizadas
+- Reintentos automáticos en caso de error
+- Soporte para múltiples destinatarios (CC, BCC)
+- Adjuntos
+- Internacionalización (asuntos, cuerpos)
+
+👤 Autor
+
+Juan Antonio Ríos — jarios@malaga.es
