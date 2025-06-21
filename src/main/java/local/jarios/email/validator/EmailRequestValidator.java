@@ -1,9 +1,12 @@
 package local.jarios.email.validator;
 
-import local.jarios.email.common.util.EmailValidator;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.model.EmailData;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,13 +21,13 @@ import static local.jarios.email.common.util.Constantes.*;
  *     <li>Formato correcto de direcciones de correo electrónico</li>
  *     <li>Presencia de propiedades SMTP obligatorias</li>
  * </ul>
- * </p>
  *
- * <p>Esta clase no debe ser instanciada.</p>
+ * <p>Esta clase no debe ser instanciada.
  *
  * @author Juan
  * @since 1.0
  */
+@Slf4j
 public final class EmailRequestValidator {
 
     /**
@@ -42,24 +45,41 @@ public final class EmailRequestValidator {
      * @throws EmailServiceException si se detecta algún valor inválido o faltante.
      */
     public static void validarEmailRequest(Properties props, EmailData data) throws EmailServiceException {
+        log.debug("[validarEmailRequest] -");
         if (props == null) {
+            log.debug("[validarEmailRequest] - Propiedades nulas.");
             throw new EmailServiceException("Propiedades nulas");
         }
         if (data == null) {
+            log.debug("[validarEmailRequest] - Email data nulo.");
             throw new EmailServiceException("EmailData nulo");
         }
 
-        if (isBlank(data.from())) throw new EmailServiceException("'from' es obligatorio");
-        if (isBlank(data.to())) throw new EmailServiceException("'to' es obligatorio");
-        if (isBlank(data.subject())) throw new EmailServiceException("'subject' es obligatorio");
-        if (isBlank(data.body())) throw new EmailServiceException("'body' es obligatorio");
+        if (isBlank(data.from())) {
+            log.debug("[validarEmailRequest] - Campo 'from' obligatorio en EmailData.");
+            throw new EmailServiceException("'from' es obligatorio");
+        }
+        if (isBlank(data.to())) {
+            log.debug("[validarEmailRequest] - Campo 'to' obligatorio en EmailData.");
+            throw new EmailServiceException("'to' es obligatorio");
+        }
+        if (isBlank(data.subject())) {
+            log.debug("[validarEmailRequest] - Campo 'subject' obligatorio en EmailData.");
+            throw new EmailServiceException("'subject' es obligatorio");
+        }
+        if (isBlank(data.body())) {
+            log.debug("[validarEmailRequest] - Campo 'body' obligatorio en EmailData.");
+            throw new EmailServiceException("'body' es obligatorio");
+        }
 
-        if (!EmailValidator.isValidEmailRFC(data.from())) {
+        if (isInvalidEmailRFC(data.from())) {
+            log.debug("[validarEmailRequest] - Email 'from' inválido: {}", data.from());
             throw new EmailServiceException("Email 'from' inválido: " + data.from());
         }
 
-        List<String> invalidTo = EmailValidator.getInvalidEmailsRFC(data.to());
+        List<String> invalidTo = getInvalidEmailsRFC(data.to());
         if (!invalidTo.isEmpty()) {
+            log.debug("[validarEmailRequest] - Email 'to' inválido: {}", invalidTo);
             throw new EmailServiceException("Email(s) 'to' inválidos: " + invalidTo);
         }
 
@@ -78,16 +98,18 @@ public final class EmailRequestValidator {
      * @param props         Objeto de propiedades a validar.
      * @param clave         Clave de la propiedad a validar.
      * @param ocultar       Si es {@code true}, el valor no debe ser mostrado en logs por seguridad.
-     * @return El valor de la propiedad validada.
      * @throws EmailServiceException si la propiedad no está presente.
      */
-    private static String validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailServiceException {
+    private static void validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailServiceException {
+        log.debug("[validarPropiedad] -");
         String valor = props.getProperty(clave);
-        if (valor == null) {
+        String valorLog = ocultar ? "******" : valor;
+        log.debug("[validarPropiedad] - Valor de la clave '{}': {}", clave, valorLog);
+        if ((valor == null) || (valor.isBlank())) {
+            log.debug("[validarPropiedad] - Falta propiedad obligatoria '{}'.", clave);
             throw new EmailServiceException("Falta propiedad obligatoria: " + clave);
         }
         // Aquí se podría añadir logging condicional si fuera necesario
-        return valor;
     }
 
     /**
@@ -97,6 +119,49 @@ public final class EmailRequestValidator {
      * @return {@code true} si es nula o vacía tras recortes, {@code false} en caso contrario.
      */
     private static boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
+        log.debug("[isBlank] -");
+        boolean valor = s == null || s.trim().isEmpty();
+        log.debug("[isBlank] - isBlanck '{}' - {}", s, valor);
+        return valor;
+    }
+
+    /**
+     * Valida una lista de correos electrónicos separados por comas.
+     * Devuelve una lista con aquellos correos que no cumplen con el formato RFC 5322.
+     *
+     * @param commaSeparatedEmails Una cadena con direcciones de correo separadas por comas.
+     * @return Lista de correos inválidos según la validación RFC.
+     */
+    public static List<String> getInvalidEmailsRFC(String commaSeparatedEmails) {
+        log.debug("[getInvalidEmailsRFC] -");
+        List<String> invalids = new ArrayList<>();
+        String[] emails = commaSeparatedEmails.split(",");
+
+        for (String email : emails) {
+            String trimmed = email.trim();
+            if (!trimmed.isEmpty() && isInvalidEmailRFC(trimmed)) {
+                invalids.add(trimmed);
+            }
+        }
+
+        return invalids;
+    }
+
+    /**
+     * Verifica si una dirección de correo electrónico es válida
+     * según las reglas del estándar RFC 5322.
+     *
+     * @param email Dirección de correo electrónico a validar.
+     * @return {@code true} si el correo es válido; {@code false} en caso contrario.
+     */
+    private static boolean isInvalidEmailRFC(String email) {
+        log.debug("[isInvalidEmailRFC] -");
+        try {
+            InternetAddress addr = new InternetAddress(email, true);
+            addr.validate(); // lanza excepción si no es válido
+            return false;    // es válido, no está inválido
+        } catch (AddressException e) {
+            return true;     // inválido
+        }
     }
 }

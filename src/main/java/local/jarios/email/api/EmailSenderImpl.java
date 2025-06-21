@@ -13,7 +13,14 @@ import jakarta.mail.Transport;
  *
  * @since 1.0
  */
-public class SmtpEmailSender implements EmailSender {
+public class EmailSenderImpl implements EmailSender {
+
+    /**
+     * Constructor por defecto.
+     */
+    public EmailSenderImpl() {
+        // Constructor vacío intencional
+    }
 
     /**
      * Envía un mensaje de correo electrónico utilizando una sesión SMTP proporcionada.

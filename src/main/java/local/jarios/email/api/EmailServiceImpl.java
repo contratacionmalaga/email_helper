@@ -5,19 +5,24 @@ import jakarta.mail.internet.*;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
 import local.jarios.email.exception.EmailServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
+
+import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
+import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
 /**
  * Implementación del servicio de envío de correos electrónicos.
  * Utiliza {@link EmailSender} para el envío efectivo de los correos.
  */
+@Slf4j
 public class EmailServiceImpl implements EmailService {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
-
+    /**
+     * Instancia del servicio que implementa el envío de emails vía SMTP.
+     * Se utiliza para delegar la lógica de envío en esta clase.
+     */
     private final EmailSender emailSender;
 
     /**
@@ -27,6 +32,7 @@ public class EmailServiceImpl implements EmailService {
      */
     public EmailServiceImpl(EmailSender emailSender) {
         this.emailSender = emailSender;
+        log.debug("[EmailServiceImpl] - EmailSender asignado correctamente.");
     }
 
     /**
@@ -38,23 +44,28 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void sendEmail(Properties props, EmailData data) throws EmailServiceException {
+
+        log.debug("[sendEmail] -");
         try {
+
             // Validación de los datos del correo
             EmailRequestValidator.validarEmailRequest(props, data);
+            log.debug("[sendEmail] - Validados Properties e EmailData.");
 
             // Configuración de la sesión de correo
             Session session = createSession(props);
+            log.debug("[sendEmail] - Creada sesión con la Properties.");
 
             // Creación del mensaje MIME
             Message message = createMimeMessage(session, data);
+            log.debug("[sendEmail] - Creación de un Message a partir de la Sesión e EmailData correctamente.");
 
             // Envío del mensaje
             emailSender.send(session, message);
-
             log.info("Correo enviado exitosamente a {}", data.to());
 
         } catch (MessagingException e) {
-            log.error("Error al enviar el correo electrónico", e);
+            log.error("Error al enviar el correo electrónico. Error: {}", e.getMessage());
             throw new EmailServiceException("Error al enviar el correo electrónico", e);
         }
     }
@@ -69,8 +80,8 @@ public class EmailServiceImpl implements EmailService {
         return Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                String username = props.getProperty("smtp.user");
-                String password = props.getProperty("smtp.password");
+                String username = props.getProperty(SMTP_USER);
+                String password = props.getProperty(SMTP_PASSWORD);
                 return new PasswordAuthentication(username, password);
             }
         });

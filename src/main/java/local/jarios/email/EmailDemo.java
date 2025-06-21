@@ -3,10 +3,11 @@ package local.jarios.email;
 import local.jarios.email.api.EmailSender;
 import local.jarios.email.api.EmailService;
 import local.jarios.email.api.EmailServiceImpl;
-import local.jarios.email.api.SmtpEmailSender;
+import local.jarios.email.api.EmailSenderImpl;
 import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.helper.EmailHelper;
 import local.jarios.email.model.EmailData;
+import local.jarios.email.validator.EmailRequestValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -71,8 +72,10 @@ public final class EmailDemo {
             // Construcción de los datos del correo
             EmailData emailData = construirEmailData();
 
+            EmailRequestValidator.validarEmailRequest(mailProps, emailData);
+
             // Creación del servicio de correo con la implementación de envío SMTP
-            EmailSender emailSender = new SmtpEmailSender();
+            EmailSender emailSender = new EmailSenderImpl();
             EmailService emailService = new EmailServiceImpl(emailSender);
 
             // Envío del correo
