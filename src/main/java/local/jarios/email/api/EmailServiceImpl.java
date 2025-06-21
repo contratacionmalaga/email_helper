@@ -31,6 +31,7 @@ public class EmailServiceImpl implements EmailService {
      * @param emailSender Instancia de {@link EmailSender} para el envío de correos.
      */
     public EmailServiceImpl(EmailSender emailSender) {
+
         this.emailSender = emailSender;
         log.debug("[EmailServiceImpl] - EmailSender asignado correctamente.");
     }
@@ -45,7 +46,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmail(Properties props, EmailData data) throws EmailServiceException {
 
-        log.debug("[sendEmail] -");
         try {
 
             // Validación de los datos del correo
@@ -65,6 +65,7 @@ public class EmailServiceImpl implements EmailService {
             log.debug("Correo enviado exitosamente a {}", data.to());
 
         } catch (MessagingException e) {
+
             log.error("Error al enviar el correo electrónico. Error: {}", e.getMessage());
             throw new EmailServiceException("Error al enviar el correo electrónico", e);
         }
@@ -77,14 +78,20 @@ public class EmailServiceImpl implements EmailService {
      * @return Instancia de {@link Session} configurada.
      */
     private Session createSession(Properties props) {
-        return Session.getInstance(props, new Authenticator() {
+
+        String username = props.getProperty(SMTP_USER);
+        log.debug("[createSession] - Obtengo el usuario desde el objeto Propertes: {}", username);
+        String password = props.getProperty(SMTP_PASSWORD);
+        log.debug("[createSession] - Obtengo la clave desde el objeto Properties: {}", password);
+
+        Session session =  Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                String username = props.getProperty(SMTP_USER);
-                String password = props.getProperty(SMTP_PASSWORD);
                 return new PasswordAuthentication(username, password);
             }
         });
+        log.debug("[createSession] - Sesión creada correctamente para el usuario: {}", username);
+        return session;
     }
 
     /**
@@ -97,10 +104,15 @@ public class EmailServiceImpl implements EmailService {
      */
     private Message createMimeMessage(Session session, EmailData data) throws MessagingException {
         Message message = new MimeMessage(session);
+        log.debug("[createMimeMessage] -");
         message.setFrom(new InternetAddress(data.from()));
+        log.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message. {}", data.from());
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(data.to()));
+        log.debug("[createMimeMessage] - Asignamos el 'to' al objeto Message. {}", data.to());
         message.setSubject(data.subject());
-        message.setText(data.body());
+        log.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message. {}", data.subject());
+        message.setContent(data.body(), "text/html; charset=utf-8");
+        log.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato html. {}", data.body());
         return message;
     }
 }

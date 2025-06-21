@@ -68,20 +68,26 @@ public final class EmailDemo {
         try {
             // Configuración del servidor SMTP
             Properties mailProps = cargarPropertiesSMTP();
+            log.info("Properties cargadas correctamente.");
 
             // Construcción de los datos del correo
             EmailData emailData = construirEmailData();
+            log.info("EmailData creado correctamente.");
 
             EmailRequestValidator.validarEmailRequest(mailProps, emailData);
+            log.info("Properties e EmailData validados correctamente.");
 
             // Creación del servicio de correo con la implementación de envío SMTP
             EmailSender emailSender = new EmailSenderImpl();
+            log.info("Creación del objeto EmailSender correctamente.");
+
             EmailService emailService = new EmailServiceImpl(emailSender);
+            log.info("Creación del objeto EmailService correctamente.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
-
             log.info("Correo enviado correctamente.");
+
             finalizar(FINAL_CORRECTO, 0);
 
         } catch (EmailServiceException e) {

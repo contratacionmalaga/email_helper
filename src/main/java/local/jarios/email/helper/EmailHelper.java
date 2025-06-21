@@ -1,5 +1,7 @@
 package local.jarios.email.helper;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Clase helper encargada de construir mensajes de correo electrónico HTML con estadísticas del procesamiento.
  * También genera el asunto del mensaje.
@@ -7,6 +9,7 @@ package local.jarios.email.helper;
  * @author Juan
  * @since 2025-02-28
  */
+@Slf4j
 public final class EmailHelper {
 
     /**
@@ -158,15 +161,14 @@ public final class EmailHelper {
     /**
      * Construye el cuerpo del correo electrónico de notificación de ejecución.
      *
-     * <p>Dependiendo del estado de {@code success}, se genera un cuerpo HTML con las estadísticas
+     * <p>Dependiendo del contenido proporcionado, se genera un cuerpo HTML con las estadísticas
      * de ejecución o con los detalles de la excepción.</p>
      *
-     * @param estadistica  matriz bidimensional con los datos de las estadísticas de ejecución
-     * @param excepcion    matriz con los detalles de la excepción en caso de error
-     * @param success      indica si la ejecución fue exitosa ({@code true}) o con errores ({@code false})
+     * @param filas matriz bidimensional con los datos de las filas a incluir en la tabla; cada fila es un array de Strings
+     * @param isExcepcion indica si las filas corresponden a una excepción (true) o a estadísticas (false)
      * @return el contenido HTML del cuerpo del correo; nunca {@code null}
      */
-    public static String getCuerpo(String[][] estadistica, String[] excepcion, boolean success) {
+    private static String construirCuerpo(String[][] filas, boolean isExcepcion) {
         StringBuilder cuerpo = new StringBuilder();
 
         // Cabecera HTML común
@@ -175,14 +177,14 @@ public final class EmailHelper {
                 .append(EmailHelper.getCabeceraBody("Estadísticas de la ejecución"))
                 .append(EmailHelper.getInicioTable());
 
-        // Contenido específico según el estado de success
-        if (success) {
-            for (String[] fila : estadistica) {
-                cuerpo.append(EmailHelper.getFila(fila[0], fila[1]));
+        if (isExcepcion) {
+            for (String[] fila : filas) {
+                // En excepciones solo se usa la primera columna y null para la segunda
+                cuerpo.append(getFila(fila[0], null));
             }
         } else {
-            for (String detalle : excepcion) {
-                cuerpo.append(getFila(detalle, null));
+            for (String[] fila : filas) {
+                cuerpo.append(EmailHelper.getFila(fila[0], fila[1]));
             }
         }
 
@@ -191,6 +193,33 @@ public final class EmailHelper {
                 .append(EmailHelper.getPieBody())
                 .append(EmailHelper.getPieHtml());
 
+        log.debug("[construirCuerpo] - Obtención de cuerpo a partir de {}", isExcepcion ? "excepción." : "estadística.");
         return cuerpo.toString();
     }
+
+    /**
+     * Construye el cuerpo del correo electrónico con las estadísticas de ejecución.
+     *
+     * @param estadistica matriz bidimensional con los datos de las estadísticas de ejecución
+     * @return el contenido HTML del cuerpo del correo con estadísticas; nunca {@code null}
+     */
+    public static String getCuerpoEstadistica(String[][] estadistica) {
+        return construirCuerpo(estadistica, false);
+    }
+
+    /**
+     * Construye el cuerpo del correo electrónico con los detalles de una excepción.
+     *
+     * @param excepcion array con los detalles de la excepción en caso de error
+     * @return el contenido HTML del cuerpo del correo con detalles de la excepción; nunca {@code null}
+     */
+    public static String getCuerpoExcepcion(String[] excepcion) {
+        // Convertimos el array unidimensional a bidimensional para reutilizar construirCuerpo
+        String[][] filas = new String[excepcion.length][1];
+        for (int i = 0; i < excepcion.length; i++) {
+            filas[i][0] = excepcion[i];
+        }
+        return construirCuerpo(filas, true);
+    }
+
 }
