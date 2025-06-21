@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
 
             // Envío del mensaje
             emailSender.send(session, message);
-            log.info("Correo enviado exitosamente a {}", data.to());
+            log.debug("Correo enviado exitosamente a {}", data.to());
 
         } catch (MessagingException e) {
             log.error("Error al enviar el correo electrónico. Error: {}", e.getMessage());
