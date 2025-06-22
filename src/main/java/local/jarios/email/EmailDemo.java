@@ -5,12 +5,14 @@ import local.jarios.email.api.EmailService;
 import local.jarios.email.api.EmailServiceImpl;
 import local.jarios.email.api.EmailSenderImpl;
 import local.jarios.email.exception.EmailException;
+import local.jarios.email.helper.ComunHelper;
 import local.jarios.email.helper.EmailHelper;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -99,9 +101,15 @@ public final class EmailDemo {
 
             finalizar(FINAL_CORRECTO, 0);
 
-        } catch (EmailException e) {
-            log.error("Error en el envío del correo: {}", e.getMessage(), e);
+        } catch (EmailException ex) {
+
+            log.error("Error en el envío del correo: {}", ex.getMessage(), ex);
             finalizar(FINAL_ERRONEO, 1);
+
+        } catch (UnknownHostException ex) {
+
+            finalizar(FINAL_ERRONEO, 1);
+
         }
     }
 
@@ -143,37 +151,47 @@ public final class EmailDemo {
      *
      * @return Objeto {@link EmailData} completamente inicializado.
      */
-    private static EmailData construirEmailData(boolean estadistica) {
+    private static EmailData construirEmailData(boolean estadistica) throws UnknownHostException {
         String from = "incidenciascontratacion@malaga.es";
         String to = "jarios@malaga.es";
 
-        String subject = EmailHelper.getAsunto("email_helper", "1.6.0", "localhost", true);
-        log.info("Creación del asunto asociado al correo: {}.", subject);
+        try {
+            String hostname = ComunHelper.getHostName();
+            String subject = EmailHelper.getAsunto("email_helper", "VERSION_PRUEBA", hostname, true);
+            log.info("Creación del asunto asociado al correo: {}.", subject);
 
-        String body;
+            String body;
 
-        if (estadistica) {
+            if (estadistica) {
 
-            String[][] datos = new String[2][2];
-            datos[0][0] = "Item [0]";
-            datos[0][1] = "Valor [0]";
-            datos[1][0] = "Item [1]";
-            datos[1][1] = "Valor [1]";
-            body = EmailHelper.getCuerpoEstadistica(datos);
+                String[][] datos = new String[2][2];
+                datos[0][0] = "Item [0]";
+                datos[0][1] = "Valor [0]";
+                datos[1][0] = "Item [1]";
+                datos[1][1] = "Valor [1]";
+                body = EmailHelper.getCuerpoEstadistica(datos);
 
-        } else {
+            } else {
 
-            String [] datos = new String[2];
-            datos[0] = "Item [0]";
-            datos[1] = "Item [1]";
-            body = EmailHelper.getCuerpoExcepcion(datos);
+                String[] datos = new String[2];
+                datos[0] = "Item [0]";
+                datos[1] = "Item [1]";
+                body = EmailHelper.getCuerpoExcepcion(datos);
+
+            }
+
+            log.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
+
+            return new EmailData(from, to, subject, body);
+
+        } catch (UnknownHostException ex) {
+
+            log.info(ex.getMessage());
+            throw new UnknownHostException(ex.getMessage());
 
         }
-
-        log.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
-
-        return new EmailData(from, to, subject, body);
     }
+
 
     /**
      * Finaliza la ejecución del programa, mostrando el mensaje de log correspondiente

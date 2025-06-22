@@ -33,15 +33,21 @@ public final class ComunHelper {
      * @return Nombre del host local.
      * @throws EmailException Si no se puede resolver el nombre del host.
      */
-    public static String getHostName() throws EmailException {
+    public static String getHostName() throws UnknownHostException {
         log.debug("[getHostName] -");
+
         try {
+
             String hostName = InetAddress.getLocalHost().getHostName();
             log.debug("[getHostName] - Nombre del host obtenido: {}", hostName);
             return hostName;
+
         } catch (UnknownHostException ex) {
-            log.error("[getHostName] - Error al obtener el nombre del host", ex);
-            throw new EmailException("[getHostName] - Error al obtener el nombre del host", ex);
+
+            String msg = String.format("[getHostName] - Error al obtener el nombre del host. Error: %s", ex.getMessage());
+            log.error(msg, ex);
+            throw new UnknownHostException(msg);
+
         }
     }
 
@@ -52,20 +58,27 @@ public final class ComunHelper {
      * @param fechaHora Marca temporal a formatear.
      * @return Fecha y hora formateadas como cadena.
      */
-    public static String getFechaHoraFormateada(Timestamp fechaHora) throws EmailException {
+    public static String getFechaHoraFormateada(Timestamp fechaHora) throws IllegalArgumentException {
         log.debug("[getFechaHoraFormateada] -");
-        String fechaFormateada = null;
+        String fechaFormateada;
+
         try {
+
             LocalDateTime fecha = (fechaHora != null) ? fechaHora.toLocalDateTime() : LocalDateTime.now();
             log.debug("[getFechaHoraFormateada] - Valor de fecha: {}", fecha);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constantes.FORMATO_FECHA);
             log.debug("[getFechaHoraFormateada] - Valor del formateador: {}", formatter);
             fechaFormateada = fecha.format(formatter);
             log.debug("[getFechaHoraFormateada] - Fecha formateada: {}", fechaFormateada);
+
         } catch (IllegalArgumentException ex) {
-            log.error("[getFechaHoraFormateada] - Error en el argumentos. Error: {}", ex.getMessage());
-            throw new EmailException("[getFechaHoraFormateada] - Error en el argumentos.", ex);
+
+            String msg = String.format("[getFechaHoraFormateada] - Error en el argumentos. Error: %s", ex.getMessage());
+            log.error(msg, ex);
+            throw new IllegalArgumentException(msg, ex);
+
         }
+
         return fechaFormateada;
     }
 }
