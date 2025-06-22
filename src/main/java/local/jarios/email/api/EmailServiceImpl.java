@@ -64,10 +64,18 @@ public class EmailServiceImpl implements EmailService {
             emailSender.send(session, message);
             log.debug("Correo enviado exitosamente a {}", data.to());
 
-        } catch (MessagingException e) {
+        } catch (MessagingException ex) {
 
-            log.error("Error al enviar el correo electrónico. Error: {}", e.getMessage());
-            throw new EmailServiceException("Error al enviar el correo electrónico", e);
+            String msg = String.format("Excepción en el envío del email. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
+            log.error(msg, ex);
+            throw new EmailServiceException(msg, ex);
+
+        } catch (RuntimeException ex) {
+
+            String msg = String.format("Excepción desconocida. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
+            log.error(msg, ex);
+            throw new EmailServiceException(msg, ex);
+
         }
     }
 

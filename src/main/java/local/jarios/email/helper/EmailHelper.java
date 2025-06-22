@@ -2,6 +2,8 @@ package local.jarios.email.helper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+
 /**
  * Clase helper encargada de construir mensajes de correo electrónico HTML con estadísticas del procesamiento.
  * También genera el asunto del mensaje.
@@ -171,21 +173,17 @@ public final class EmailHelper {
     private static String construirCuerpo(String[][] filas, boolean isExcepcion) {
         StringBuilder cuerpo = new StringBuilder();
 
+        String titulo = isExcepcion ? "Estadísticas de la ejecución" : "Errores durante la ejecución";
+
         // Cabecera HTML común
         cuerpo.append(EmailHelper.getCabeceraHtml())
                 .append(EmailHelper.getHead())
-                .append(EmailHelper.getCabeceraBody("Estadísticas de la ejecución"))
+                .append(EmailHelper.getCabeceraBody(titulo))
                 .append(EmailHelper.getInicioTable());
 
-        if (isExcepcion) {
-            for (String[] fila : filas) {
-                // En excepciones solo se usa la primera columna y null para la segunda
-                cuerpo.append(getFila(fila[0], null));
-            }
-        } else {
-            for (String[] fila : filas) {
-                cuerpo.append(EmailHelper.getFila(fila[0], fila[1]));
-            }
+        for (String[] fila : filas) {
+            // En excepciones solo se usa la primera columna y null para la segunda
+            cuerpo.append(getFila(fila[0], fila[1]));
         }
 
         // Pie de la tabla y del HTML
@@ -214,11 +212,14 @@ public final class EmailHelper {
      * @return el contenido HTML del cuerpo del correo con detalles de la excepción; nunca {@code null}
      */
     public static String getCuerpoExcepcion(String[] excepcion) {
+        log.debug("[getCuerpoExcepcion] - Vector Excepción: {}", Arrays.toString(excepcion));
         // Convertimos el array unidimensional a bidimensional para reutilizar construirCuerpo
-        String[][] filas = new String[excepcion.length][1];
+        String[][] filas = new String[excepcion.length][2];
+        log.debug("[getCuerpoExcepcion] - Creada matriz de tamañano: [{}x2]", excepcion.length);
         for (int i = 0; i < excepcion.length; i++) {
             filas[i][0] = "Traza del error";
             filas[i][1] = excepcion[i];
+            log.debug("[getCuerpoExcepcion] - Fila '{}' de la matriz: [{},{}]", i, filas[i][0], filas[i][1]);
         }
         return construirCuerpo(filas, true);
     }

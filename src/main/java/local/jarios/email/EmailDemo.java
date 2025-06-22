@@ -6,6 +6,7 @@ import local.jarios.email.api.EmailServiceImpl;
 import local.jarios.email.api.EmailSenderImpl;
 import local.jarios.email.exception.EmailServiceException;
 import local.jarios.email.helper.EmailHelper;
+import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +72,8 @@ public final class EmailDemo {
             log.info("Properties cargadas correctamente.");
 
             // Construcción de los datos del correo
-            EmailData emailData = construirEmailData();
-            log.info("EmailData creado correctamente.");
+            EmailData emailData = construirEmailData(true);
+            log.info("EmailData creado correctamente para estadísticas.");
 
             EmailRequestValidator.validarEmailRequest(mailProps, emailData);
             log.info("Properties e EmailData validados correctamente.");
@@ -83,6 +84,14 @@ public final class EmailDemo {
 
             EmailService emailService = new EmailServiceImpl(emailSender);
             log.info("Creación del objeto EmailService correctamente.");
+
+            // Envío del correo
+            emailService.sendEmail(mailProps, emailData);
+            log.info("Correo enviado correctamente.");
+
+            // Construcción de los datos del correo
+            emailData = construirEmailData(false);
+            log.info("EmailData creado correctamente para excecpción.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
@@ -134,23 +143,34 @@ public final class EmailDemo {
      *
      * @return Objeto {@link EmailData} completamente inicializado.
      */
-    private static EmailData construirEmailData() {
+    private static EmailData construirEmailData(boolean estadistica) {
         String from = "incidenciascontratacion@malaga.es";
         String to = "jarios@malaga.es";
 
         String subject = EmailHelper.getAsunto("email_helper", "1.6.0", "localhost", true);
         log.info("Creación del asunto asociado al correo: {}.", subject);
 
-        String body = EmailHelper.getCabeceraHtml()
-                + EmailHelper.getHead()
-                + EmailHelper.getCabeceraBody("Mensaje de prueba")
-                + EmailHelper.getInicioTable()
-                + EmailHelper.getFila("Key", "Value")
-                + EmailHelper.getPieTable()
-                + EmailHelper.getPieBody()
-                + EmailHelper.getPieHtml();
+        String body;
 
-        log.info("Cuerpo del correo generado correctamente.");
+        if (estadistica) {
+
+            String[][] datos = new String[2][2];
+            datos[0][0] = "Item [0]";
+            datos[0][1] = "Valor [0]";
+            datos[1][0] = "Item [1]";
+            datos[1][1] = "Valor [1]";
+            body = EmailHelper.getCuerpoEstadistica(datos);
+
+        } else {
+
+            String [] datos = new String[2];
+            datos[0] = "Item [0]";
+            datos[1] = "Item [1]";
+            body = EmailHelper.getCuerpoExcepcion(datos);
+
+        }
+
+        log.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
 
         return new EmailData(from, to, subject, body);
     }

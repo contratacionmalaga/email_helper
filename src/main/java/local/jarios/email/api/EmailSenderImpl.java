@@ -4,6 +4,8 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
+import local.jarios.email.exception.EmailServiceException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementación de {@link EmailSender} que utiliza el protocolo SMTP para enviar correos electrónicos.
@@ -13,6 +15,7 @@ import jakarta.mail.Transport;
  *
  * @since 1.0
  */
+@Slf4j
 public class EmailSenderImpl implements EmailSender {
 
     /**
@@ -30,11 +33,29 @@ public class EmailSenderImpl implements EmailSender {
      *
      * @param session La sesión SMTP que contiene las propiedades y la autenticación necesarias.
      * @param message El mensaje de correo electrónico a enviar.
-     * @throws MessagingException Si ocurre un error al enviar el mensaje.
+     * @throws EmailServiceException Si ocurre un error al enviar el mensaje.
      * @see Transport#send(Message)
      */
     @Override
-    public void send(Session session, Message message) throws MessagingException {
-        Transport.send(message);
+    public void send(Session session, Message message) throws EmailServiceException {
+        try {
+
+            Transport.send(message);
+            log.debug("[send] - Email enviado correctamente.");
+
+        } catch (MessagingException ex) {
+
+            String msg = String.format("Excepción en el envío del email. Sessión: %s. Message: %s", session, message);
+            log.error(msg, ex);
+            throw  new EmailServiceException(msg, ex);
+
+        } catch (RuntimeException ex) {
+
+            String msg = String.format("Excepción desconocida. Sessión: %s. Message: %s", session, message);
+            log.error(msg, ex);
+            throw  new EmailServiceException(msg, ex);
+
+        }
+
     }
 }
