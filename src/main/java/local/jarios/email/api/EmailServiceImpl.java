@@ -4,7 +4,7 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
@@ -41,10 +41,10 @@ public class EmailServiceImpl implements EmailService {
      *
      * @param props Propiedades de configuración del servidor SMTP.
      * @param data  Datos del correo electrónico a enviar.
-     * @throws EmailServiceException Si ocurre algún error durante el proceso de envío.
+     * @throws EmailException Si ocurre algún error durante el proceso de envío.
      */
     @Override
-    public void sendEmail(Properties props, EmailData data) throws EmailServiceException {
+    public void sendEmail(Properties props, EmailData data) throws EmailException {
 
         try {
 
@@ -68,13 +68,13 @@ public class EmailServiceImpl implements EmailService {
 
             String msg = String.format("Excepción en el envío del email. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
             log.error(msg, ex);
-            throw new EmailServiceException(msg, ex);
+            throw new EmailException(msg, ex);
 
         } catch (RuntimeException ex) {
 
             String msg = String.format("Excepción desconocida. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
             log.error(msg, ex);
-            throw new EmailServiceException(msg, ex);
+            throw new EmailException(msg, ex);
 
         }
     }

@@ -2,7 +2,7 @@ package local.jarios.email.api;
 
 import jakarta.mail.Message;
 import jakarta.mail.Session;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 
 /**
  * Interfaz que define el contrato para el envío de correos electrónicos.
@@ -22,8 +22,8 @@ public interface EmailSender {
      *
      * @param session La sesión SMTP que contiene las propiedades y la autenticación necesarias.
      * @param message El mensaje de correo electrónico a enviar.
-     * @throws EmailServiceException Si ocurre un error al enviar el mensaje.
+     * @throws EmailException Si ocurre un error al enviar el mensaje.
      * @see jakarta.mail.Transport#send(Message)
      */
-    void send(Session session, Message message) throws EmailServiceException;
+    void send(Session session, Message message) throws EmailException;
 }

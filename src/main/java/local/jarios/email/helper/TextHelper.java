@@ -1,6 +1,6 @@
 package local.jarios.email.helper;
 
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,7 +24,7 @@ public final class TextHelper {
      * Obtiene el nombre del equipo donde se está ejecutando la aplicación.
      *
      * @return Nombre del host local.
-     * @throws EmailServiceException Si no se puede resolver el nombre del host.
+     * @throws EmailException Si no se puede resolver el nombre del host.
      */
     public static String recortar(String cadena, int tamano) {
 

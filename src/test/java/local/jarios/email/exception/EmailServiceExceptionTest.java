@@ -9,7 +9,7 @@ class EmailServiceExceptionTest {
     @Test
     void testConstructorWithMessage() {
         String msg = "Error de envío";
-        EmailServiceException exception = new EmailServiceException(msg);
+        EmailException exception = new EmailException(msg);
 
         assertEquals(msg, exception.getMessage());
         assertNull(exception.getCause());
@@ -19,7 +19,7 @@ class EmailServiceExceptionTest {
     void testConstructorWithMessageAndCause() {
         String msg = "Error de conexión SMTP";
         Throwable cause = new RuntimeException("Timeout");
-        EmailServiceException exception = new EmailServiceException(msg, cause);
+        EmailException exception = new EmailException(msg, cause);
 
         assertEquals(msg, exception.getMessage());
         assertEquals(cause, exception.getCause());

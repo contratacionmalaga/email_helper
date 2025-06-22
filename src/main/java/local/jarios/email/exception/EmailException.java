@@ -19,14 +19,14 @@ package local.jarios.email.exception;
  * @author Juan
  * @since 13/06/2025
  */
-public class EmailServiceException extends RuntimeException {
+public class EmailException extends RuntimeException {
 
     /**
      * Crea una nueva excepción con un mensaje descriptivo.
      *
      * @param message descripción del error
      */
-    public EmailServiceException(String message) {
+    public EmailException(String message) {
         super(message);
     }
 
@@ -36,7 +36,7 @@ public class EmailServiceException extends RuntimeException {
      * @param message descripción del error
      * @param cause excepción que causó este error
      */
-    public EmailServiceException(String message, Throwable cause) {
+    public EmailException(String message, Throwable cause) {
         super(message, cause);
     }
 }

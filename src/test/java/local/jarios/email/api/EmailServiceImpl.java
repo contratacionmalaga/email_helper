@@ -2,7 +2,7 @@ package local.jarios.email.api;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import local.jarios.email.model.EmailData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ class EmailServiceImplTest {
         doThrow(new MessagingException("SMTP error")).when(emailSender).send(any(), any());
 
         // Act & Assert
-        EmailServiceException ex = assertThrows(EmailServiceException.class, () ->
+        EmailException ex = assertThrows(EmailException.class, () ->
                 emailService.sendEmail(props, data)
         );
         assertTrue(ex.getMessage().contains("Error al enviar"));
@@ -77,7 +77,7 @@ class EmailServiceImplTest {
         Properties props = new Properties(); // faltan propiedades obligatorias
 
         // Act & Assert
-        EmailServiceException ex = assertThrows(EmailServiceException.class, () ->
+        EmailException ex = assertThrows(EmailException.class, () ->
                 emailService.sendEmail(props, data)
         );
         assertTrue(ex.getMessage().contains("Falta propiedad obligatoria"));

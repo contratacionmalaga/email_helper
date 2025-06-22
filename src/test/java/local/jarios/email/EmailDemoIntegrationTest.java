@@ -2,7 +2,7 @@ package local.jarios.email;
 
 import local.jarios.email.api.EmailSender;
 import local.jarios.email.api.EmailServiceImpl;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import local.jarios.email.model.EmailData;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +52,7 @@ class EmailDemoIntegrationTest {
 
         EmailServiceImpl service = new EmailServiceImpl(mockSender);
 
-        EmailServiceException ex = assertThrows(EmailServiceException.class,
+        EmailException ex = assertThrows(EmailException.class,
                 () -> service.sendEmail(props, data));
 
         assertTrue(ex.getMessage().contains("Falta propiedad obligatoria"));
@@ -67,7 +67,7 @@ class EmailDemoIntegrationTest {
 
         EmailServiceImpl service = new EmailServiceImpl(mockSender);
 
-        EmailServiceException ex = assertThrows(EmailServiceException.class,
+        EmailException ex = assertThrows(EmailException.class,
                 () -> service.sendEmail(props, data));
 
         assertTrue(ex.getMessage().contains("Email 'from' inválido"));
@@ -82,7 +82,7 @@ class EmailDemoIntegrationTest {
 
         EmailServiceImpl service = new EmailServiceImpl(mockSender);
 
-        EmailServiceException ex = assertThrows(EmailServiceException.class,
+        EmailException ex = assertThrows(EmailException.class,
                 () -> service.sendEmail(props, data));
 
         assertTrue(ex.getMessage().contains("Email(s) 'to' inválidos"));
@@ -94,12 +94,12 @@ class EmailDemoIntegrationTest {
         EmailData data = buildValidEmail();
 
         EmailSender throwingSender = (s, m) -> {
-            throw new jakarta.mail.MessagingException("Simulando fallo SMTP");
+            throw new EmailException("Simulando fallo SMTP");
         };
 
         EmailServiceImpl service = new EmailServiceImpl(throwingSender);
 
-        EmailServiceException ex = assertThrows(EmailServiceException.class,
+        EmailException ex = assertThrows(EmailException.class,
                 () -> service.sendEmail(props, data));
 
         assertEquals("Error al enviar el correo electrónico", ex.getMessage());

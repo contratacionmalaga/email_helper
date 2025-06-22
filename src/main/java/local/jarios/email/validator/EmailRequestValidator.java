@@ -3,7 +3,7 @@ package local.jarios.email.validator;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import local.jarios.email.common.util.Constantes;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import lombok.extern.slf4j.Slf4j;
@@ -45,44 +45,44 @@ public final class EmailRequestValidator {
      *
      * @param props Propiedades del servidor SMTP.
      * @param data  Datos del correo electrónico (remitente, destinatario, asunto, cuerpo).
-     * @throws EmailServiceException si se detecta algún valor inválido o faltante.
+     * @throws EmailException si se detecta algún valor inválido o faltante.
      */
-    public static void validarEmailRequest(Properties props, EmailData data) throws EmailServiceException {
+    public static void validarEmailRequest(Properties props, EmailData data) throws EmailException {
         if (props == null) {
             log.debug("[validarEmailRequest] - Propiedades nulas.");
-            throw new EmailServiceException("Propiedades nulas");
+            throw new EmailException("Propiedades nulas");
         }
         if (data == null) {
             log.debug("[validarEmailRequest] - Email data nulo.");
-            throw new EmailServiceException("EmailData nulo");
+            throw new EmailException("EmailData nulo");
         }
 
         if (isBlank(data.from())) {
             log.debug("[validarEmailRequest] - Campo 'from' obligatorio en EmailData.");
-            throw new EmailServiceException("'from' es obligatorio");
+            throw new EmailException("'from' es obligatorio");
         }
         if (isBlank(data.to())) {
             log.debug("[validarEmailRequest] - Campo 'to' obligatorio en EmailData.");
-            throw new EmailServiceException("'to' es obligatorio");
+            throw new EmailException("'to' es obligatorio");
         }
         if (isBlank(data.subject())) {
             log.debug("[validarEmailRequest] - Campo 'subject' obligatorio en EmailData.");
-            throw new EmailServiceException("'subject' es obligatorio");
+            throw new EmailException("'subject' es obligatorio");
         }
         if (isBlank(TextHelper.recortar(data.body(), Constantes.TAMANO_MAXIMO))) {
             log.debug("[validarEmailRequest] - Campo 'body' obligatorio en EmailData.");
-            throw new EmailServiceException("'body' es obligatorio");
+            throw new EmailException("'body' es obligatorio");
         }
 
         if (isInvalidEmailRFC(data.from())) {
             log.debug("[validarEmailRequest] - Email 'from' inválido: {}", data.from());
-            throw new EmailServiceException("Email 'from' inválido: " + data.from());
+            throw new EmailException("Email 'from' inválido: " + data.from());
         }
 
         List<String> invalidTo = getInvalidEmailsRFC(data.to());
         if (!invalidTo.isEmpty()) {
             log.debug("[validarEmailRequest] - Email 'to' inválido: {}", invalidTo);
-            throw new EmailServiceException("Email(s) 'to' inválidos: " + invalidTo);
+            throw new EmailException("Email(s) 'to' inválidos: " + invalidTo);
         }
 
         // Validación de propiedades SMTP requeridas
@@ -100,15 +100,15 @@ public final class EmailRequestValidator {
      * @param props         Objeto de propiedades a validar.
      * @param clave         Clave de la propiedad a validar.
      * @param ocultar       Si es {@code true}, el valor no debe ser mostrado en logs por seguridad.
-     * @throws EmailServiceException si la propiedad no está presente.
+     * @throws EmailException si la propiedad no está presente.
      */
-    private static void validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailServiceException {
+    private static void validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailException {
         String valor = props.getProperty(clave);
         String valorLog = ocultar ? "******" : valor;
         log.debug("[validarPropiedad] - Valor de la clave '{}': {}", clave, valorLog);
         if ((valor == null) || (valor.isBlank())) {
             log.debug("[validarPropiedad] - Falta propiedad obligatoria '{}'.", clave);
-            throw new EmailServiceException("Falta propiedad obligatoria: " + clave);
+            throw new EmailException("Falta propiedad obligatoria: " + clave);
         }
         // Aquí se podría añadir logging condicional si fuera necesario
     }

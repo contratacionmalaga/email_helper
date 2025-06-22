@@ -1,7 +1,7 @@
 package local.jarios.email.helper;
 
 import local.jarios.email.common.util.Constantes;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -31,9 +31,9 @@ public final class ComunHelper {
      * Obtiene el nombre del equipo donde se está ejecutando la aplicación.
      *
      * @return Nombre del host local.
-     * @throws EmailServiceException Si no se puede resolver el nombre del host.
+     * @throws EmailException Si no se puede resolver el nombre del host.
      */
-    public static String getHostName() throws EmailServiceException {
+    public static String getHostName() throws EmailException {
         log.debug("[getHostName] -");
         try {
             String hostName = InetAddress.getLocalHost().getHostName();
@@ -41,7 +41,7 @@ public final class ComunHelper {
             return hostName;
         } catch (UnknownHostException ex) {
             log.error("[getHostName] - Error al obtener el nombre del host", ex);
-            throw new EmailServiceException("[getHostName] - Error al obtener el nombre del host", ex);
+            throw new EmailException("[getHostName] - Error al obtener el nombre del host", ex);
         }
     }
 
@@ -52,7 +52,7 @@ public final class ComunHelper {
      * @param fechaHora Marca temporal a formatear.
      * @return Fecha y hora formateadas como cadena.
      */
-    public static String getFechaHoraFormateada(Timestamp fechaHora) throws EmailServiceException{
+    public static String getFechaHoraFormateada(Timestamp fechaHora) throws EmailException {
         log.debug("[getFechaHoraFormateada] -");
         String fechaFormateada = null;
         try {
@@ -64,7 +64,7 @@ public final class ComunHelper {
             log.debug("[getFechaHoraFormateada] - Fecha formateada: {}", fechaFormateada);
         } catch (IllegalArgumentException ex) {
             log.error("[getFechaHoraFormateada] - Error en el argumentos. Error: {}", ex.getMessage());
-            throw new EmailServiceException("[getFechaHoraFormateada] - Error en el argumentos.", ex);
+            throw new EmailException("[getFechaHoraFormateada] - Error en el argumentos.", ex);
         }
         return fechaFormateada;
     }

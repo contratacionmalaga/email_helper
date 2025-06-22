@@ -1,6 +1,6 @@
 package local.jarios.email.validator;
 
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import local.jarios.email.model.EmailData;
 import org.junit.jupiter.api.Test;
 
@@ -28,27 +28,27 @@ class EmailRequestValidatorTest {
 
     @Test
     void shouldThrowWhenPropsIsNull() {
-        assertThrows(EmailServiceException.class, () ->
+        assertThrows(EmailException.class, () ->
                 EmailRequestValidator.validarEmailRequest(null, buildValidEmailData()));
     }
 
     @Test
     void shouldThrowWhenEmailDataIsNull() {
-        assertThrows(EmailServiceException.class, () ->
+        assertThrows(EmailException.class, () ->
                 EmailRequestValidator.validarEmailRequest(buildValidProperties(), null));
     }
 
     @Test
     void shouldThrowWhenFromIsBlank() {
         EmailData data = new EmailData("  ", "to@example.com", "sub", "body");
-        assertThrows(EmailServiceException.class, () ->
+        assertThrows(EmailException.class, () ->
                 EmailRequestValidator.validarEmailRequest(buildValidProperties(), data));
     }
 
     @Test
     void shouldThrowWhenToIsInvalid() {
         EmailData data = new EmailData("from@example.com", "invalid-email", "sub", "body");
-        assertThrows(EmailServiceException.class, () ->
+        assertThrows(EmailException.class, () ->
                 EmailRequestValidator.validarEmailRequest(buildValidProperties(), data));
     }
 
@@ -56,7 +56,7 @@ class EmailRequestValidatorTest {
     void shouldThrowWhenMissingSmtpProperty() {
         Properties props = buildValidProperties();
         props.remove(SMTP_PORT); // Remove a required property
-        assertThrows(EmailServiceException.class, () ->
+        assertThrows(EmailException.class, () ->
                 EmailRequestValidator.validarEmailRequest(props, buildValidEmailData()));
     }
 

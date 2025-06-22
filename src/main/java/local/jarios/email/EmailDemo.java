@@ -4,7 +4,7 @@ import local.jarios.email.api.EmailSender;
 import local.jarios.email.api.EmailService;
 import local.jarios.email.api.EmailServiceImpl;
 import local.jarios.email.api.EmailSenderImpl;
-import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.exception.EmailException;
 import local.jarios.email.helper.EmailHelper;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
@@ -99,7 +99,7 @@ public final class EmailDemo {
 
             finalizar(FINAL_CORRECTO, 0);
 
-        } catch (EmailServiceException e) {
+        } catch (EmailException e) {
             log.error("Error en el envío del correo: {}", e.getMessage(), e);
             finalizar(FINAL_ERRONEO, 1);
         }
