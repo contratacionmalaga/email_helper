@@ -7,6 +7,7 @@ import local.jarios.email.model.EmailData;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,7 +46,6 @@ public final class EmailRequestValidator {
      * @throws EmailServiceException si se detecta algún valor inválido o faltante.
      */
     public static void validarEmailRequest(Properties props, EmailData data) throws EmailServiceException {
-        log.debug("[validarEmailRequest] -");
         if (props == null) {
             log.debug("[validarEmailRequest] - Propiedades nulas.");
             throw new EmailServiceException("Propiedades nulas");
@@ -101,7 +101,6 @@ public final class EmailRequestValidator {
      * @throws EmailServiceException si la propiedad no está presente.
      */
     private static void validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailServiceException {
-        log.debug("[validarPropiedad] -");
         String valor = props.getProperty(clave);
         String valorLog = ocultar ? "******" : valor;
         log.debug("[validarPropiedad] - Valor de la clave '{}': {}", clave, valorLog);
@@ -119,7 +118,6 @@ public final class EmailRequestValidator {
      * @return {@code true} si es nula o vacía tras recortes, {@code false} en caso contrario.
      */
     private static boolean isBlank(String s) {
-        log.debug("[isBlank] -");
         boolean valor = s == null || s.trim().isEmpty();
         log.debug("[isBlank] - isBlanck '{}' - {}", s, valor);
         return valor;
@@ -133,14 +131,17 @@ public final class EmailRequestValidator {
      * @return Lista de correos inválidos según la validación RFC.
      */
     public static List<String> getInvalidEmailsRFC(String commaSeparatedEmails) {
-        log.debug("[getInvalidEmailsRFC] -");
+
         List<String> invalids = new ArrayList<>();
         String[] emails = commaSeparatedEmails.split(",");
-
+        log.debug("[getInvalidEmailsRFC] - Array de emails: {}", Arrays.toString(emails));
         for (String email : emails) {
+            log.debug("[getInvalidEmailsRFC] - Procesando el email: {}", email);
             String trimmed = email.trim();
+            log.debug("[getInvalidEmailsRFC] - Email sin espacios en blanco: {}", trimmed);
             if (!trimmed.isEmpty() && isInvalidEmailRFC(trimmed)) {
                 invalids.add(trimmed);
+                log.debug("[getInvalidEmailsRFC] - Email no valido: {}", email);
             }
         }
 
@@ -155,12 +156,14 @@ public final class EmailRequestValidator {
      * @return {@code true} si el correo es válido; {@code false} en caso contrario.
      */
     private static boolean isInvalidEmailRFC(String email) {
-        log.debug("[isInvalidEmailRFC] -");
+
         try {
             InternetAddress addr = new InternetAddress(email, true);
             addr.validate(); // lanza excepción si no es válido
+            log.debug("[isInvalidEmailRFC] - Cumple con el RFC de email: {}", email);
             return false;    // es válido, no está inválido
         } catch (AddressException e) {
+            log.debug("[isInvalidEmailRFC] - NO cumple con el RFC de email: {}", email);
             return true;     // inválido
         }
     }

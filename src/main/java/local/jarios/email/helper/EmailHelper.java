@@ -217,7 +217,8 @@ public final class EmailHelper {
         // Convertimos el array unidimensional a bidimensional para reutilizar construirCuerpo
         String[][] filas = new String[excepcion.length][1];
         for (int i = 0; i < excepcion.length; i++) {
-            filas[i][0] = excepcion[i];
+            filas[i][0] = "Traza del error";
+            filas[i][1] = excepcion[i];
         }
         return construirCuerpo(filas, true);
     }

@@ -104,7 +104,6 @@ public class EmailServiceImpl implements EmailService {
      */
     private Message createMimeMessage(Session session, EmailData data) throws MessagingException {
         Message message = new MimeMessage(session);
-        log.debug("[createMimeMessage] -");
         message.setFrom(new InternetAddress(data.from()));
         log.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message. {}", data.from());
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(data.to()));
