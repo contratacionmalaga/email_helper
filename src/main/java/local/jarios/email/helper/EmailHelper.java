@@ -156,8 +156,10 @@ public final class EmailHelper {
      */
     public static String getAsunto(String appName, String appVersion, String equipo, boolean success) {
         String status = success ? "Ejecución SIN ERRORES" : "Ejecución CON ERRORES";
-        return String.format("[%s-%s] - %s - %s - %s",
+        String asunto = String.format("[%s-%s] - %s - %s - %s",
                 appName, appVersion, equipo, status, ComunHelper.getFechaHoraFormateada(null));
+        log.debug("[getAsunto] - Asunto: {}", asunto);
+        return asunto;
     }
 
     /**
@@ -174,6 +176,7 @@ public final class EmailHelper {
         StringBuilder cuerpo = new StringBuilder();
 
         String titulo = isExcepcion ? "Estadísticas de la ejecución" : "Errores durante la ejecución";
+        log.debug("[construirCuerpo] - Titulo del email: {}", titulo);
 
         // Cabecera HTML común
         cuerpo.append(EmailHelper.getCabeceraHtml())
