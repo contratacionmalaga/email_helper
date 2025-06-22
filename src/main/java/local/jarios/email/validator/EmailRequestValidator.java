@@ -2,7 +2,9 @@ package local.jarios.email.validator;
 
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
+import local.jarios.email.common.util.Constantes;
 import local.jarios.email.exception.EmailServiceException;
+import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,7 +69,7 @@ public final class EmailRequestValidator {
             log.debug("[validarEmailRequest] - Campo 'subject' obligatorio en EmailData.");
             throw new EmailServiceException("'subject' es obligatorio");
         }
-        if (isBlank(data.body())) {
+        if (isBlank(TextHelper.recortar(data.body(), Constantes.TAMANO_MAXIMO))) {
             log.debug("[validarEmailRequest] - Campo 'body' obligatorio en EmailData.");
             throw new EmailServiceException("'body' es obligatorio");
         }

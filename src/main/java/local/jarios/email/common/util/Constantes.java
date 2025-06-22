@@ -76,23 +76,17 @@ public final class Constantes {
      */
     public static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 
-
-    /** Protocolo para realizar el envío */
-    public static final String PROTOCOL = "smtp";
-
     /** Clave por defecto */
     public static final String EMAIL_REGEX = "^[\\\\w.-]+@[\\\\w.-]+\\\\.[a-zA-Z]{2,}$";
-
-    /** Nombre sin extensión del fichero app.properties */
-    public static final Pattern EMAIL_PATTERN =Pattern.compile(EMAIL_REGEX);
 
     /** PATTERNS DE FECHA **/
     public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * Nombre de la propiedad que define el puerto del servidor SMTP.
+     * <p>Ejemplo: {@code 587} para TLS, {@code 465} para SSL.</p>
      */
-    public static final String SMTP_PROTOCOL = "smtp";
+    public static final int TAMANO_MAXIMO = 50;
 
     /**
      * Constructor privado para evitar instanciación.
