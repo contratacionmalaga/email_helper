@@ -1,7 +1,5 @@
 package local.jarios.email.common.util;
 
-import java.util.regex.Pattern;
-
 /**
  * Clase que contiene constantes generales utilizadas a lo largo de la aplicación.
  * <p>
@@ -75,9 +73,6 @@ public final class Constantes {
      * Nombre de la propiedad que define el puerto del servidor SMTP.
      */
     public static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
-
-    /** Clave por defecto */
-    public static final String EMAIL_REGEX = "^[\\\\w.-]+@[\\\\w.-]+\\\\.[a-zA-Z]{2,}$";
 
     /** PATTERNS DE FECHA **/
     public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
