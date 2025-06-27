@@ -148,8 +148,9 @@ public final class EmailDemo {
      * Utiliza utilidades de {@link EmailHelper} para construir el asunto y el cuerpo del mensaje
      * en formato HTML.
      * </p>
-     *
+     * @param estadistica indica si muestra un informe de estadística o de error
      * @return Objeto {@link EmailData} completamente inicializado.
+     * @throws UnknownHostException excepción
      */
     private static EmailData construirEmailData(boolean estadistica) throws UnknownHostException {
         String from = "incidenciascontratacion@malaga.es";

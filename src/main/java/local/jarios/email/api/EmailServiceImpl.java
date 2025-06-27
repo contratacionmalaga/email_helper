@@ -62,17 +62,17 @@ public class EmailServiceImpl implements EmailService {
 
             // Envío del mensaje
             emailSender.send(session, message);
-            log.debug("Correo enviado exitosamente a {}", data.to());
+            log.debug("[sendEmail] - Correo enviado exitosamente a {}", data.to());
 
         } catch (MessagingException ex) {
 
-            String msg = String.format("Excepción en el envío del email. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
+            String msg = String.format("[sendEmail] - Excepción en el envío del email. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
             log.error(msg, ex);
             throw new EmailException(msg, ex);
 
         } catch (RuntimeException ex) {
 
-            String msg = String.format("Excepción desconocida. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
+            String msg = String.format("[sendEmail] - Excepción desconocida. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
             log.error(msg, ex);
             throw new EmailException(msg, ex);
 
@@ -119,7 +119,7 @@ public class EmailServiceImpl implements EmailService {
         message.setSubject(data.subject());
         log.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message.");
         message.setContent(data.body(), "text/html; charset=utf-8");
-        log.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato html.");
+        log.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato HTML y UTF-8.");
         return message;
     }
 }

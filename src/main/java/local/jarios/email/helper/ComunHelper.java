@@ -1,7 +1,6 @@
 package local.jarios.email.helper;
 
 import local.jarios.email.common.util.Constantes;
-import local.jarios.email.exception.EmailException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -31,10 +30,9 @@ public final class ComunHelper {
      * Obtiene el nombre del equipo donde se está ejecutando la aplicación.
      *
      * @return Nombre del host local.
-     * @throws EmailException Si no se puede resolver el nombre del host.
+     * @throws UnknownHostException Si no se puede resolver el nombre del host.
      */
     public static String getHostName() throws UnknownHostException {
-        log.debug("[getHostName] -");
 
         try {
 
@@ -59,7 +57,7 @@ public final class ComunHelper {
      * @return Fecha y hora formateadas como cadena.
      */
     public static String getFechaHoraFormateada(Timestamp fechaHora) throws IllegalArgumentException {
-        log.debug("[getFechaHoraFormateada] -");
+
         String fechaFormateada;
 
         try {

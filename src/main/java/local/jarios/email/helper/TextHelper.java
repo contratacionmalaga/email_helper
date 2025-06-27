@@ -23,6 +23,8 @@ public final class TextHelper {
     /**
      * Obtiene el nombre del equipo donde se está ejecutando la aplicación.
      *
+     * @param cadena String a recortar
+     * @param tamano Entero con el valor a recortar
      * @return Nombre del host local.
      * @throws EmailException Si no se puede resolver el nombre del host.
      */

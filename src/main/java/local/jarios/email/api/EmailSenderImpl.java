@@ -45,13 +45,13 @@ public class EmailSenderImpl implements EmailSender {
 
         } catch (MessagingException ex) {
 
-            String msg = String.format("Excepción en el envío del email. Sessión: %s. Message: %s", session, message);
+            String msg = String.format("[send] - Excepción en el envío del email. Sessión: %s. Message: %s", session, message);
             log.error(msg, ex);
             throw  new EmailException(msg, ex);
 
         } catch (RuntimeException ex) {
 
-            String msg = String.format("Excepción desconocida. Sessión: %s. Message: %s", session, message);
+            String msg = String.format("[send] - Excepción desconocida. Sessión: %s. Message: %s", session, message);
             log.error(msg, ex);
             throw  new EmailException(msg, ex);
 
