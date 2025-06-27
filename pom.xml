@@ -276,7 +276,7 @@
             </activation>
             <properties>
                 <!-- Aquí defines manualmente la versión limpia -->
-                <version.trimmed>2.5.1</version.trimmed>
+                <version.trimmed>2.5.2</version.trimmed>
             </properties>
         </profile>
     </profiles>
