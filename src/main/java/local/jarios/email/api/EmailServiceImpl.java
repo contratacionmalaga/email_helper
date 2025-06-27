@@ -54,7 +54,7 @@ public class EmailServiceImpl implements EmailService {
 
             // Configuración de la sesión de correo
             Session session = createSession(props);
-            log.debug("[sendEmail] - Creada sesión con la Properties.");
+            log.debug("[sendEmail] - Creado el objeto Session correctamente con Properties.");
 
             // Creación del mensaje MIME
             Message message = createMimeMessage(session, data);
@@ -113,13 +113,13 @@ public class EmailServiceImpl implements EmailService {
     private Message createMimeMessage(Session session, EmailData data) throws MessagingException {
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(data.from()));
-        log.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message. {}", data.from());
+        log.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message: {}", data.from());
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(data.to()));
-        log.debug("[createMimeMessage] - Asignamos el 'to' al objeto Message. {}", data.to());
+        log.debug("[createMimeMessage] - Asignamos el 'to' al objeto Message: {}", data.to());
         message.setSubject(data.subject());
-        log.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message. {}", data.subject());
+        log.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message.");
         message.setContent(data.body(), "text/html; charset=utf-8");
-        log.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato html. {}", data.body());
+        log.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato html.");
         return message;
     }
 }
