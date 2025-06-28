@@ -1,7 +1,6 @@
 package local.jarios.email.helper;
 
 import local.jarios.email.exception.EmailException;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Clase auxiliar con métodos comunes y utilidades generales.
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Juan Antonio
  */
-@Slf4j
 public final class TextHelper {
 
     /**

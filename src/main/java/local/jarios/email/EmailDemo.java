@@ -4,13 +4,17 @@ import local.jarios.email.api.EmailSender;
 import local.jarios.email.api.EmailService;
 import local.jarios.email.api.EmailServiceImpl;
 import local.jarios.email.api.EmailSenderImpl;
+import local.jarios.email.common.util.Mensajes;
+import local.jarios.email.enums.TipoFinalEjecucion;
 import local.jarios.email.exception.EmailException;
 import local.jarios.email.helper.ComunHelper;
 import local.jarios.email.helper.EmailHelper;
+import local.jarios.email.helper.FinalDelProgramaHelper;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -33,20 +37,13 @@ import static local.jarios.email.common.util.Constantes.*;
  * @author Juan
  * @version 1.0
  */
-@Slf4j
 public final class EmailDemo {
 
-    /** Mensaje de log al inicio de la ejecución del programa. */
-    private static final String INICIO = "**** Inicio del log";
+    /**
+     * LOGGER del componente
+     */
+    private static final Logger LOGGER = LogManager.getLogger("local.jarios.email");
 
-    /** Mensaje de log al final de la ejecución del programa. */
-    private static final String FINAL = "**** Final del log";
-
-    /** Mensaje de log cuando la ejecución termina con error. */
-    private static final String FINAL_ERRONEO = "Error";
-
-    /** Mensaje de log cuando la ejecución finaliza correctamente. */
-    private static final String FINAL_CORRECTO = "La ejecución del aplicativo ha finalizado correctamente";
 
     /**
      * Constructor privado para evitar la instanciación de esta clase de utilidad.
@@ -66,49 +63,52 @@ public final class EmailDemo {
      */
     public static void main(String[] args) {
 
-        log.info(INICIO);
+        LOGGER.info(Mensajes.INICIO);
 
         try {
             // Configuración del servidor SMTP
             Properties mailProps = cargarPropertiesSMTP();
-            log.info("Properties cargadas correctamente.");
+            LOGGER.info("Properties cargadas correctamente.");
 
             // Construcción de los datos del correo
             EmailData emailData = construirEmailData(true);
-            log.info("EmailData creado correctamente para estadísticas.");
+            LOGGER.info("EmailData creado correctamente para estadísticas.");
 
             EmailRequestValidator.validarEmailRequest(mailProps, emailData);
-            log.info("Properties e EmailData validados correctamente.");
+            LOGGER.info("Properties e EmailData validados correctamente.");
 
             // Creación del servicio de correo con la implementación de envío SMTP
             EmailSender emailSender = new EmailSenderImpl();
-            log.info("Creación del objeto EmailSender correctamente.");
+            LOGGER.info("Creación del objeto EmailSender correctamente.");
 
             EmailService emailService = new EmailServiceImpl(emailSender);
-            log.info("Creación del objeto EmailService correctamente.");
+            LOGGER.info("Creación del objeto EmailService correctamente.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
-            log.info("Correo enviado correctamente.");
+            LOGGER.info("Correo enviado correctamente.");
 
             // Construcción de los datos del correo
             emailData = construirEmailData(false);
-            log.info("EmailData creado correctamente para excecpción.");
+            LOGGER.info("EmailData creado correctamente para excecpción.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
-            log.info("Correo enviado correctamente.");
+            LOGGER.info("Correo enviado correctamente.");
 
-            finalizar(FINAL_CORRECTO, 0);
+            FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.CORRECTO);
 
         } catch (EmailException ex) {
 
-            log.error("Error en el envío del correo: {}", ex.getMessage(), ex);
-            finalizar(FINAL_ERRONEO, 1);
+            LOGGER.error("Error en el envío del correo: {}", ex.getMessage(), ex);
+            FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.ERROR);
+
 
         } catch (UnknownHostException ex) {
 
-            finalizar(FINAL_ERRONEO, 1);
+            LOGGER.error("Error al obtener el nombre del host: {}", ex.getMessage(), ex);
+            FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.ERROR);
+
 
         }
     }
@@ -136,7 +136,7 @@ public final class EmailDemo {
 
         propMap.forEach((clave, valor) -> {
             props.setProperty(clave, valor);
-            log.info("Asignación de propiedad '{}' correctamente.", clave);
+            LOGGER.info("Asignación de propiedad '{}' correctamente.", clave);
         });
 
         return props;
@@ -159,7 +159,7 @@ public final class EmailDemo {
         try {
             String hostname = ComunHelper.getHostName();
             String subject = EmailHelper.getAsunto("email_helper", "VERSION_PRUEBA", hostname, true);
-            log.info("Creación del asunto asociado al correo: {}.", subject);
+            LOGGER.info("Creación del asunto asociado al correo: {}.", subject);
 
             String body;
 
@@ -181,39 +181,14 @@ public final class EmailDemo {
 
             }
 
-            log.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
+            LOGGER.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
 
             return new EmailData(from, to, subject, body);
 
         } catch (UnknownHostException ex) {
 
-            log.info(ex.getMessage());
+            LOGGER.info(ex.getMessage());
             throw new UnknownHostException(ex.getMessage());
-
         }
-    }
-
-
-    /**
-     * Finaliza la ejecución del programa, mostrando el mensaje de log correspondiente
-     * y realizando una salida del sistema con el código indicado.
-     *
-     * @param mensaje  Mensaje a registrar en el log.
-     * @param exitCode Código de salida para {@code System.exit}.
-     *                 <ul>
-     *                   <li>{@code 0}: Ejecución correcta</li>
-     *                   <li>{@code 1}: Error general</li>
-     *                   <li>Otros valores: definidos por el usuario</li>
-     *                 </ul>
-     */
-    private static void finalizar(String mensaje, int exitCode) {
-        if (exitCode == 0) {
-            log.info(mensaje);
-        } else {
-            log.error("{} (Código de salida: {})", mensaje, exitCode);
-        }
-
-        log.info(FINAL);
-        System.exit(exitCode);
     }
 }

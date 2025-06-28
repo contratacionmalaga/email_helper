@@ -1,6 +1,7 @@
 package local.jarios.email.helper;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -11,8 +12,10 @@ import java.util.Arrays;
  * @author Juan
  * @since 2025-02-28
  */
-@Slf4j
 public final class EmailHelper {
+
+    /** LOGGER asociado al componente. */
+    private static final Logger LOGGER = LogManager.getLogger("local.jarios.email");
 
     /**
      * Constructor privado para evitar la instanciación de la clase utilitaria {@code MiMailHelper}.
@@ -158,7 +161,7 @@ public final class EmailHelper {
         String status = success ? "Ejecución SIN ERRORES" : "Ejecución CON ERRORES";
         String asunto = String.format("[%s-%s] - %s - %s - %s",
                 appName, appVersion, equipo, status, ComunHelper.getFechaHoraFormateada(null));
-        log.debug("[getAsunto] - Asunto: {}", asunto);
+        LOGGER.debug("[getAsunto] - Asunto: {}", asunto);
         return asunto;
     }
 
@@ -176,7 +179,7 @@ public final class EmailHelper {
         StringBuilder cuerpo = new StringBuilder();
 
         String titulo = isExcepcion ? "Estadísticas de la ejecución" : "Errores durante la ejecución";
-        log.debug("[construirCuerpo] - Titulo del email: {}", titulo);
+        LOGGER.debug("[construirCuerpo] - Titulo del email: {}", titulo);
 
         // Cabecera HTML común
         cuerpo.append(EmailHelper.getCabeceraHtml())
@@ -194,7 +197,7 @@ public final class EmailHelper {
                 .append(EmailHelper.getPieBody())
                 .append(EmailHelper.getPieHtml());
 
-        log.debug("[construirCuerpo] - Obtención de cuerpo a partir de {}", isExcepcion ? "excepción." : "estadística.");
+        LOGGER.debug("[construirCuerpo] - Obtención de cuerpo a partir de {}", isExcepcion ? "excepción." : "estadística.");
         return cuerpo.toString();
     }
 
@@ -215,14 +218,14 @@ public final class EmailHelper {
      * @return el contenido HTML del cuerpo del correo con detalles de la excepción; nunca {@code null}
      */
     public static String getCuerpoExcepcion(String[] excepcion) {
-        log.debug("[getCuerpoExcepcion] - Vector Excepción: {}", Arrays.toString(excepcion));
+        LOGGER.debug("[getCuerpoExcepcion] - Vector Excepción: {}", Arrays.toString(excepcion));
         // Convertimos el array unidimensional a bidimensional para reutilizar construirCuerpo
         String[][] filas = new String[excepcion.length][2];
-        log.debug("[getCuerpoExcepcion] - Creada matriz de tamañano: [{}x2]", excepcion.length);
+        LOGGER.debug("[getCuerpoExcepcion] - Creada matriz de tamañano: [{}x2]", excepcion.length);
         for (int i = 0; i < excepcion.length; i++) {
             filas[i][0] = "Traza del error";
             filas[i][1] = excepcion[i];
-            log.debug("[getCuerpoExcepcion] - Fila '{}' de la matriz: [{},{}]", i, filas[i][0], filas[i][1]);
+            LOGGER.debug("[getCuerpoExcepcion] - Fila '{}' de la matriz: [{},{}]", i, filas[i][0], filas[i][1]);
         }
         return construirCuerpo(filas, true);
     }
