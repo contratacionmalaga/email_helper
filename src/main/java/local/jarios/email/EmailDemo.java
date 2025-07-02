@@ -66,6 +66,7 @@ public final class EmailDemo {
         LOGGER.info(Mensajes.INICIO);
 
         try {
+
             // Configuración del servidor SMTP
             Properties mailProps = cargarPropertiesSMTP();
             LOGGER.info("Properties cargadas correctamente.");
@@ -98,17 +99,9 @@ public final class EmailDemo {
 
             FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.CORRECTO);
 
-        } catch (EmailException ex) {
+        } catch (EmailException | UnknownHostException ex) {
 
-            LOGGER.error("Error en el envío del correo: {}", ex.getMessage(), ex);
             FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.ERROR);
-
-
-        } catch (UnknownHostException ex) {
-
-            LOGGER.error("Error al obtener el nombre del host: {}", ex.getMessage(), ex);
-            FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.ERROR);
-
 
         }
     }
@@ -119,6 +112,7 @@ public final class EmailDemo {
      * @return {@link Properties} con los parámetros necesarios para la autenticación y conexión.
      */
     private static Properties cargarPropertiesSMTP() {
+
         Properties props = new Properties();
 
         Map<String, String> propMap = Map.of(

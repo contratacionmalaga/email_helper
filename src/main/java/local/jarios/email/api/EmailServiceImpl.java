@@ -67,12 +67,6 @@ public class EmailServiceImpl implements EmailService {
             emailSender.send(session, message);
             LOGGER.debug("[sendEmail] - Correo enviado exitosamente a {}", data.to());
 
-        } catch (MessagingException ex) {
-
-            String msg = String.format("[sendEmail] - Excepción en el envío del email. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
-            LOGGER.error(msg, ex);
-            throw new EmailException(msg, ex);
-
         } catch (RuntimeException ex) {
 
             String msg = String.format("[sendEmail] - Excepción desconocida. Error: %s; Properties: %s; EmailData: %s", ex.getMessage(), props, data);
@@ -111,18 +105,30 @@ public class EmailServiceImpl implements EmailService {
      * @param session Instancia de {@link Session} configurada.
      * @param data    Datos del correo electrónico a enviar.
      * @return Instancia de {@link Message} configurada.
-     * @throws MessagingException Si ocurre un error al crear el mensaje.
+     * @throws EmailException Si ocurre un error al crear el mensaje.
      */
-    private Message createMimeMessage(Session session, EmailData data) throws MessagingException {
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(data.from()));
-        LOGGER.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message: {}", data.from());
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(data.to()));
-        LOGGER.debug("[createMimeMessage] - Asignamos el 'to' al objeto Message: {}", data.to());
-        message.setSubject(data.subject());
-        LOGGER.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message.");
-        message.setContent(data.body(), "text/html; charset=utf-8");
-        LOGGER.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato HTML y UTF-8.");
-        return message;
+    private Message createMimeMessage(Session session, EmailData data) throws EmailException {
+
+        //
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(data.from()));
+            LOGGER.debug("[createMimeMessage] - Asignamos el 'from' al objeto Message: {}", data.from());
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(data.to()));
+            LOGGER.debug("[createMimeMessage] - Asignamos el 'to' al objeto Message: {}", data.to());
+            message.setSubject(data.subject());
+            LOGGER.debug("[createMimeMessage] - Asignamos el 'subject' al objeto Message.");
+            message.setContent(data.body(), "text/html; charset=utf-8");
+            LOGGER.debug("[createMimeMessage] - Asignamos el 'body' al objeto Message con formato HTML y UTF-8.");
+            return message;
+
+        }  catch (MessagingException ex) {
+
+            String msg = String.format("[createMimeMessage] - Excepción AddressExcepction | MessagngException. Error: %s; EmailData: %s", ex.getMessage(), data);
+            LOGGER.error(msg, ex);
+            throw new EmailException(msg, ex);
+
+        }
     }
 }
