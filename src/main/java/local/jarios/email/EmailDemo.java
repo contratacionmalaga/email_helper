@@ -150,39 +150,33 @@ public final class EmailDemo {
         String from = "incidenciascontratacion@malaga.es";
         String to = "jarios@malaga.es";
 
-        try {
-            String hostname = ComunHelper.getHostName();
-            String subject = EmailHelper.getAsunto("email_helper", "VERSION_PRUEBA", hostname, true);
-            LOGGER.info("Creación del asunto asociado al correo: {}.", subject);
+        String hostname = ComunHelper.getHostName();
+        String subject = EmailHelper.getAsunto("email_helper", "VERSION_PRUEBA", hostname, true);
+        LOGGER.info("Creación del asunto asociado al correo: {}.", subject);
 
-            String body;
+        String body;
 
-            if (estadistica) {
+        if (estadistica) {
 
-                String[][] datos = new String[2][2];
-                datos[0][0] = "Item [0]";
-                datos[0][1] = "Valor [0]";
-                datos[1][0] = "Item [1]";
-                datos[1][1] = "Valor [1]";
-                body = EmailHelper.getCuerpoEstadistica(datos);
+            String[][] datos = new String[2][2];
+            datos[0][0] = "Item [0]";
+            datos[0][1] = "Valor [0]";
+            datos[1][0] = "Item [1]";
+            datos[1][1] = "Valor [1]";
+            body = EmailHelper.getCuerpoEstadistica(datos);
 
-            } else {
+        } else {
 
-                String[] datos = new String[2];
-                datos[0] = "Item [0]";
-                datos[1] = "Item [1]";
-                body = EmailHelper.getCuerpoExcepcion(datos);
+            String[] datos = new String[2];
+            datos[0] = "Item [0]";
+            datos[1] = "Item [1]";
+            body = EmailHelper.getCuerpoExcepcion(datos);
 
-            }
-
-            LOGGER.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
-
-            return new EmailData(from, to, subject, body);
-
-        } catch (UnknownHostException ex) {
-
-            LOGGER.info(ex.getMessage());
-            throw new UnknownHostException(ex.getMessage());
         }
+
+        LOGGER.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
+
+        return new EmailData(from, to, subject, body);
+
     }
 }
