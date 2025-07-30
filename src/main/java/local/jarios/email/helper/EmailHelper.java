@@ -178,7 +178,7 @@ public final class EmailHelper {
     private static String construirCuerpo(String[][] filas, boolean isExcepcion) {
         StringBuilder cuerpo = new StringBuilder();
 
-        String titulo = isExcepcion ? "Estadísticas de la ejecución" : "Errores durante la ejecución";
+        String titulo = isExcepcion ? "Errores durante la ejecución" : "Estadísticas de la ejecución";
         LOGGER.debug("[construirCuerpo] - Titulo del email: {}", titulo);
 
         // Cabecera HTML común
