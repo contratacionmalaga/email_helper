@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>local.jarios</groupId>
     <artifactId>email_helper</artifactId>
-    <version>3.3.0.-SNAPSHOT</version>
+    <version>3.5.0</version>
     <packaging>jar</packaging>
 
     <name>email_helper</name>
@@ -38,8 +38,9 @@
         <exec.mainClass>local.jarios.EmailDemo</exec.mainClass>
 
         <!-- Centralización de versiones -->
+        <!-- LOGS -->
+        <logback.version>1.5.23</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j.version>2.25.3</log4j.version>
         <lombok.version>1.18.42</lombok.version>
         <junit.version>6.1.0-M1</junit.version>
         <assertj.version>4.0.0-M1</assertj.version>
@@ -58,6 +59,20 @@
 
     <dependencies>
 
+        <!-- Logback Classic: Implementación principal -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version> <!-- Usa la versión más reciente disponible -->
+        </dependency>
+
+        <!-- Logback Core: Necesario para el funcionamiento -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version> <!-- Usa la versión más reciente disponible -->
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,25 +86,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-
-        <!-- Framework para la gestión de los logs con Log4j -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->

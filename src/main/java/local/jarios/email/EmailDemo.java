@@ -13,8 +13,7 @@ import local.jarios.email.helper.FinalDelProgramaHelper;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -37,12 +36,8 @@ import static local.jarios.email.common.util.Constantes.*;
  * @author Juan
  * @version 1.0
  */
+@Slf4j
 public final class EmailDemo {
-
-    /**
-     * LOGGER del componente
-     */
-    private static final Logger LOGGER = LogManager.getLogger("local.jarios.email");
 
 
     /**
@@ -63,39 +58,39 @@ public final class EmailDemo {
      */
     public static void main(String[] args) {
 
-        LOGGER.info(Mensajes.INICIO);
+        log.info(Mensajes.INICIO);
 
         try {
 
             // Configuración del servidor SMTP
             Properties mailProps = cargarPropertiesSMTP();
-            LOGGER.info("Properties cargadas correctamente.");
+            log.info("Properties cargadas correctamente.");
 
             // Construcción de los datos del correo
             EmailData emailData = construirEmailData(true);
-            LOGGER.info("EmailData creado correctamente para estadísticas.");
+            log.info("EmailData creado correctamente para estadísticas.");
 
             EmailRequestValidator.validarEmailRequest(mailProps, emailData);
-            LOGGER.info("Properties e EmailData validados correctamente.");
+            log.info("Properties e EmailData validados correctamente.");
 
             // Creación del servicio de correo con la implementación de envío SMTP
             EmailSender emailSender = new EmailSenderImpl();
-            LOGGER.info("Creación del objeto EmailSender correctamente.");
+            log.info("Creación del objeto EmailSender correctamente.");
 
             EmailService emailService = new EmailServiceImpl(emailSender);
-            LOGGER.info("Creación del objeto EmailService correctamente.");
+            log.info("Creación del objeto EmailService correctamente.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
-            LOGGER.info("Correo enviado correctamente.");
+            log.info("Correo enviado correctamente.");
 
             // Construcción de los datos del correo
             emailData = construirEmailData(false);
-            LOGGER.info("EmailData creado correctamente para excecpción.");
+            log.info("EmailData creado correctamente para excecpción.");
 
             // Envío del correo
             emailService.sendEmail(mailProps, emailData);
-            LOGGER.info("Correo enviado correctamente.");
+            log.info("Correo enviado correctamente.");
 
             FinalDelProgramaHelper.finalizar(TipoFinalEjecucion.CORRECTO);
 
@@ -130,7 +125,7 @@ public final class EmailDemo {
 
         propMap.forEach((clave, valor) -> {
             props.setProperty(clave, valor);
-            LOGGER.info("Asignación de propiedad '{}' correctamente.", clave);
+            log.info("Asignación de propiedad '{}' correctamente.", clave);
         });
 
         return props;
@@ -152,7 +147,7 @@ public final class EmailDemo {
 
         String hostname = ComunHelper.getHostName();
         String subject = EmailHelper.getAsunto("email_helper", "VERSION_PRUEBA", hostname, true);
-        LOGGER.info("Creación del asunto asociado al correo: {}.", subject);
+        log.info("Creación del asunto asociado al correo: {}.", subject);
 
         String body;
 
@@ -174,7 +169,7 @@ public final class EmailDemo {
 
         }
 
-        LOGGER.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
+        log.info("Cuerpo del correo generado correctamente. Body: {}", TextHelper.recortar(body, TAMANO_MAXIMO));
 
         return new EmailData(from, to, subject, body);
 

@@ -6,8 +6,7 @@ import local.jarios.email.common.util.Constantes;
 import local.jarios.email.exception.EmailException;
 import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,10 +30,8 @@ import static local.jarios.email.common.util.Constantes.*;
  * @author Juan
  * @since 1.0
  */
+@Slf4j
 public final class EmailRequestValidator {
-    
-    /** LOGGER asociado al componente. */
-    private static final Logger LOGGER = LogManager.getLogger("local.jarios.email");
     
     /**
      * Constructor privado para evitar instanciación.
@@ -52,39 +49,39 @@ public final class EmailRequestValidator {
      */
     public static void validarEmailRequest(Properties props, EmailData data) throws EmailException {
         if (props == null) {
-            LOGGER.debug("[validarEmailRequest] - Propiedades nulas.");
+            log.debug("[validarEmailRequest] - Propiedades nulas.");
             throw new EmailException("Propiedades nulas");
         }
         if (data == null) {
-            LOGGER.debug("[validarEmailRequest] - Email data nulo.");
+            log.debug("[validarEmailRequest] - Email data nulo.");
             throw new EmailException("EmailData nulo");
         }
 
         if (isBlank(data.from())) {
-            LOGGER.debug("[validarEmailRequest] - Campo 'from' obligatorio en EmailData.");
+            log.debug("[validarEmailRequest] - Campo 'from' obligatorio en EmailData.");
             throw new EmailException("'from' es obligatorio");
         }
         if (isBlank(data.to())) {
-            LOGGER.debug("[validarEmailRequest] - Campo 'to' obligatorio en EmailData.");
+            log.debug("[validarEmailRequest] - Campo 'to' obligatorio en EmailData.");
             throw new EmailException("'to' es obligatorio");
         }
         if (isBlank(data.subject())) {
-            LOGGER.debug("[validarEmailRequest] - Campo 'subject' obligatorio en EmailData.");
+            log.debug("[validarEmailRequest] - Campo 'subject' obligatorio en EmailData.");
             throw new EmailException("'subject' es obligatorio");
         }
         if (isBlank(TextHelper.recortar(data.body(), Constantes.TAMANO_MAXIMO))) {
-            LOGGER.debug("[validarEmailRequest] - Campo 'body' obligatorio en EmailData.");
+            log.debug("[validarEmailRequest] - Campo 'body' obligatorio en EmailData.");
             throw new EmailException("'body' es obligatorio");
         }
 
         if (isInvalidEmailRFC(data.from())) {
-            LOGGER.debug("[validarEmailRequest] - Email 'from' inválido: {}", data.from());
+            log.debug("[validarEmailRequest] - Email 'from' inválido: {}", data.from());
             throw new EmailException("Email 'from' inválido: " + data.from());
         }
 
         List<String> invalidTo = getInvalidEmailsRFC(data.to());
         if (!invalidTo.isEmpty()) {
-            LOGGER.debug("[validarEmailRequest] - Email 'to' inválido: {}", invalidTo);
+            log.debug("[validarEmailRequest] - Email 'to' inválido: {}", invalidTo);
             throw new EmailException("Email(s) 'to' inválidos: " + invalidTo);
         }
 
@@ -108,9 +105,9 @@ public final class EmailRequestValidator {
     private static void validarPropiedad(Properties props, String clave, boolean ocultar) throws EmailException {
         String valor = props.getProperty(clave);
         String valorLog = ocultar ? "******" : valor;
-        LOGGER.debug("[validarPropiedad] - Valor de la clave '{}': {}", clave, valorLog);
+        log.debug("[validarPropiedad] - Valor de la clave '{}': {}", clave, valorLog);
         if ((valor == null) || (valor.isBlank())) {
-            LOGGER.debug("[validarPropiedad] - Falta propiedad obligatoria '{}'.", clave);
+            log.debug("[validarPropiedad] - Falta propiedad obligatoria '{}'.", clave);
             throw new EmailException("Falta propiedad obligatoria: " + clave);
         }
         // Aquí se podría añadir logging condicional si fuera necesario
@@ -124,7 +121,7 @@ public final class EmailRequestValidator {
      */
     private static boolean isBlank(String s) {
         boolean valor = s == null || s.trim().isEmpty();
-        LOGGER.debug("[isBlank] - isBlanck '{}' - {}", s, valor);
+        log.debug("[isBlank] - isBlanck '{}' - {}", s, valor);
         return valor;
     }
 
@@ -139,14 +136,14 @@ public final class EmailRequestValidator {
 
         List<String> invalids = new ArrayList<>();
         String[] emails = commaSeparatedEmails.split(",");
-        LOGGER.debug("[getInvalidEmailsRFC] - Array de emails: {}", Arrays.toString(emails));
+        log.debug("[getInvalidEmailsRFC] - Array de emails: {}", Arrays.toString(emails));
         for (String email : emails) {
-            LOGGER.debug("[getInvalidEmailsRFC] - Procesando el email: {}", email);
+            log.debug("[getInvalidEmailsRFC] - Procesando el email: {}", email);
             String trimmed = email.trim();
-            LOGGER.debug("[getInvalidEmailsRFC] - Email sin espacios en blanco: {}", trimmed);
+            log.debug("[getInvalidEmailsRFC] - Email sin espacios en blanco: {}", trimmed);
             if (!trimmed.isEmpty() && isInvalidEmailRFC(trimmed)) {
                 invalids.add(trimmed);
-                LOGGER.debug("[getInvalidEmailsRFC] - Email no valido: {}", email);
+                log.debug("[getInvalidEmailsRFC] - Email no valido: {}", email);
             }
         }
 
@@ -165,10 +162,10 @@ public final class EmailRequestValidator {
         try {
             InternetAddress addr = new InternetAddress(email, true);
             addr.validate(); // lanza excepción si no es válido
-            LOGGER.debug("[isInvalidEmailRFC] - Cumple con el RFC de email: {}", email);
+            log.debug("[isInvalidEmailRFC] - Cumple con el RFC de email: {}", email);
             return false;    // es válido, no está inválido
         } catch (AddressException e) {
-            LOGGER.debug("[isInvalidEmailRFC] - NO cumple con el RFC de email: {}", email);
+            log.debug("[isInvalidEmailRFC] - NO cumple con el RFC de email: {}", email);
             return true;     // inválido
         }
     }

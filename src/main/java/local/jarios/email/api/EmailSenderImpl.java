@@ -5,8 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import local.jarios.email.exception.EmailException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementación de {@link EmailSender} que utiliza el protocolo SMTP para enviar correos electrónicos.
@@ -16,11 +15,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @since 1.0
  */
+@Slf4j
 public class EmailSenderImpl implements EmailSender {
 
-    /** LOGGER asociado al componente. */
-    private static final Logger LOGGER = LogManager.getLogger("local.jarios.email");
-    
     /**
      * Constructor por defecto.
      */
@@ -44,18 +41,18 @@ public class EmailSenderImpl implements EmailSender {
         try {
 
             Transport.send(message);
-            LOGGER.debug("[send] - Email enviado correctamente.");
+            log.debug("[send] - Email enviado correctamente.");
 
         } catch (MessagingException ex) {
 
             String msg = String.format("[send] - Excepción en el envío del email. Sessión: %s. Message: %s", session, message);
-            LOGGER.error(msg, ex);
+            log.error(msg, ex);
             throw  new EmailException(msg, ex);
 
         } catch (RuntimeException ex) {
 
             String msg = String.format("[send] - Excepción desconocida. Sessión: %s. Message: %s", session, message);
-            LOGGER.error(msg, ex);
+            log.error(msg, ex);
             throw  new EmailException(msg, ex);
 
         }
