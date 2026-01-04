@@ -49,30 +49,25 @@
         <mockito.version>5.21.0</mockito.version>
         <jakarta.mail.version>2.2.0.-M1</jakarta.mail.version>
 
-        <!-- Definir la versión de los plugins también -->
-        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
-        <spotbugs.plugin.version>4.9.3.2</spotbugs.plugin.version>
-        <maven.release.plugin.version>3.1.1</maven.release.plugin.version>
-        <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>
-        <maven.dependency.plugin.version>3.8.1</maven.dependency.plugin.version>
-        <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
 
         <!-- Plugin versions -->
+        <maven.assembly.plugin.version>3.7.1</maven.assembly.plugin.version>
+        <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
+        <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
+        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
         <maven.failsafe.plugin.version>3.5.4</maven.failsafe.plugin.version>
         <maven.jar.plugin.version>3.5.0</maven.jar.plugin.version>
-        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
-        <maven.shade.plugin.version>3.6.1</maven.shade.plugin.version>
-        <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
-        <maven.release.plugin.version>3.3.1</maven.release.plugin.version>
-        <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
-        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
-        <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
-        <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
         <maven.project.info.reports.plugin.version>3.9.0</maven.project.info.reports.plugin.version>
+        <maven.release.plugin.version>3.3.1</maven.release.plugin.version>
+        <maven.shade.plugin.version>3.6.1</maven.shade.plugin.version>
+        <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <spotbugs.plugin.version>4.9.3.2</spotbugs.plugin.version>
+
 
         <!-- Quality and security plugin versions -->
         <jacoco.plugin.version>0.8.14</jacoco.plugin.version>
