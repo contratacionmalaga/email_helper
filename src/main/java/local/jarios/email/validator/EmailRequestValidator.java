@@ -16,14 +16,12 @@ import static local.jarios.email.common.util.Constantes.*;
 /**
  * Validador de los datos necesarios para el envío de correos electrónicos.
  *
- * <p>
- * Esta clase:
+ * <p>Esta clase:</p>
  * <ul>
  *   <li>No realiza logging en el flujo normal</li>
  *   <li>Lanza {@link EmailException} con mensajes claros</li>
  *   <li>Delega el logging a la capa de servicio</li>
  * </ul>
- * </p>
  *
  * @author Juan
  * @since 1.0

@@ -617,6 +617,7 @@
                                                 <exclude>META-INF/*.RSA</exclude>
                                                 <exclude>META-INF/LICENSE*</exclude>
                                                 <exclude>META-INF/NOTICE*</exclude>
+                                                <exclude>module-info.class</exclude> <!-- NUEVO -->
                                             </excludes>
                                         </filter>
                                     </filters>

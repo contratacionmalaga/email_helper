@@ -15,14 +15,12 @@ import static local.jarios.email.common.util.Constantes.SMTP_USER;
 /**
  * Implementación del servicio de envío de correos electrónicos.
  *
- * <p>
- * Esta clase:
+ * <p>Esta clase:</p>
  * <ul>
  *   <li>Orquesta el envío del correo</li>
  *   <li>Realiza logging a nivel de negocio</li>
  *   <li>No expone información sensible</li>
  * </ul>
- * </p>
  */
 @Slf4j
 public class EmailServiceImpl implements EmailService {
