@@ -11,81 +11,59 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Clase auxiliar con métodos comunes y utilidades generales.
- * <p>
- * Proporciona funciones para obtener el nombre del host, imprimir objetos,
- * calcular tiempos de ejecución y formatear fechas.
- * </p>
+ * Helpers:
+ * - No loguean en flujo normal
+ * - Solo informan en caso de error
  *
- * @author Juan Antonio
+ * @author Juan
  */
 @Slf4j
 public final class ComunHelper {
-    
-    /**
-     * Constructor privado para evitar instanciación.
-     */
-    private ComunHelper() { }
+
+    private ComunHelper() {
+        // No instanciable
+    }
 
     /**
-     * Obtiene el nombre del equipo donde se está ejecutando la aplicación.
+     * Obtiene el nombre del host donde se ejecuta la aplicación.
      *
-     * @return Nombre del host local.
-     * @throws UnknownHostException Si no se puede resolver el nombre del host.
+     * @return nombre del host
+     * @throws UnknownHostException si no se puede resolver
      */
     public static String getHostName() throws UnknownHostException {
 
         try {
-
-            String hostName = InetAddress.getLocalHost().getHostName();
-            log.debug("[getHostName] - Nombre del host obtenido: {}", hostName);
-            return hostName;
+            return InetAddress.getLocalHost().getHostName();
 
         } catch (UnknownHostException ex) {
-
-            String msg = String.format(
-                "[getHostName] - Error al obtener el nombre del host. Error: %s",
-                ex.getMessage()
-            );
-            log.error(msg, ex);
-            throw new UnknownHostException(msg);
-
+            log.error("No se ha podido obtener el nombre del host.", ex);
+            throw ex;
         }
     }
 
     /**
-     * Formatea una marca temporal {@link Timestamp} a cadena con formato
-     * "yyyy-MM-dd HH:mm:ss". Si la marca es null, se formatea la fecha y hora actuales.
+     * Devuelve una fecha formateada según {@link Constantes#FORMATO_FECHA}.
+     * Si la fecha es null, se utiliza la fecha y hora actual.
      *
-     * @param fechaHora Marca temporal a formatear.
-     * @return Fecha y hora formateadas como cadena.
+     * @param fechaHora fecha opcional
+     * @return fecha formateada
+     * @throws IllegalArgumentException si el formato es inválido
      */
-    public static String getFechaHoraFormateada(
-        Timestamp fechaHora) throws IllegalArgumentException {
-
-        String fechaFormateada;
+    public static String getFechaHoraFormateada(Timestamp fechaHora) {
 
         try {
-
             LocalDateTime fecha = (fechaHora != null)
                 ? fechaHora.toLocalDateTime()
                 : LocalDateTime.now();
-            log.debug("[getFechaHoraFormateada] - Valor de fecha: {}", fecha);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constantes.FORMATO_FECHA);
-            log.debug("[getFechaHoraFormateada] - Valor del formateador: {}", formatter);
-            fechaFormateada = fecha.format(formatter);
-            log.debug("[getFechaHoraFormateada] - Fecha formateada: {}", fechaFormateada);
+
+            DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern(Constantes.FORMATO_FECHA);
+
+            return fecha.format(formatter);
 
         } catch (IllegalArgumentException ex) {
-
-            String msg = String.format(
-                "[getFechaHoraFormateada] - Error en el argumentos. Error: %s",
-                ex.getMessage()
-            );
-            log.error(msg, ex);
-            throw new IllegalArgumentException(msg, ex);
-
+            log.error("Formato de fecha inválido: {}", Constantes.FORMATO_FECHA, ex);
+            throw ex;
         }
-
-        return fechaFormateada;
     }
 }
