@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   release:
-    name: Build and publish release
+    name: Build and create release
     runs-on: ubuntu-latest
 
     steps:
@@ -39,8 +39,8 @@ jobs:
             -DnewVersion="${{ inputs.release_version }}" \
             -DgenerateBackupPoms=false
 
-      - name: Run tests
-        run: ./mvnw -B test
+      - name: Build and run tests
+        run: ./mvnw -B verify
 
       - name: Commit release version
         run: |
@@ -53,11 +53,6 @@ jobs:
             git commit -m "Release v${{ inputs.release_version }}"
             git push
           fi
-
-      - name: Publish package to GitHub Packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./mvnw -B -DskipTests deploy
 
       - name: Create Git tag
         run: |
