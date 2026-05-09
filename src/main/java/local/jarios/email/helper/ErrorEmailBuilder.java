@@ -30,15 +30,15 @@ public final class ErrorEmailBuilder {
   ) {
     String subject = "❌ ERROR en servicio de envío de email";
 
-    String body = """
-            <h2>Error detectado</h2>
-            <p><b>Contexto:</b> %s</p>
-            <p><b>Fecha:</b> %s</p>
-            <p><b>Excepción:</b> %s</p>
-
-            <h3>Stacktrace</h3>
-            <pre>%s</pre>
-            """.formatted(
+    String body = (
+        "<h2>Error detectado</h2>%n"
+            + "<p><b>Contexto:</b> %s</p>%n"
+            + "<p><b>Fecha:</b> %s</p>%n"
+            + "<p><b>Excepción:</b> %s</p>%n"
+            + "%n"
+            + "<h3>Stacktrace</h3>%n"
+            + "<pre>%s</pre>%n"
+    ).formatted(
         EmailHelper.escapeHtml(contexto),
         LocalDateTime.now(),
         EmailHelper.escapeHtml(ex.getClass().getName() + ": " + ex.getMessage()),

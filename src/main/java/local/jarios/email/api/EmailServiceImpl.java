@@ -1,7 +1,12 @@
 package local.jarios.email.api;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.*;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import local.jarios.email.exception.EmailException;
 import local.jarios.email.model.EmailData;
 import local.jarios.email.validator.EmailRequestValidator;
@@ -50,11 +55,6 @@ public class EmailServiceImpl implements EmailService {
 
         } catch (EmailException ex) {
 
-            if (isErrorNotification(data)) {
-                log.error("Fallo enviando correo de error. Abortando para evitar bucle.");
-                return; // 🔴 CORTE DEFINITIVO
-            }
-
             log.error(
                 "Fallo SMTP | host={} | port={} | user={}",
                 props.getProperty(SMTP_HOST),
@@ -65,11 +65,6 @@ public class EmailServiceImpl implements EmailService {
             throw ex;
 
         } catch (RuntimeException ex) {
-
-            if (isErrorNotification(data)) {
-                log.error("Fallo crítico enviando correo de error. Abortando.");
-                return;
-            }
 
             log.error("Error inesperado durante el envío del correo.");
 
@@ -84,10 +79,6 @@ public class EmailServiceImpl implements EmailService {
     /* ===================== */
     /* MÉTODOS PRIVADOS */
     /* ===================== */
-
-    private boolean isErrorNotification(EmailData data) {
-        return data.subject() != null && data.subject().startsWith("❌ ERROR");
-    }
 
     private Session createSession(Properties props) {
 

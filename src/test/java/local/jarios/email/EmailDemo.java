@@ -87,8 +87,8 @@ public final class EmailDemo {
             ErrorNotificationService notifier =
                 new ErrorNotificationService(
                     new EmailServiceImpl(new EmailSenderImpl()),
-                    "incidenciascontratacion@malaga.es",
-                    "jarios@malaga.es"
+                    getRequiredEnv("ERROR_EMAIL_FROM"),
+                    getRequiredEnv("ERROR_EMAIL_TO")
                 );
 
             notifier.notifyError(
@@ -110,15 +110,15 @@ public final class EmailDemo {
         Properties props = new Properties();
 
         Map<String, String> propMap = Map.of(
-            SMTP_HOST, "correo.malaga.es",
+            SMTP_HOST, getRequiredEnv("SMTP_HOST"),
             SMTP_AUTH, "true",
             SMTP_PORT, "587",
             SMTP_SOCKETFACTORY_PORT, "587",
             SMTP_CHECKSERVERIDENTITY, "true",
             SMTP_PROTOCOLS, "TLSv1.2",
-            SMTP_TRUST, "correo.malaga.es",
+            SMTP_TRUST, getRequiredEnv("SMTP_HOST"),
             SMTP_STARTTLS_ENABLE, "true",
-            SMTP_USER, "incidenciascontratacion@malaga.es"
+            SMTP_USER, getRequiredEnv("SMTP_USER")
         );
 
         propMap.forEach(props::setProperty);
@@ -157,10 +157,10 @@ public final class EmailDemo {
 
     private static EmailData construirEmailData() throws UnknownHostException {
 
-        String from = "incidenciascontratacion@malaga.es";
+        String from = getRequiredEnv("EMAIL_FROM");
         log.debug("Variable from: {}", from);
 
-        String to = "jarios@malaga.es";
+        String to = getRequiredEnv("EMAIL_TO");
         log.debug("Variable to: {}", to);
 
         String hostname = ComunHelper.getHostName();

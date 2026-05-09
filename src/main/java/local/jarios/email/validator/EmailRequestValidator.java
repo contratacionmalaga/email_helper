@@ -9,7 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static local.jarios.email.common.util.Constantes.*;
+import static local.jarios.email.common.util.Constantes.SMTP_AUTH;
+import static local.jarios.email.common.util.Constantes.SMTP_HOST;
+import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
+import static local.jarios.email.common.util.Constantes.SMTP_PORT;
+import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS;
+import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
 /**
  * Validador de los datos necesarios para el envío de correos electrónicos.

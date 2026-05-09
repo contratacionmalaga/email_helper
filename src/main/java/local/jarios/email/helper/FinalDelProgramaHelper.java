@@ -1,13 +1,12 @@
 package local.jarios.email.helper;
 
-import local.jarios.email.common.util.Mensajes;
 import local.jarios.email.enums.TipoFinalEjecucion;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Clase utilitaria para finalizar la ejecución del programa
- * registrando el resultado final mediante logs y terminando el proceso
- * con el código adecuado.
+ * registrando el resultado final mediante logs y devolviendo
+ * el código adecuado.
  * <p>
  * El método {@code finalizar} acepta un tipo de finalización que determina
  * si la ejecución terminó correctamente o con error y actúa en consecuencia.
@@ -29,19 +28,20 @@ public final class FinalDelProgramaHelper {
      * Finaliza la ejecución del programa.
      * @param tipoFinal Tipo de finalización de la ejecución.
      */
-    public static void finalizar(TipoFinalEjecucion tipoFinal) {
+    public static int finalizar(TipoFinalEjecucion tipoFinal) {
 
-        finalizar(tipoFinal, (String)null);
+        return finalizar(tipoFinal, (String) null);
     }
 
     /**
      * Finaliza la ejecución del programa registrando un mensaje
-     * de resultado y llamando a {@code System.exit} con el código
-     * 0 para ejecución correcta o 1 para error.
+     * de resultado y devolviendo 0 para ejecución correcta o 1 para error.
      *
      * @param tipoFinal Tipo de finalización de la ejecución.
+     * @param mensajeError Mensaje con el detalle del error.
+     * @return código de finalización recomendado.
      */
-    public static void finalizar(TipoFinalEjecucion tipoFinal, String mensajeError) {
+    public static int finalizar(TipoFinalEjecucion tipoFinal, String mensajeError) {
         String mensaje;
         int exitCode;
         if (tipoFinal == TipoFinalEjecucion.CORRECTO) {
@@ -59,7 +59,8 @@ public final class FinalDelProgramaHelper {
         log.info("==== FINAL DE LA APLICACIÓN: version-helper ====  ");
         System.out.flush();
         System.err.flush();
-        System.exit(exitCode);
+
+        return exitCode;
     }
 }
 
