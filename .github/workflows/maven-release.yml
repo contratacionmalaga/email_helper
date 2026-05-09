@@ -67,3 +67,8 @@ jobs:
             target/*.jar \
             --title "v${{ inputs.release_version }}" \
             --notes "Release v${{ inputs.release_version }}"
+
+      - name: Publish package to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./mvnw -B deploy

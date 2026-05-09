@@ -10,6 +10,10 @@ on:
         description: Release tag to publish, for example v6.0.0
         required: true
         type: string
+      source_ref:
+        description: Git ref to build from. Defaults to release_tag.
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -24,7 +28,7 @@ jobs:
       - name: Checkout release tag
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.release.tag_name || inputs.release_tag }}
+          ref: ${{ inputs.source_ref || github.event.release.tag_name || inputs.release_tag }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
