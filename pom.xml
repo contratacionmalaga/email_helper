@@ -6,7 +6,7 @@
 
     <groupId>local.jarios</groupId>
     <artifactId>email-helper</artifactId>
-    <version>5.3.0</version>
+    <version>6.0.0</version>
     <packaging>jar</packaging>
 
     <name>email-helper</name>
