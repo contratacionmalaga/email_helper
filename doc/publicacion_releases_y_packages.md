@@ -56,6 +56,8 @@ Uso:
 - Se ejecuta automaticamente cuando una release queda publicada.
 - Hace checkout del tag de la release.
 - Configura JDK 21.
+- Obtiene la version desde el tag `vX.Y.Z`.
+- Ajusta la version Maven del paquete a `X.Y.Z` antes de publicar.
 - Ejecuta `./mvnw -B deploy`.
 - Publica el artefacto en GitHub Packages.
 
@@ -202,9 +204,9 @@ on:
 
 Condicion importante:
 
-- El tag publicado debe apuntar a un commit cuyo `pom.xml` ya tenga la version correcta.
+- El tag debe usar el formato `vX.Y.Z`.
 
-Si se crea manualmente una release `v5.3.1` pero el `pom.xml` sigue en `5.3.0`, se publicara un paquete `5.3.0`, no `5.3.1`.
+Si se crea manualmente una release `v5.3.1`, el workflow ajustara temporalmente el `pom.xml` del runner a `5.3.1` antes de ejecutar `deploy`. Asi el package publicado queda identificado con la misma version de la release.
 
 Por ese motivo, la via recomendada es usar siempre:
 
@@ -254,12 +256,45 @@ permissions:
 
 Causa probable:
 
-- La release fue creada manualmente sobre un commit cuyo `pom.xml` no tenia la version del tag.
+- El tag de la release no usa el formato `vX.Y.Z`.
+- El workflow antiguo pudo ejecutarse antes de que se incorporase el ajuste automatico de version desde el tag.
 
 Solucion:
 
 - Usar `Maven Release`.
-- O actualizar `pom.xml`, commitear, crear tag y publicar release desde ese commit.
+- Usar tags con formato `vX.Y.Z`.
+- Comprobar en `Publish Maven Package` el paso `Resolve package version from release tag`.
+
+## Borrado de releases y packages antiguos
+
+Borrar releases y packages antiguos es una operacion destructiva. Antes de hacerlo hay que decidir una politica clara.
+
+Politica recomendada:
+
+- Conservar solo la ultima version estable.
+- Conservar, si aplica, la ultima version anterior usada por aplicaciones en produccion.
+- Eliminar releases y packages de prueba.
+- No reutilizar numeros de version eliminados salvo que se tenga claro que ningun consumidor los esta usando.
+
+Antes de borrar:
+
+```powershell
+gh release list
+```
+
+Para borrar una release y su tag:
+
+```powershell
+gh release delete vX.Y.Z --cleanup-tag
+```
+
+Para listar packages Maven:
+
+```powershell
+gh api /orgs/contratacionmalaga/packages?package_type=maven
+```
+
+El borrado de versiones de packages debe hacerse con la API de GitHub Packages identificando primero el package y la version concreta. No se recomienda automatizar este borrado dentro del pipeline de release normal, porque un error de versionado podria eliminar artefactos consumidos por aplicaciones.
 
 ### El workflow de package no se dispara
 

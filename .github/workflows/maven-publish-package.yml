@@ -30,6 +30,26 @@ jobs:
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
 
+      - name: Resolve package version from release tag
+        id: release-version
+        shell: bash
+        run: |
+          tag="${{ github.event.release.tag_name }}"
+          version="${tag#v}"
+
+          if [[ -z "$version" || "$version" == "$tag" ]]; then
+            echo "Release tag must use the vX.Y.Z format. Current tag: $tag" >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Configure Maven package version
+        run: |
+          ./mvnw -B versions:set \
+            -DnewVersion="${{ steps.release-version.outputs.version }}" \
+            -DgenerateBackupPoms=false
+
       - name: Publish package to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
