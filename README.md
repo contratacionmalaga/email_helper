@@ -1,167 +1,291 @@
-# 📧 Helper para el envío de Emails utilizando jakarta.mail-api<
+# Email Helper
 
-Herramienta Java para el envío de correos electrónicos mediante SMTP de forma sencilla, robusta y extensible.  
-Ideal para proyectos que requieren auditoría, monitoreo o notificaciones automatizadas.
+Librería Java para enviar correos electrónicos mediante SMTP usando Jakarta Mail.
 
-> **Autor:** Juan Antonio  
-> **Fecha de inicio:** 04/06/2024
+Está pensada para aplicaciones Java que necesitan centralizar el envío de correos, validar datos de entrada, construir cuerpos HTML sencillos y delegar el logging en la aplicación consumidora mediante SLF4J.
 
----
+> Autor: Juan Antonio Ríos  
+> Inicio del proyecto: 04/06/2024  
+> Versión actual: 5.3.0
 
-## 🧩 Características
+## Características
 
-- Envío de correos vía SMTP autenticado con TLS
-- Validación de direcciones de correo (`RFC 5322`)
-- Cuerpo del email soporta HTML con estructuras dinámicas (tablas, secciones, etc.)
-- Separación clara de responsabilidades: modelo, servicio, helper
-- Manejo centralizado de errores personalizados
+- Envío SMTP con autenticación.
+- Validación de remitente, destinatarios y propiedades SMTP obligatorias.
+- Soporte de múltiples destinatarios separados por coma.
+- Soporte de contenido HTML con escape de valores dinámicos.
+- Excepción de dominio: `EmailException`.
+- API sencilla basada en `EmailService`.
+- Separación entre servicio de envío (`EmailService`) y transporte SMTP (`EmailSender`).
+- Logging mediante `slf4j-api`, sin forzar Logback, Log4j2 u otra implementación en producción.
+- Notificación de errores configurable mediante `ErrorNotificationService`.
 
----
+## Requisitos
 
-## 📁 Estructura del proyecto
+- Java 21 o superior.
+- Maven Wrapper incluido en el proyecto.
+- Acceso a un servidor SMTP.
 
+En Windows:
+
+```powershell
+.\mvnw.cmd test
 ```
+
+En Linux/macOS:
+
+```bash
+./mvnw test
+```
+
+## Estructura
+
+```text
 src/
-└── main/
-    └── java/
-        └── local/
-            └── jarios/
-                ├── email/                          # Punto de entrada y clases de ejemplo/demo
-                │   ├── EmailDemo.java              # Clase con el método main para ejecutar una prueba de envío
-                │
-                ├── api/                            # API pública del servicio de correo
-                │   ├── EmailService.java           # Interfaz del servicio de envío de correo
-                │   └── EmailServiceImpl.java       # Implementación SMTP del servicio de envío
-                │
-                ├── model/                          # Modelos de datos relacionados con el correo
-                │   └── EmailData.java              # Record que encapsula from, to, subject y body
-                │
-                ├── helper/                         # Clases utilitarias para construir correos en HTML
-                │   └── EmailHelper.java            # Métodos estáticos para componer el cuerpo del correo
-                │
-                ├── exception/                      # Manejo de errores personalizados
-                │   └── EmailServiceException.java  # Excepción específica para errores de envío
-                │
-                └── common/                         # Utilidades y constantes compartidas
-                    └── util/
-                        ├── Constantes.java         # Constantes como claves de properties SMTP
-                        └── EmailValidator.java     # Validaciones RFC para direcciones de email
-test/
-└── main/
-    └── java/
-        └── local/
-            └── jarios/
-                ├── email/
-                    PENDIENTE                
-└── README.md
-└── pom.xml
+├── main/
+│   └── java/
+│       └── local/jarios/email/
+│           ├── api/
+│           │   ├── EmailSender.java
+│           │   ├── EmailSenderImpl.java
+│           │   ├── EmailService.java
+│           │   ├── EmailServiceImpl.java
+│           │   └── ErrorNotificationService.java
+│           ├── common/util/
+│           │   ├── Constantes.java
+│           │   └── Mensajes.java
+│           ├── enums/
+│           │   └── TipoFinalEjecucion.java
+│           ├── exception/
+│           │   └── EmailException.java
+│           ├── helper/
+│           │   ├── ComunHelper.java
+│           │   ├── EmailHelper.java
+│           │   ├── ErrorEmailBuilder.java
+│           │   ├── ExceptionUtils.java
+│           │   ├── FinalDelProgramaHelper.java
+│           │   └── TextHelper.java
+│           ├── model/
+│           │   └── EmailData.java
+│           └── validator/
+│               └── EmailRequestValidator.java
+└── test/
+    ├── java/
+    │   └── local/jarios/email/
+    │       ├── EmailDemo.java
+    │       ├── api/
+    │       ├── helper/
+    │       └── validator/
+    └── resources/
+        └── logback-test.xml
 ```
 
----
+## Instalación
 
-## ⚙️ Requisitos
+El proyecto publica artefactos Maven en GitHub Packages:
 
-- Java 11 o superior
-- Maven / Gradle
-- Acceso a servidor SMTP
-- Variable de entorno con **clave maestra de cifrado**
-
----
-
-## 🔐 Clases principales
-
-✅ EmailService (interface)
-
-```
-void enviarEmail(Properties props, EmailData emailData) throws EmailServiceException;
+```xml
+<dependency>
+    <groupId>local.jarios</groupId>
+    <artifactId>email-helper</artifactId>
+    <version>5.3.0</version>
+</dependency>
 ```
 
-✅ EmailServiceImpl
+Si el paquete se consume desde GitHub Packages, la aplicación consumidora debe tener configurado el repositorio y credenciales correspondientes en Maven.
 
-Implementación concreta que utiliza JavaMail (jakarta.mail) para enviar emails mediante SMTP.
+## Uso básico
 
-- Valida campos obligatorios
-- Realiza autenticación
-- Permite log extendido en debug
-- Soporta HTML
+```java
+import local.jarios.email.api.EmailSender;
+import local.jarios.email.api.EmailSenderImpl;
+import local.jarios.email.api.EmailService;
+import local.jarios.email.api.EmailServiceImpl;
+import local.jarios.email.model.EmailData;
 
-✅ EmailData (record)
+import java.util.Properties;
 
-Contenedor inmutable que representa los datos del email:
+import static local.jarios.email.common.util.Constantes.SMTP_AUTH;
+import static local.jarios.email.common.util.Constantes.SMTP_HOST;
+import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
+import static local.jarios.email.common.util.Constantes.SMTP_PORT;
+import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS;
+import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
+public class Example {
+
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.setProperty(SMTP_HOST, "smtp.example.com");
+        props.setProperty(SMTP_PORT, "587");
+        props.setProperty(SMTP_AUTH, "true");
+        props.setProperty(SMTP_STARTTLS, "true");
+        props.setProperty(SMTP_USER, System.getenv("SMTP_USER"));
+        props.setProperty(SMTP_PASSWORD, System.getenv("SMTP_PASSWORD"));
+
+        EmailData emailData = new EmailData(
+            "from@example.com",
+            "to@example.com",
+            "Asunto del correo",
+            "<p>Contenido del correo</p>"
+        );
+
+        EmailSender emailSender = new EmailSenderImpl();
+        EmailService emailService = new EmailServiceImpl(emailSender);
+
+        emailService.sendEmail(props, emailData);
+    }
+}
 ```
-public record EmailData(String from, String to, String subject, String body) {}
+
+No se deben versionar usuarios, contraseñas ni tokens SMTP. Usa variables de entorno, ficheros locales ignorados por Git o un gestor de secretos.
+
+## Propiedades SMTP obligatorias
+
+El validador exige estas propiedades:
+
+| Constante | Clave Jakarta Mail |
+| --- | --- |
+| `SMTP_USER` | `mail.smtp.user` |
+| `SMTP_PASSWORD` | `mail.smtp.password` |
+| `SMTP_AUTH` | `mail.smtp.auth` |
+| `SMTP_STARTTLS` | `mail.smtp.starttls.enable` |
+| `SMTP_HOST` | `mail.smtp.host` |
+| `SMTP_PORT` | `mail.smtp.port` |
+
+Si falta alguna propiedad o algún dato del correo es inválido, la librería lanza `EmailException`.
+
+## Modelo de datos
+
+```java
+public record EmailData(
+    String from,
+    String to,
+    String subject,
+    String body
+) {}
 ```
 
-✅ EmailHelper
+`to` permite una o varias direcciones separadas por coma:
 
-Utilidades para generar partes del HTML del correo: cabecera, tablas, pie, asunto dinámico, etc.
-
-✅ EmailServiceException
-Excepción personalizada que encapsula los errores del servicio de correo.
-
-✅ EmailDemo
-Clase de ejemplo que muestra el flujo completo:
-
-1. Carga propiedades SMTP
-2. Construye EmailData
-3. Envía el correo con EmailServiceImpl
-
-⚙️ Configuración SMTP (ejemplo)
-```properties
-mail.smtp.host=
-mail.smtp.auth=
-mail.smtp.port=
-mail.smtp.user=
-mail.smtp.password=
-mail.smtp.starttls.enable=
-mail.smtp.trust=
-mail.smtp.protocols=
+```java
+new EmailData(
+    "from@example.com",
+    "one@example.com,two@example.com",
+    "Asunto",
+    "<p>Cuerpo</p>"
+);
 ```
 
-🚀 Ejemplo de uso
-```
-Properties smtpProps = new Properties();
-// ... set propiedades SMTP como en ejemplo
+## Notificaciones de error
 
-EmailData data = new EmailData(
-    "origen@dominio.com",
-    "destino@dominio.com",
-    "Asunto de prueba",
-    EmailHelper.getCabeceraHtml() +
-    EmailHelper.getHead() +
-    EmailHelper.getCabeceraBody("Mensaje de prueba") +
-    EmailHelper.getInicioTable() +
-    EmailHelper.getFila("Campo", "Valor") +
-    EmailHelper.getPieTable() +
-    EmailHelper.getPieBody() +
-    EmailHelper.getPieHtml()
+`ErrorNotificationService` permite construir y enviar un correo de error sin relanzar excepciones si la propia notificación falla.
+
+```java
+EmailService emailService = new EmailServiceImpl(new EmailSenderImpl());
+
+ErrorNotificationService notifier = new ErrorNotificationService(
+    emailService,
+    "errors@example.com",
+    "ops@example.com"
 );
 
-EmailService emailService = new EmailServiceImpl();
-emailService.enviarEmail(smtpProps, data);
+notifier.notifyError(
+    exception,
+    "Proceso de importación",
+    smtpProperties
+);
 ```
 
-🛠️ Requisitos
+El remitente y destinatario se configuran por constructor. No están fijados en la librería.
 
-- Java 21 o superior
-- Jakarta Mail (jakarta.mail:jakarta.mail-api)
-- Lombok (opcional)
+## Helpers HTML
 
-📝 Notas
+`EmailHelper` ofrece utilidades para construir cuerpos HTML sencillos:
 
-- Si quieres desacoplar la configuración SMTP, puedes externalizarla en un .properties o .yaml.
-- En producción, nunca incluyas contraseñas directamente en código. Usa vaults, variables de entorno o cifrado.
-- El código está preparado para ser migrado a un servicio más complejo, incluyendo colas o APIs REST.
+- `getCuerpoEstadistica(String[][] estadistica)`
+- `getCuerpoExcepcion(String[] excepcion)`
+- `getAsunto(String appName, String appVersion, String equipo, boolean success)`
 
-✨ Futuras mejoras
+Los valores dinámicos insertados en HTML se escapan para evitar marcado inesperado en el correo.
 
-- Plantillas de HTML parametrizadas
-- Reintentos automáticos en caso de error
-- Soporte para múltiples destinatarios (CC, BCC)
-- Adjuntos
-- Internacionalización (asuntos, cuerpos)
+## Logging
 
-👤 Autor
+La librería solo depende de `slf4j-api`.
 
-Juan Antonio Ríos — jarios@malaga.es
+La aplicación consumidora debe aportar su implementación de logging si quiere ver logs:
+
+- Logback
+- Log4j2
+- cualquier implementación compatible con SLF4J
+
+En tests se usa `logback-classic` con `src/test/resources/logback-test.xml`.
+
+## Build y tests
+
+Compilar y ejecutar tests:
+
+```powershell
+.\mvnw.cmd test
+```
+
+Instalar localmente:
+
+```powershell
+.\mvnw.cmd clean install
+```
+
+Ejecutar perfil de calidad:
+
+```powershell
+.\mvnw.cmd -Pquality checkstyle:check spotbugs:check
+```
+
+Actualmente el perfil de calidad usa Checkstyle y SpotBugs. Si Checkstyle se ejecuta con `sun_checks.xml`, puede requerir ajustes de estilo adicionales antes de pasar completamente.
+
+## CI/CD
+
+El repositorio incluye workflows de GitHub Actions:
+
+- `.github/workflows/maven-ci.yml`: compila y ejecuta el build Maven en pushes y pull requests.
+- `.github/workflows/maven-release.yml`: genera una nueva release de forma manual.
+
+## Crear una release
+
+Desde GitHub:
+
+1. Ir a `Actions`.
+2. Seleccionar `Maven Release`.
+3. Pulsar `Run workflow`.
+4. Informar `release_version`, por ejemplo `5.3.1`.
+
+El pipeline:
+
+1. Configura JDK 21.
+2. Cambia la versión del `pom.xml`.
+3. Ejecuta tests.
+4. Publica el paquete en GitHub Packages.
+5. Crea el tag `vX.Y.Z`.
+6. Crea una GitHub Release con el JAR generado.
+
+Para publicar en GitHub Packages, el repositorio debe tener permisos de escritura para Actions:
+
+```text
+Settings > Actions > General > Workflow permissions > Read and write permissions
+```
+
+## Auditoría
+
+La auditoría técnica del proyecto se encuentra en:
+
+```text
+doc/auditoria/2026_05_09_auditoria_proyecto.md
+```
+
+## Notas de seguridad
+
+- No versionar credenciales SMTP.
+- No incluir contraseñas reales en demos, tests ni documentación.
+- Rotar cualquier secreto que haya estado en el repositorio.
+- Preferir variables de entorno o gestor de secretos.
+- Revisar el histórico Git si se sospecha exposición previa.

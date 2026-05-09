@@ -55,7 +55,7 @@ public final class EmailHelper {
         return
             "<body>" +
                 "<div class='container'>" +
-                "<div class='header'><h1>" + titulo + "</h1></div>";
+                "<div class='header'><h1>" + escapeHtml(titulo) + "</h1></div>";
     }
 
     public static String getPieBody() {
@@ -74,7 +74,7 @@ public final class EmailHelper {
     }
 
     public static String getFila(String key, String value) {
-        return "<tr><th>" + key + "</th><td>" + value + "</td></tr>";
+        return "<tr><th>" + escapeHtml(key) + "</th><td>" + escapeHtml(value) + "</td></tr>";
     }
 
     /* ===================== */
@@ -143,5 +143,19 @@ public final class EmailHelper {
         }
 
         return construirCuerpo(filas, true);
+    }
+
+    static String escapeHtml(String value) {
+
+        if (value == null) {
+            return "";
+        }
+
+        return value
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&#39;");
     }
 }

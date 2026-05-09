@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
 
+import static local.jarios.email.common.util.Constantes.SMTP_HOST;
 import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
+import static local.jarios.email.common.util.Constantes.SMTP_PORT;
 import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
 /**
@@ -35,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendEmail(Properties props, EmailData data) throws EmailException {
 
         try {
-            log.info("Inicio del envío de correo electrónico.");
+            log.debug("Inicio del envío de correo electrónico.");
 
             EmailRequestValidator.validarEmailRequest(props, data);
 
@@ -44,14 +46,33 @@ public class EmailServiceImpl implements EmailService {
 
             emailSender.send(session, message);
 
-            log.info("Correo electrónico enviado correctamente.");
+            log.debug("Correo electrónico enviado correctamente.");
 
         } catch (EmailException ex) {
-            log.error("Error enviando correo electrónico: {}", ex.getMessage());
+
+            if (isErrorNotification(data)) {
+                log.error("Fallo enviando correo de error. Abortando para evitar bucle.");
+                return; // 🔴 CORTE DEFINITIVO
+            }
+
+            log.error(
+                "Fallo SMTP | host={} | port={} | user={}",
+                props.getProperty(SMTP_HOST),
+                props.getProperty(SMTP_PORT),
+                props.getProperty(SMTP_USER)
+            );
+
             throw ex;
 
         } catch (RuntimeException ex) {
-            log.error("Error inesperado durante el envío del correo.", ex);
+
+            if (isErrorNotification(data)) {
+                log.error("Fallo crítico enviando correo de error. Abortando.");
+                return;
+            }
+
+            log.error("Error inesperado durante el envío del correo.");
+
             throw new EmailException(
                 "Error inesperado durante el envío del correo electrónico.",
                 ex
@@ -59,9 +80,14 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+
     /* ===================== */
     /* MÉTODOS PRIVADOS */
     /* ===================== */
+
+    private boolean isErrorNotification(EmailData data) {
+        return data.subject() != null && data.subject().startsWith("❌ ERROR");
+    }
 
     private Session createSession(Properties props) {
 

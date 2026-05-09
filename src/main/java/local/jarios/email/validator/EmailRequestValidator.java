@@ -2,9 +2,7 @@ package local.jarios.email.validator;
 
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
-import local.jarios.email.common.util.Constantes;
 import local.jarios.email.exception.EmailException;
-import local.jarios.email.helper.TextHelper;
 import local.jarios.email.model.EmailData;
 
 import java.util.ArrayList;
@@ -73,9 +71,10 @@ public final class EmailRequestValidator {
             throw new EmailException("El asunto ('subject') es obligatorio.");
         }
 
-        if (isBlank(TextHelper.recortar(data.body(), Constantes.TAMANO_MAXIMO))) {
+        if (isBlank(data.body())) {
             throw new EmailException("El cuerpo del mensaje ('body') es obligatorio.");
         }
+
     }
 
     private static void validarDirecciones(EmailData data) {

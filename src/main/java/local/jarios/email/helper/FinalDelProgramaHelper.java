@@ -26,26 +26,40 @@ public final class FinalDelProgramaHelper {
     }
 
     /**
+     * Finaliza la ejecución del programa.
+     * @param tipoFinal Tipo de finalización de la ejecución.
+     */
+    public static void finalizar(TipoFinalEjecucion tipoFinal) {
+
+        finalizar(tipoFinal, (String)null);
+    }
+
+    /**
      * Finaliza la ejecución del programa registrando un mensaje
      * de resultado y llamando a {@code System.exit} con el código
      * 0 para ejecución correcta o 1 para error.
      *
      * @param tipoFinal Tipo de finalización de la ejecución.
      */
-    public static void finalizar(TipoFinalEjecucion tipoFinal) {
+    public static void finalizar(TipoFinalEjecucion tipoFinal, String mensajeError) {
         String mensaje;
         int exitCode;
-
         if (tipoFinal == TipoFinalEjecucion.CORRECTO) {
-            mensaje = Mensajes.FINAL_CORRECTO;
+            mensaje = "La ejecución ha finalizado CORRECTAMENTE.";
             exitCode = 0;
         } else {
-            mensaje = Mensajes.FINAL_ERROR;
+            mensaje = "!!!! La ejecución ha finalizado con ERRORES !!!!";
             exitCode = 1;
+            if (mensajeError != null && !mensajeError.isBlank()) {
+                mensaje = mensaje + " Detalle: " + mensajeError;
+            }
         }
 
         log.info(mensaje);
-        log.info(Mensajes.FINAL);
+        log.info("==== FINAL DE LA APLICACIÓN: version-helper ====  ");
+        System.out.flush();
+        System.err.flush();
         System.exit(exitCode);
     }
 }
+
