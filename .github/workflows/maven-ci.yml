@@ -35,7 +35,6 @@ jobs:
           project: 'email_helper'
           path: '.'
           format: 'HTML'
-          out: 'reports'
 
       - name: Upload OWASP Dependency Check report
         uses: actions/upload-artifact@v7
