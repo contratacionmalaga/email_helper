@@ -36,7 +36,7 @@
         <maven.minimum.version>3.6.3</maven.minimum.version>
 
         <!-- Versiones -->
-        <slf4j.version>2.0.17</slf4j.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <lombok.version>1.18.44</lombok.version>
         <jakarta.mail.version>2.0.2</jakarta.mail.version>
 
