@@ -36,7 +36,7 @@ Estado verificado el 2026-08-12:
 - Maven Wrapper efectivo: Apache Maven `3.9.16`.
 - No se han encontrado secretos reales en el codigo actual mediante busqueda textual basica.
 
-Los principales puntos pendientes ya no son de bloqueo inmediato. Tras las mejoras del 2026-08-12 queda cerrada la estrategia Java: mantener baseline Java 21, validar CI con JDK 21 y JDK 25, y reservar la migracion real a Java 25 para una version mayor cuando los consumidores esten preparados. Siguen abiertos la evaluacion de actualizaciones mayores o inestables y la trazabilidad del secreto historico mencionado en la auditoria antigua.
+Los principales puntos pendientes ya no son de bloqueo inmediato. Tras las mejoras del 2026-08-12 queda cerrada la estrategia Java: mantener baseline Java 21, validar CI con JDK 21 y JDK 25, y reservar la migracion real a Java 25 para una version mayor cuando los consumidores esten preparados. Durante el cierre de la version 6.1.0 se detecto y corrigio ademas la compatibilidad de compilacion con JDK 25 haciendo explicito Lombok como annotation processor en Maven. Siguen abiertos la evaluacion de actualizaciones mayores o inestables y la trazabilidad del secreto historico mencionado en la auditoria antigua.
 
 ## Fuentes y comprobaciones usadas
 
@@ -282,7 +282,7 @@ Accion recomendada:
 | --- | --- | --- | --- | --- |
 | H01 | Completado | Alta | Anadir tests directos para `EmailServiceImpl` | `EmailServiceImplTest` valida mensaje construido, content-type, recipients, excepciones de dominio, runtime inesperado y props nulas; `test` pasa. |
 | H02 | Completado | Alta | Actualizar versiones estables de bajo riesgo | Lombok `1.18.46`, Enforcer `3.6.3`, SpotBugs `4.10.3.0` y Maven Wrapper `3.9.16`; `test` y `-Pquality` pasan. |
-| H03 | Completado | Alta | Decidir estrategia Java 21 vs Java 25 LTS | Se mantiene `maven.compiler.release=21`; CI valida JDK 21 y JDK 25; migracion real a Java 25 queda reservada para version mayor futura. |
+| H03 | Completado | Alta | Decidir estrategia Java 21 vs Java 25 LTS | Se mantiene `maven.compiler.release=21`; CI valida JDK 21 y JDK 25; se hizo explicito Lombok como annotation processor para compatibilidad de compilacion con JDK 25; la migracion real a Java 25 queda reservada para version mayor futura. |
 | H04 | Completado | Media | Incorporar `-Pquality` al CI | `.github/workflows/maven-ci.yml` ejecuta Checkstyle y SpotBugs de forma bloqueante. |
 | H05 | Completado | Media | Hacer observable `ErrorNotificationService` | Nuevo `notifyErrorAndReturnResult(...)`; `notifyError(...)` mantiene compatibilidad. |
 | H06 | Completado | Media | Limitar o configurar stacktrace en emails de error | `ErrorEmailBuilder` limita por defecto y permite configurar longitud; test agregado. |
@@ -334,4 +334,5 @@ Accion recomendada:
 | --- | --- | --- |
 | 2026-08-12 | Creacion de auditoria viva inicial | Documento generado con estado actual, actualizaciones disponibles, hallazgos e hitos. |
 | 2026-08-12 | Cierre de H01, H02, H04, H05, H06, H07, H08 y H09 | Tests ampliados a 19, quality integrado en CI, versiones estables actualizadas, README corregido, notificaciones observables, stacktrace limitado/configurable, constantes SMTP limpiadas y asunto de error configurable. |
-| 2026-08-12 | Cierre de H03 y generacion de version 6.1.0 | Se mantiene baseline Java 21, se valida CI con JDK 21 y JDK 25, README documenta compatibilidad Java y `pom.xml` sube a `6.1.0`. |
+| 2026-08-12 | Cierre de H03 y generacion de version 6.1.0 | Se mantiene baseline Java 21, se valida CI con JDK 21 y JDK 25, README documenta compatibilidad Java y pom.xml sube a 6.1.0. |
+| 2026-08-12 | Ajuste de compilacion para JDK 25 | Se declara Lombok de forma explicita en maven-compiler-plugin como annotation processor para evitar errores cannot find symbol: log en CI con JDK 25. |
