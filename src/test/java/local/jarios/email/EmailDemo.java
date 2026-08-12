@@ -167,7 +167,7 @@ public final class EmailDemo {
         log.debug("Variable hostname: {}", hostname);
 
         String subject = EmailHelper.getAsunto(
-            "email_helper",
+            "email-helper",
             "VERSION_PRUEBA",
             hostname,
             true);

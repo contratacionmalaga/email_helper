@@ -326,7 +326,7 @@ Accion recomendada:
 | 2026-08-12 | `.\mvnw.cmd versions:display-dependency-updates versions:display-plugin-updates versions:display-property-updates` | Correcto tras mejoras. Lombok, Enforcer y SpotBugs ya figuran al dia; quedan actualizaciones aplazadas o inestables. |
 | 2026-08-12 | `.\mvnw.cmd dependency:tree` | Correcto. Arbol de dependencias revisado. |
 | 2026-08-12 | Busqueda textual de secretos | Sin secretos reales detectados en codigo actual; solo nombres de variables y valores ficticios. |
-| 2026-08-12 | `.\mvnw.cmd package` | Correcto. Artefacto generado: `target/email_helper-6.1.0.jar`. |
+| 2026-08-12 | `.\mvnw.cmd package` | Correcto. Artefacto generado: `target/email-helper-6.1.0.jar`. |
 
 ## Bitacora de actualizaciones
 

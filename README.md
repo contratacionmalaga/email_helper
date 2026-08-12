@@ -92,7 +92,7 @@ El proyecto publica artefactos Maven en GitHub Packages:
 ```xml
 <dependency>
     <groupId>local.jarios</groupId>
-    <artifactId>email_helper</artifactId>
+    <artifactId>email-helper</artifactId>
     <version>6.1.0</version>
 </dependency>
 ```

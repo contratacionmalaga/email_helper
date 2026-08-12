@@ -92,11 +92,11 @@ El `pom.xml` debe tener configurado `distributionManagement` con el server id us
 <distributionManagement>
     <repository>
         <id>github-releases</id>
-        <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+        <url>https://maven.pkg.github.com/contratacionmalaga/email-helper</url>
     </repository>
     <snapshotRepository>
         <id>github-snapshots</id>
-        <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+        <url>https://maven.pkg.github.com/contratacionmalaga/email-helper</url>
     </snapshotRepository>
 </distributionManagement>
 ```
@@ -221,7 +221,7 @@ Dependencia Maven:
 ```xml
 <dependency>
     <groupId>local.jarios</groupId>
-    <artifactId>email_helper</artifactId>
+    <artifactId>email-helper</artifactId>
     <version>5.3.1</version>
 </dependency>
 ```
@@ -232,7 +232,7 @@ El proyecto consumidor debe tener acceso a GitHub Packages y configurar el repos
 <repositories>
     <repository>
         <id>github-releases</id>
-        <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+        <url>https://maven.pkg.github.com/contratacionmalaga/email-helper</url>
     </repository>
 </repositories>
 ```
