@@ -29,7 +29,7 @@ class ErrorNotificationServiceTest {
         assertThat(emailService.emailData.from()).isEqualTo("errors@example.com");
         assertThat(emailService.emailData.to()).isEqualTo("ops@example.com");
         assertThat(emailService.emailData.subject())
-            .isEqualTo("❌ ERROR en servicio de envío de email");
+            .isEqualTo("ERROR en servicio de envio de email");
         assertThat(emailService.emailData.body()).contains("batch process");
     }
 
@@ -48,6 +48,26 @@ class ErrorNotificationServiceTest {
             "batch process",
             new Properties()
         )).doesNotThrowAnyException();
+    }
+
+
+    @Test
+    void shouldReturnFalseWhenNotificationFails() {
+        ErrorNotificationService service = new ErrorNotificationService(
+            (props, data) -> {
+                throw new EmailException("SMTP unavailable");
+            },
+            "errors@example.com",
+            "ops@example.com"
+        );
+
+        boolean result = service.notifyErrorAndReturnResult(
+            new RuntimeException("boom"),
+            "batch process",
+            new Properties()
+        );
+
+        assertThat(result).isFalse();
     }
 
     private static final class CapturingEmailService implements EmailService {

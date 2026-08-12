@@ -47,4 +47,23 @@ class EmailHelperTest {
             .doesNotContain("<context>")
             .doesNotContain("<failure & detail>");
     }
+
+    @Test
+    void shouldAllowCustomErrorSubjectAndLimitStacktrace() {
+        RuntimeException ex = new RuntimeException("failure");
+
+        EmailData email = ErrorEmailBuilder.build(
+            ex,
+            "context",
+            "from@example.com",
+            "to@example.com",
+            "Custom subject",
+            12
+        );
+
+        assertThat(email.subject()).isEqualTo("Custom subject");
+        assertThat(email.body())
+            .contains("[stacktrace truncado]")
+            .doesNotContain("local.jarios.email.helper.EmailHelperTest");
+    }
 }

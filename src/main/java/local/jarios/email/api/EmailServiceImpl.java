@@ -57,9 +57,9 @@ public class EmailServiceImpl implements EmailService {
 
             log.error(
                 "Fallo SMTP | host={} | port={} | user={}",
-                props.getProperty(SMTP_HOST),
-                props.getProperty(SMTP_PORT),
-                props.getProperty(SMTP_USER)
+                getSafeProperty(props, SMTP_HOST),
+                getSafeProperty(props, SMTP_PORT),
+                getSafeProperty(props, SMTP_USER)
             );
 
             throw ex;
@@ -82,7 +82,7 @@ public class EmailServiceImpl implements EmailService {
 
     private Session createSession(Properties props) {
 
-        String username = props.getProperty(SMTP_USER);
+        String username = getSafeProperty(props, SMTP_USER);
         String password = props.getProperty(SMTP_PASSWORD);
 
         return Session.getInstance(
@@ -109,6 +109,7 @@ public class EmailServiceImpl implements EmailService {
             );
             message.setSubject(data.subject());
             message.setContent(data.body(), "text/html; charset=utf-8");
+            message.saveChanges();
 
             return message;
 
@@ -118,5 +119,9 @@ public class EmailServiceImpl implements EmailService {
                 ex
             );
         }
+    }
+    private String getSafeProperty(Properties props, String key) {
+
+        return props == null ? null : props.getProperty(key);
     }
 }

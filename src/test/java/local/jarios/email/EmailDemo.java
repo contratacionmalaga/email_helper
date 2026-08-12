@@ -25,7 +25,7 @@ import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
 import static local.jarios.email.common.util.Constantes.SMTP_PORT;
 import static local.jarios.email.common.util.Constantes.SMTP_PROTOCOLS;
 import static local.jarios.email.common.util.Constantes.SMTP_SOCKETFACTORY_PORT;
-import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS_ENABLE;
+import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS;
 import static local.jarios.email.common.util.Constantes.SMTP_TRUST;
 import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
@@ -117,7 +117,7 @@ public final class EmailDemo {
             SMTP_CHECKSERVERIDENTITY, "true",
             SMTP_PROTOCOLS, "TLSv1.2",
             SMTP_TRUST, getRequiredEnv("SMTP_HOST"),
-            SMTP_STARTTLS_ENABLE, "true",
+            SMTP_STARTTLS, "true",
             SMTP_USER, getRequiredEnv("SMTP_USER")
         );
 

@@ -6,7 +6,7 @@ Está pensada para aplicaciones Java que necesitan centralizar el envío de corr
 
 > Autor: Juan Antonio Ríos  
 > Inicio del proyecto: 04/06/2024  
-> Versión actual: 5.3.0
+> Versión actual: 6.1.0
 
 ## Características
 
@@ -22,7 +22,7 @@ Está pensada para aplicaciones Java que necesitan centralizar el envío de corr
 
 ## Requisitos
 
-- Java 21 o superior.
+- Java 21 o superior para ejecutar la librería. El build se valida con JDK 21 y JDK 25.
 - Maven Wrapper incluido en el proyecto.
 - Acceso a un servidor SMTP.
 
@@ -80,6 +80,11 @@ src/
         └── logback-test.xml
 ```
 
+## Compatibilidad Java
+
+La versión `6.1.0` mantiene `maven.compiler.release=21`, por lo que el artefacto sigue siendo compatible con aplicaciones que ejecuten Java 21 o superior.
+
+El proyecto se valida en CI con JDK 21 y JDK 25 para preparar la futura migración a Java 25 LTS sin romper consumidores actuales. La subida del baseline a Java 25 debe reservarse para una versión mayor cuando los consumidores estén preparados.
 ## Instalación
 
 El proyecto publica artefactos Maven en GitHub Packages:
@@ -88,7 +93,7 @@ El proyecto publica artefactos Maven en GitHub Packages:
 <dependency>
     <groupId>local.jarios</groupId>
     <artifactId>email_helper</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
 </dependency>
 ```
 
@@ -241,7 +246,7 @@ Ejecutar perfil de calidad:
 .\mvnw.cmd -Pquality checkstyle:check spotbugs:check
 ```
 
-Actualmente el perfil de calidad usa Checkstyle y SpotBugs. Si Checkstyle se ejecuta con `sun_checks.xml`, puede requerir ajustes de estilo adicionales antes de pasar completamente.
+Actualmente el perfil de calidad usa Checkstyle y SpotBugs con la configuración del proyecto.
 
 ## CI/CD
 
@@ -257,11 +262,11 @@ Desde GitHub:
 1. Ir a `Actions`.
 2. Seleccionar `Maven Release`.
 3. Pulsar `Run workflow`.
-4. Informar `release_version`, por ejemplo `5.3.1`.
+4. Informar `release_version`, por ejemplo `6.0.1`.
 
 El pipeline:
 
-1. Configura JDK 21.
+1. Configura JDK 21 para la release actual. El CI valida además JDK 25 manteniendo `maven.compiler.release=21`.
 2. Cambia la versión del `pom.xml`.
 3. Ejecuta tests.
 4. Publica el paquete en GitHub Packages.
@@ -279,8 +284,10 @@ Settings > Actions > General > Workflow permissions > Read and write permissions
 La auditoría técnica del proyecto se encuentra en:
 
 ```text
-doc/auditoria/2026_05_09_auditoria_proyecto.md
+docs/auditorias/2026-08-12-auditoria-viva-proyecto.md
 ```
+
+La auditoría anterior queda conservada como histórico en `doc/auditoria/2026_05_09_auditoria_proyecto.md`.
 
 ## Notas de seguridad
 

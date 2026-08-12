@@ -55,31 +55,25 @@ public final class Constantes {
     public static final String SMTP_SOCKETFACTORY_PORT = "mail.smtp.socketFactory.port";
 
     /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
+     * Nombre de la propiedad que activa la comprobación de identidad del servidor SMTP.
      */
     public static final String SMTP_CHECKSERVERIDENTITY = "mail.smtp.checkserveridentity";
 
     /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
+     * Nombre de la propiedad que define los protocolos TLS permitidos.
      */
     public static final String SMTP_PROTOCOLS = "mail.smtp.protocols";
 
     /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
+     * Nombre de la propiedad que define hosts SMTP de confianza para TLS.
      */
     public static final String SMTP_TRUST = "mail.smtp.trust";
-
-    /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
-     */
-    public static final String SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 
     /** PATTERNS DE FECHA **/
     public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
 
     /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
-     * <p>Ejemplo: {@code 587} para TLS, {@code 465} para SSL.</p>
+     * Tamaño máximo por defecto para recortes de texto.
      */
     public static final int TAMANO_MAXIMO = 50;
 

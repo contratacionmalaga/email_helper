@@ -6,7 +6,7 @@
 
     <groupId>local.jarios</groupId>
     <artifactId>email_helper</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
     <packaging>jar</packaging>
 
     <name>email-helper</name>
@@ -37,7 +37,7 @@
 
         <!-- Versiones -->
         <slf4j.version>2.0.17</slf4j.version>
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <jakarta.mail.version>2.0.2</jakarta.mail.version>
 
         <!-- Tests -->
@@ -48,10 +48,10 @@
         <logback.version>1.5.32</logback.version>
 
         <!-- Plugins -->
-        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>3.6.3</maven.enforcer.plugin.version>
         <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
-        <spotbugs.plugin.version>4.9.8.2</spotbugs.plugin.version>
+        <spotbugs.plugin.version>4.10.3.0</spotbugs.plugin.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
     </properties>
 
