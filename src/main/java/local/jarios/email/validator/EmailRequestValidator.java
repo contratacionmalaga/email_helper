@@ -1,14 +1,5 @@
 package local.jarios.email.validator;
 
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
-import local.jarios.email.exception.EmailException;
-import local.jarios.email.model.EmailData;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import static local.jarios.email.common.util.Constantes.SMTP_AUTH;
 import static local.jarios.email.common.util.Constantes.SMTP_HOST;
 import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
@@ -16,14 +7,23 @@ import static local.jarios.email.common.util.Constantes.SMTP_PORT;
 import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS;
 import static local.jarios.email.common.util.Constantes.SMTP_USER;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import local.jarios.email.exception.EmailException;
+import local.jarios.email.model.EmailData;
+
 /**
  * Validador de los datos necesarios para el envío de correos electrónicos.
  *
- * <p>Esta clase:</p>
+ * <p>Esta clase:
+ *
  * <ul>
- *   <li>No realiza logging en el flujo normal</li>
- *   <li>Lanza {@link EmailException} con mensajes claros</li>
- *   <li>Delega el logging a la capa de servicio</li>
+ *   <li>No realiza logging en el flujo normal
+ *   <li>Lanza {@link EmailException} con mensajes claros
+ *   <li>Delega el logging a la capa de servicio
  * </ul>
  *
  * @author Juan
@@ -31,120 +31,118 @@ import static local.jarios.email.common.util.Constantes.SMTP_USER;
  */
 public final class EmailRequestValidator {
 
-    private EmailRequestValidator() {
-        // No instanciable
+  private EmailRequestValidator() {
+    // No instanciable
+  }
+
+  /**
+   * Valida todos los datos necesarios para el envío de un correo electrónico.
+   *
+   * @param props propiedades SMTP
+   * @param data datos del email
+   * @throws EmailException si algún dato es inválido
+   */
+  public static void validarEmailRequest(Properties props, EmailData data) throws EmailException {
+
+    if (props == null) {
+      throw new EmailException("Las propiedades SMTP son obligatorias.");
     }
 
-    /**
-     * Valida todos los datos necesarios para el envío de un correo electrónico.
-     *
-     * @param props propiedades SMTP
-     * @param data  datos del email
-     * @throws EmailException si algún dato es inválido
-     */
-    public static void validarEmailRequest(Properties props, EmailData data)
-        throws EmailException {
-
-        if (props == null) {
-            throw new EmailException("Las propiedades SMTP son obligatorias.");
-        }
-
-        if (data == null) {
-            throw new EmailException("Los datos del email son obligatorios.");
-        }
-
-        validarEmailData(data);
-        validarDirecciones(data);
-        validarPropiedadesSMTP(props);
+    if (data == null) {
+      throw new EmailException("Los datos del email son obligatorios.");
     }
 
-    /* ===================== */
-    /* VALIDACIONES */
-    /* ===================== */
+    validarEmailData(data);
+    validarDirecciones(data);
+    validarPropiedadesSMTP(props);
+  }
 
-    private static void validarEmailData(EmailData data) {
+  /* ===================== */
+  /* VALIDACIONES */
+  /* ===================== */
 
-        if (isBlank(data.from())) {
-            throw new EmailException("El remitente ('from') es obligatorio.");
-        }
+  private static void validarEmailData(EmailData data) {
 
-        if (isBlank(data.to())) {
-            throw new EmailException("El destinatario ('to') es obligatorio.");
-        }
-
-        if (isBlank(data.subject())) {
-            throw new EmailException("El asunto ('subject') es obligatorio.");
-        }
-
-        if (isBlank(data.body())) {
-            throw new EmailException("El cuerpo del mensaje ('body') es obligatorio.");
-        }
-
+    if (isBlank(data.from())) {
+      throw new EmailException("El remitente ('from') es obligatorio.");
     }
 
-    private static void validarDirecciones(EmailData data) {
-
-        if (isInvalidEmailRFC(data.from())) {
-            throw new EmailException("Email 'from' inválido: " + data.from());
-        }
-
-        List<String> invalidTo = getInvalidEmailsRFC(data.to());
-        if (!invalidTo.isEmpty()) {
-            throw new EmailException("Email(s) 'to' inválidos: " + invalidTo);
-        }
+    if (isBlank(data.to())) {
+      throw new EmailException("El destinatario ('to') es obligatorio.");
     }
 
-    private static void validarPropiedadesSMTP(Properties props) {
-
-        validarPropiedad(props, SMTP_USER);
-        validarPropiedad(props, SMTP_PASSWORD);
-        validarPropiedad(props, SMTP_AUTH);
-        validarPropiedad(props, SMTP_STARTTLS);
-        validarPropiedad(props, SMTP_HOST);
-        validarPropiedad(props, SMTP_PORT);
+    if (isBlank(data.subject())) {
+      throw new EmailException("El asunto ('subject') es obligatorio.");
     }
 
-    private static void validarPropiedad(Properties props, String clave) {
+    if (isBlank(data.body())) {
+      throw new EmailException("El cuerpo del mensaje ('body') es obligatorio.");
+    }
+  }
 
-        String valor = props.getProperty(clave);
+  private static void validarDirecciones(EmailData data) {
 
-        if (valor == null || valor.isBlank()) {
-            throw new EmailException("Falta la propiedad SMTP obligatoria: " + clave);
-        }
+    if (isInvalidEmailRFC(data.from())) {
+      throw new EmailException("Email 'from' inválido: " + data.from());
     }
 
-    /* ===================== */
-    /* UTILIDADES */
-    /* ===================== */
+    List<String> invalidTo = getInvalidEmailsRFC(data.to());
+    if (!invalidTo.isEmpty()) {
+      throw new EmailException("Email(s) 'to' inválidos: " + invalidTo);
+    }
+  }
 
-    private static boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
+  private static void validarPropiedadesSMTP(Properties props) {
+
+    validarPropiedad(props, SMTP_USER);
+    validarPropiedad(props, SMTP_PASSWORD);
+    validarPropiedad(props, SMTP_AUTH);
+    validarPropiedad(props, SMTP_STARTTLS);
+    validarPropiedad(props, SMTP_HOST);
+    validarPropiedad(props, SMTP_PORT);
+  }
+
+  private static void validarPropiedad(Properties props, String clave) {
+
+    String valor = props.getProperty(clave);
+
+    if (valor == null || valor.isBlank()) {
+      throw new EmailException("Falta la propiedad SMTP obligatoria: " + clave);
+    }
+  }
+
+  /* ===================== */
+  /* UTILIDADES */
+  /* ===================== */
+
+  private static boolean isBlank(String s) {
+    return s == null || s.trim().isEmpty();
+  }
+
+  public static List<String> getInvalidEmailsRFC(String commaSeparatedEmails) {
+
+    List<String> invalids = new ArrayList<>();
+
+    for (String email : commaSeparatedEmails.split(",")) {
+
+      String trimmed = email.trim();
+
+      if (!trimmed.isEmpty() && isInvalidEmailRFC(trimmed)) {
+        invalids.add(trimmed);
+      }
     }
 
-    public static List<String> getInvalidEmailsRFC(String commaSeparatedEmails) {
+    return invalids;
+  }
 
-        List<String> invalids = new ArrayList<>();
+  private static boolean isInvalidEmailRFC(String email) {
 
-        for (String email : commaSeparatedEmails.split(",")) {
-
-            String trimmed = email.trim();
-
-            if (!trimmed.isEmpty() && isInvalidEmailRFC(trimmed)) {
-                invalids.add(trimmed);
-            }
-        }
-
-        return invalids;
+    try {
+      InternetAddress addr = new InternetAddress(email, true);
+      addr.validate();
+      return false;
+    } catch (AddressException ex) {
+      return true;
     }
-
-    private static boolean isInvalidEmailRFC(String email) {
-
-        try {
-            InternetAddress addr = new InternetAddress(email, true);
-            addr.validate();
-            return false;
-        } catch (AddressException ex) {
-            return true;
-        }
-    }
+  }
 }

@@ -2,85 +2,80 @@ package local.jarios.email.common.util;
 
 /**
  * Clase que contiene constantes generales utilizadas a lo largo de la aplicación.
- * <p>
- * Contiene cadenas comunes, formatos de fecha y caracteres de control,
- * para evitar el uso de valores mágicos en el código.
- * </p>
  *
- * <p><b>Author:</b> Juan Antonio</p>
- * <p><b>Date:</b> 04/06/2024</p>
- * <p><b>Team:</b> Juan Antonio</p>
+ * <p>Contiene cadenas comunes, formatos de fecha y caracteres de control, para evitar el uso de
+ * valores mágicos en el código.
+ *
+ * <p><b>Author:</b> Juan Antonio
+ *
+ * <p><b>Date:</b> 04/06/2024
+ *
+ * <p><b>Team:</b> Juan Antonio
  */
 public final class Constantes {
 
-    /**
-     * Nombre de la propiedad que contiene el nombre de usuario del remitente (SMTP).
-     * <p>Ejemplo: {@code noreply@empresa.com}</p>
-     */
-    public static final String SMTP_USER = "mail.smtp.user";
+  /**
+   * Nombre de la propiedad que contiene el nombre de usuario del remitente (SMTP).
+   *
+   * <p>Ejemplo: {@code noreply@empresa.com}
+   */
+  public static final String SMTP_USER = "mail.smtp.user";
 
-    /**
-     * Nombre de la propiedad que contiene la contraseña del usuario SMTP.
-     * <p>Debe mantenerse oculta en los logs por seguridad.</p>
-     */
-    public static final String SMTP_PASSWORD = "mail.smtp.password";
+  /**
+   * Nombre de la propiedad que contiene la contraseña del usuario SMTP.
+   *
+   * <p>Debe mantenerse oculta en los logs por seguridad.
+   */
+  public static final String SMTP_PASSWORD = "mail.smtp.password";
 
-    /**
-     * Nombre de la propiedad que indica si se requiere autenticación SMTP.
-     * <p>Valor esperado: {@code true} o {@code false}.</p>
-     */
-    public static final String SMTP_AUTH = "mail.smtp.auth";
+  /**
+   * Nombre de la propiedad que indica si se requiere autenticación SMTP.
+   *
+   * <p>Valor esperado: {@code true} o {@code false}.
+   */
+  public static final String SMTP_AUTH = "mail.smtp.auth";
 
-    /**
-     * Nombre de la propiedad que habilita el protocolo STARTTLS.
-     * <p>Valor esperado: {@code true} o {@code false}.</p>
-     */
-    public static final String SMTP_STARTTLS = "mail.smtp.starttls.enable";
+  /**
+   * Nombre de la propiedad que habilita el protocolo STARTTLS.
+   *
+   * <p>Valor esperado: {@code true} o {@code false}.
+   */
+  public static final String SMTP_STARTTLS = "mail.smtp.starttls.enable";
 
-    /**
-     * Nombre de la propiedad que define el host del servidor SMTP.
-     * <p>Ejemplo: {@code smtp.gmail.com}, {@code mail.miempresa.es}</p>
-     */
-    public static final String SMTP_HOST = "mail.smtp.host";
+  /**
+   * Nombre de la propiedad que define el host del servidor SMTP.
+   *
+   * <p>Ejemplo: {@code smtp.gmail.com}, {@code mail.miempresa.es}
+   */
+  public static final String SMTP_HOST = "mail.smtp.host";
 
-    /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
-     * <p>Ejemplo: {@code 587} para TLS, {@code 465} para SSL.</p>
-     */
-    public static final String SMTP_PORT = "mail.smtp.port";
+  /**
+   * Nombre de la propiedad que define el puerto del servidor SMTP.
+   *
+   * <p>Ejemplo: {@code 587} para TLS, {@code 465} para SSL.
+   */
+  public static final String SMTP_PORT = "mail.smtp.port";
 
-    /**
-     * Nombre de la propiedad que define el puerto del servidor SMTP.
-     */
-    public static final String SMTP_SOCKETFACTORY_PORT = "mail.smtp.socketFactory.port";
+  /** Nombre de la propiedad que define el puerto del servidor SMTP. */
+  public static final String SMTP_SOCKETFACTORY_PORT = "mail.smtp.socketFactory.port";
 
-    /**
-     * Nombre de la propiedad que activa la comprobación de identidad del servidor SMTP.
-     */
-    public static final String SMTP_CHECKSERVERIDENTITY = "mail.smtp.checkserveridentity";
+  /** Nombre de la propiedad que activa la comprobación de identidad del servidor SMTP. */
+  public static final String SMTP_CHECKSERVERIDENTITY = "mail.smtp.checkserveridentity";
 
-    /**
-     * Nombre de la propiedad que define los protocolos TLS permitidos.
-     */
-    public static final String SMTP_PROTOCOLS = "mail.smtp.protocols";
+  /** Nombre de la propiedad que define los protocolos TLS permitidos. */
+  public static final String SMTP_PROTOCOLS = "mail.smtp.protocols";
 
-    /**
-     * Nombre de la propiedad que define hosts SMTP de confianza para TLS.
-     */
-    public static final String SMTP_TRUST = "mail.smtp.trust";
+  /** Nombre de la propiedad que define hosts SMTP de confianza para TLS. */
+  public static final String SMTP_TRUST = "mail.smtp.trust";
 
-    /** PATTERNS DE FECHA **/
-    public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
+  /** PATTERNS DE FECHA * */
+  public static final String FORMATO_FECHA = "yyyy-MM-dd HH:mm:ss";
 
-    /**
-     * Tamaño máximo por defecto para recortes de texto.
-     */
-    public static final int TAMANO_MAXIMO = 50;
+  /** Tamaño máximo por defecto para recortes de texto. */
+  public static final int TAMANO_MAXIMO = 50;
 
-    /**
-     * Constructor privado para evitar instanciación.
-     */
-    private Constantes() {
-        // No instanciable
-    }
+  /** Constructor privado para evitar instanciación. */
+  private Constantes() {
+    // No instanciable
+  }
 }

@@ -1,186 +1,150 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>local.jarios</groupId>
-        <artifactId>jarios-parent</artifactId>
-        <version>1.0.1</version>
-        <relativePath>../jarios-parent/pom.xml</relativePath>
-    </parent>
-    <artifactId>email-helper</artifactId>
-    <version>6.1.1</version>
-    <packaging>jar</packaging>
-
-    <name>email-helper</name>
-    <description>Servicio de envío de emails para aplicaciones desarrolladas en Java</description>
-
-    <scm>
-        <connection>scm:git:https://github.com/contratacionmalaga/email_helper.git</connection>
-        <developerConnection>scm:git:git@github.com:contratacionmalaga/email_helper.git</developerConnection>
-        <url>https://github.com/contratacionmalaga/email_helper</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>github-releases</id>
-            <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
-        </repository>
-        <snapshotRepository>
-            <id>github-snapshots</id>
-            <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <properties>
-
-        <!-- Versiones -->
-
-        <!-- Tests -->
-
-        <!-- (Solo para tests, opcional) -->
-
-        <!-- Plugins -->
-    </properties>
-
-    <dependencies>
-        <!-- SLF4J API (la librería solo "habla" SLF4J) -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Jakarta Mail -->
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>${jakarta.mail.version}</version>
-        </dependency>
-
-        <!-- Opcional: Logback SOLO en tests (para ver logs en tests si te interesa) -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>local.jarios</groupId>
+    <artifactId>jarios-parent</artifactId>
+    <version>1.0.9</version>
+    <relativePath>../jarios-parent/pom.xml</relativePath>
+  </parent>
+  <artifactId>email-helper</artifactId>
+  <version>6.1.2</version>
+  <packaging>jar</packaging>
+  <name>email-helper</name>
+  <description>Servicio de envío de emails para aplicaciones desarrolladas en Java</description>
+  <scm>
+    <connection>scm:git:https://github.com/contratacionmalaga/email_helper.git</connection>
+    <developerConnection>scm:git:git@github.com:contratacionmalaga/email_helper.git</developerConnection>
+    <url>https://github.com/contratacionmalaga/email_helper</url>
+    <tag>HEAD</tag>
+  </scm>
+  <distributionManagement>
+    <repository>
+      <id>github-releases</id>
+      <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+    </repository>
+    <snapshotRepository>
+      <id>github-snapshots</id>
+      <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <properties>
+    <!-- Versiones -->
+    <!-- Tests -->
+    <!-- (Solo para tests, opcional) -->
+    <!-- Plugins -->
+  </properties>
+  <dependencies>
+    <!-- SLF4J API (la librería solo "habla" SLF4J) -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Jakarta Mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>jakarta.mail</artifactId>
+    </dependency>
+    <!-- Opcional: Logback SOLO en tests (para ver logs en tests si te interesa) -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <!-- versions.maven.plugin.version -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+      </plugin>
+      <!-- Enforcer: Maven + Java -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>${maven.minimum.version}</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>${maven.compiler.release}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <!-- Surefire (tests) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useModulePath>false</useModulePath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>quality</id>
+      <build>
         <plugins>
-
-            <!-- versions.maven.plugin.version -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${versions.maven.plugin.version}</version>
-            </plugin>
-
-            <!-- Enforcer: Maven + Java -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${maven.enforcer.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>${maven.minimum.version}</version>
-                                </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>${maven.compiler.release}</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Compiler -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin.version}</version>
-                <configuration>
-                    <release>${maven.compiler.release}</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
-            <!-- Surefire (tests) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                </configuration>
-            </plugin>
-
+          <plugin>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>${spotbugs.maven.plugin.version}</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>${maven.checkstyle.plugin.version}</version>
+            <configuration>
+              <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+            </configuration>
+          </plugin>
         </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>quality</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs-maven-plugin</artifactId>
-                        <version>${spotbugs.maven.plugin.version}</version>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${maven.checkstyle.plugin.version}</version>
-                        <configuration>
-                            <configLocation>src/checkstyle/checkstyle.xml</configLocation>
-                            <consoleOutput>true</consoleOutput>
-                            <failsOnError>true</failsOnError>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
+      </build>
+    </profile>
+  </profiles>
 </project>
