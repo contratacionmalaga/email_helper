@@ -4,11 +4,11 @@
   <parent>
     <groupId>local.jarios</groupId>
     <artifactId>jarios-parent</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <relativePath>../jarios-parent/pom.xml</relativePath>
   </parent>
   <artifactId>email-helper</artifactId>
-  <version>6.1.3</version>
+  <version>6.1.4</version>
   <packaging>jar</packaging>
   <name>email-helper</name>
   <description>Servicio de envío de emails para aplicaciones desarrolladas en Java</description>
@@ -131,12 +131,10 @@
           <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>${spotbugs.maven.plugin.version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${maven.checkstyle.plugin.version}</version>
             <configuration>
               <configLocation>src/checkstyle/checkstyle.xml</configLocation>
               <consoleOutput>true</consoleOutput>
@@ -148,3 +146,5 @@
     </profile>
   </profiles>
 </project>
+
+
