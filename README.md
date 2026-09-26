@@ -1,298 +1,298 @@
-# Email Helper
+# Biblioteca de Envío de Correo Electrónico
 
-Librería Java para enviar correos electrónicos mediante SMTP usando Jakarta Mail.
+Biblioteca Java para enviar correos HTML mediante SMTP, validar los datos del mensaje y construir notificaciones de error. La aplicación consumidora proporciona la configuración SMTP y la implementación de logging.
 
-Está pensada para aplicaciones Java que necesitan centralizar el envío de correos, validar datos de entrada, construir cuerpos HTML sencillos y delegar el logging en la aplicación consumidora mediante SLF4J.
+**Artefacto Maven:** `local.jarios:email-helper:6.2.0`
 
-> Autor: Juan Antonio Ríos  
-> Inicio del proyecto: 04/06/2024  
-> Versión actual: 6.1.0
+**Repositorio:** [contratacionmalaga/email_helper](https://github.com/contratacionmalaga/email_helper)
 
-## Características
+## Información de la versión
 
-- Envío SMTP con autenticación.
-- Validación de remitente, destinatarios y propiedades SMTP obligatorias.
-- Soporte de múltiples destinatarios separados por coma.
-- Soporte de contenido HTML con escape de valores dinámicos.
-- Excepción de dominio: `EmailException`.
-- API sencilla basada en `EmailService`.
-- Separación entre servicio de envío (`EmailService`) y transporte SMTP (`EmailSender`).
-- Logging mediante `slf4j-api`, sin forzar Logback, Log4j2 u otra implementación en producción.
-- Notificación de errores configurable mediante `ErrorNotificationService`.
+| Característica | Configuración |
+|---|---|
+| Versión preparada para publicación | **6.2.0** |
+| Tipo de artefacto | Biblioteca `jar` |
+| Parent Maven | `local.jarios:jarios-parent:1.0.15` |
+| Java de referencia y compilación | **21** |
+| Maven mínimo y distribuido mediante Wrapper | **3.9.16** |
+| Maven Wrapper | **3.3.4** |
+| Contenido de los mensajes | HTML, UTF-8 |
+| Publicación | GitHub Packages |
+| Revisión de dependencias y herramientas | 26 de septiembre de 2026 |
 
-## Requisitos
+El POM ya declara **6.2.0**. Los ejemplos corresponden a esta versión; su disponibilidad en GitHub Packages depende de la publicación del tag `v6.2.0`.
 
-- Java 21 o superior para ejecutar la librería. El build se valida con JDK 21 y JDK 25.
-- Maven Wrapper incluido en el proyecto.
-- Acceso a un servidor SMTP.
+Esta versión adopta el parent 1.0.15 y actualiza herramientas de compilación, pruebas y calidad. Mantiene la API pública y el baseline Java 21. Las versiones de dependencias y herramientas se heredan del parent, sin sobrescrituras locales.
 
-En Windows:
+## Alcance y funcionamiento
 
-```powershell
-.\mvnw.cmd test
-```
+`EmailServiceImpl` valida la solicitud, crea una sesión Jakarta Mail con autenticación, construye un mensaje HTML y delega su envío en `EmailSender`. `EmailSenderImpl` utiliza el transporte SMTP de Jakarta Mail.
 
-En Linux/macOS:
+- Un remitente y uno o varios destinatarios separados por comas.
+- Asunto y cuerpo obligatorios.
+- Helpers para generar HTML con escape de los valores dinámicos.
+- Notificaciones de error con contexto y traza de la excepción.
+- Errores de validación y envío comunicados mediante `EmailException`.
 
-```bash
-./mvnw test
-```
+Es una biblioteca para integrar en aplicaciones Java. La API `EmailData` no incorpora adjuntos, CC ni CCO. El envío es síncrono y no incluye colas ni reintentos automáticos.
 
-## Estructura
+## Requisitos e integración Maven
 
-```text
-src/
-├── main/
-│   └── java/
-│       └── local/jarios/email/
-│           ├── api/
-│           │   ├── EmailSender.java
-│           │   ├── EmailSenderImpl.java
-│           │   ├── EmailService.java
-│           │   ├── EmailServiceImpl.java
-│           │   └── ErrorNotificationService.java
-│           ├── common/util/
-│           │   ├── Constantes.java
-│           │   └── Mensajes.java
-│           ├── enums/
-│           │   └── TipoFinalEjecucion.java
-│           ├── exception/
-│           │   └── EmailException.java
-│           ├── helper/
-│           │   ├── ComunHelper.java
-│           │   ├── EmailHelper.java
-│           │   ├── ErrorEmailBuilder.java
-│           │   ├── ExceptionUtils.java
-│           │   ├── FinalDelProgramaHelper.java
-│           │   └── TextHelper.java
-│           ├── model/
-│           │   └── EmailData.java
-│           └── validator/
-│               └── EmailRequestValidator.java
-└── test/
-    ├── java/
-    │   └── local/jarios/email/
-    │       ├── EmailDemo.java
-    │       ├── api/
-    │       ├── helper/
-    │       └── validator/
-    └── resources/
-        └── logback-test.xml
-```
+Se requiere Java 21 o superior, acceso a un servidor SMTP y sus credenciales. Para compilar se necesita un JDK y Maven 3.9.16 o superior; el Wrapper incluido proporciona Maven.
 
-## Compatibilidad Java
-
-La versión `6.1.0` mantiene `maven.compiler.release=21`, por lo que el artefacto sigue siendo compatible con aplicaciones que ejecuten Java 21 o superior.
-
-El proyecto se valida en CI con JDK 21 y JDK 25 para preparar la futura migración a Java 25 LTS sin romper consumidores actuales. La subida del baseline a Java 25 debe reservarse para una versión mayor cuando los consumidores estén preparados.
-## Instalación
-
-El proyecto publica artefactos Maven en GitHub Packages:
+Declare la dependencia en el POM de la aplicación consumidora:
 
 ```xml
 <dependency>
-    <groupId>local.jarios</groupId>
-    <artifactId>email-helper</artifactId>
-    <version>6.1.0</version>
+  <groupId>local.jarios</groupId>
+  <artifactId>email-helper</artifactId>
+  <version>6.2.0</version>
 </dependency>
 ```
 
-Si el paquete se consume desde GitHub Packages, la aplicación consumidora debe tener configurado el repositorio y credenciales correspondientes en Maven.
+Puede omitir la versión si su parent ya gestiona la versión deseada. En particular, `jarios-parent:1.0.15` todavía gestiona `email-helper:6.1.4`: usar ese parent no selecciona automáticamente la 6.2.0.
+
+### Acceso a GitHub Packages
+
+Incorpore estos repositorios al POM consumidor o a un perfil activo de Maven:
+
+```xml
+<repositories>
+  <repository>
+    <id>github-email-helper</id>
+    <url>https://maven.pkg.github.com/contratacionmalaga/email_helper</url>
+  </repository>
+  <repository>
+    <id>github-jarios-parent</id>
+    <url>https://maven.pkg.github.com/contratacionmalaga/jarios-parent</url>
+  </repository>
+</repositories>
+```
+
+Añada los servidores a su `settings.xml`, conservando la configuración existente:
+
+```xml
+<servers>
+  <server>
+    <id>github-email-helper</id>
+    <username>${env.GITHUB_ACTOR}</username>
+    <password>${env.PACKAGES_TOKEN}</password>
+  </server>
+  <server>
+    <id>github-jarios-parent</id>
+    <username>${env.GITHUB_ACTOR}</username>
+    <password>${env.PACKAGES_TOKEN}</password>
+  </server>
+</servers>
+```
+
+Defina `GITHUB_ACTOR` y `PACKAGES_TOKEN` con un usuario y una credencial con acceso de lectura a los paquetes. Los identificadores de servidor deben coincidir con los de los repositorios.
 
 ## Uso básico
 
+Este ejemplo obtiene las credenciales de variables de entorno. La biblioteca no las lee automáticamente.
+
 ```java
-import local.jarios.email.api.EmailSender;
+import java.util.Properties;
 import local.jarios.email.api.EmailSenderImpl;
 import local.jarios.email.api.EmailService;
 import local.jarios.email.api.EmailServiceImpl;
 import local.jarios.email.model.EmailData;
 
-import java.util.Properties;
+public final class EjemploCorreo {
+  public static void main(String[] args) {
+    Properties props = new Properties();
+    props.setProperty("mail.smtp.host", "smtp.example.com");
+    props.setProperty("mail.smtp.port", "587");
+    props.setProperty("mail.smtp.auth", "true");
+    props.setProperty("mail.smtp.starttls.enable", "true");
+    props.setProperty("mail.smtp.starttls.required", "true");
+    props.setProperty("mail.smtp.user", variableObligatoria("SMTP_USER"));
+    props.setProperty("mail.smtp.password", variableObligatoria("SMTP_PASSWORD"));
+    props.setProperty("mail.smtp.connectiontimeout", "10000");
+    props.setProperty("mail.smtp.timeout", "10000");
+    props.setProperty("mail.smtp.writetimeout", "10000");
 
-import static local.jarios.email.common.util.Constantes.SMTP_AUTH;
-import static local.jarios.email.common.util.Constantes.SMTP_HOST;
-import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
-import static local.jarios.email.common.util.Constantes.SMTP_PORT;
-import static local.jarios.email.common.util.Constantes.SMTP_STARTTLS;
-import static local.jarios.email.common.util.Constantes.SMTP_USER;
+    EmailData mensaje = new EmailData(
+        "from@example.com",
+        "one@example.com,two@example.com",
+        "Resultado del proceso",
+        "<p>El proceso ha terminado correctamente.</p>");
 
-public class Example {
+    EmailService servicio = new EmailServiceImpl(new EmailSenderImpl());
+    servicio.sendEmail(props, mensaje);
+  }
 
-    public static void main(String[] args) {
-        Properties props = new Properties();
-        props.setProperty(SMTP_HOST, "smtp.example.com");
-        props.setProperty(SMTP_PORT, "587");
-        props.setProperty(SMTP_AUTH, "true");
-        props.setProperty(SMTP_STARTTLS, "true");
-        props.setProperty(SMTP_USER, System.getenv("SMTP_USER"));
-        props.setProperty(SMTP_PASSWORD, System.getenv("SMTP_PASSWORD"));
-
-        EmailData emailData = new EmailData(
-            "from@example.com",
-            "to@example.com",
-            "Asunto del correo",
-            "<p>Contenido del correo</p>"
-        );
-
-        EmailSender emailSender = new EmailSenderImpl();
-        EmailService emailService = new EmailServiceImpl(emailSender);
-
-        emailService.sendEmail(props, emailData);
+  private static String variableObligatoria(String nombre) {
+    String valor = System.getenv(nombre);
+    if (valor == null || valor.isBlank()) {
+      throw new IllegalStateException("Falta configurar " + nombre);
     }
+    return valor;
+  }
 }
 ```
 
-No se deben versionar usuarios, contraseñas ni tokens SMTP. Usa variables de entorno, ficheros locales ignorados por Git o un gestor de secretos.
+Adapte el host, puerto y remitente a su servidor. Los tiempos de espera del ejemplo están expresados en milisegundos; la biblioteca no establece valores propios para ellos.
 
-## Propiedades SMTP obligatorias
+## Configuración SMTP y validación
 
-El validador exige estas propiedades:
+Las constantes siguientes pertenecen a `local.jarios.email.common.util.Constantes`:
 
-| Constante | Clave Jakarta Mail |
-| --- | --- |
-| `SMTP_USER` | `mail.smtp.user` |
-| `SMTP_PASSWORD` | `mail.smtp.password` |
-| `SMTP_AUTH` | `mail.smtp.auth` |
-| `SMTP_STARTTLS` | `mail.smtp.starttls.enable` |
-| `SMTP_HOST` | `mail.smtp.host` |
-| `SMTP_PORT` | `mail.smtp.port` |
+| Constante | Clave | Ejemplo |
+|---|---|---|
+| `SMTP_HOST` | `mail.smtp.host` | `smtp.example.com` |
+| `SMTP_PORT` | `mail.smtp.port` | `587` |
+| `SMTP_AUTH` | `mail.smtp.auth` | `true` |
+| `SMTP_STARTTLS` | `mail.smtp.starttls.enable` | `true` |
+| `SMTP_USER` | `mail.smtp.user` | Usuario SMTP |
+| `SMTP_PASSWORD` | `mail.smtp.password` | Contraseña SMTP |
 
-Si falta alguna propiedad o algún dato del correo es inválido, la librería lanza `EmailException`.
+El validador exige que las seis propiedades existan y no estén en blanco, incluso si `mail.smtp.auth` vale `false`. Comprueba presencia, pero no valida el rango del puerto ni los valores booleanos. Las propiedades adicionales se entregan a Jakarta Mail.
 
-## Modelo de datos
+También rechaza propiedades o datos del mensaje nulos, campos vacíos y direcciones que no superen la validación de Jakarta Mail. Esta comprobación no garantiza que el buzón exista ni que el servidor acepte el mensaje.
 
-```java
-public record EmailData(
-    String from,
-    String to,
-    String subject,
-    String body
-) {}
-```
+## API pública
 
-`to` permite una o varias direcciones separadas por coma:
+| Tipo o método | Finalidad |
+|---|---|
+| `EmailData(String from, String to, String subject, String body)` | Record con los datos del correo. |
+| `new EmailServiceImpl(EmailSender sender)` | Servicio con transporte inyectable. |
+| `EmailService.sendEmail(Properties props, EmailData data)` | Valida, construye y envía el mensaje. |
+| `EmailSender.send(Session session, Message message)` | Contrato de transporte, sustituible en pruebas. |
+| `new EmailSenderImpl()` | Transporte basado en `Transport.send(message)`. |
+| `ErrorNotificationService.notifyError(Throwable ex, String contexto, Properties props)` | Intenta notificar un error y registra el fallo de notificación. |
+| `ErrorNotificationService.notifyErrorAndReturnResult(...)` | Mismo envío; devuelve `true` si se completa y `false` si falla. |
 
-```java
-new EmailData(
-    "from@example.com",
-    "one@example.com,two@example.com",
-    "Asunto",
-    "<p>Cuerpo</p>"
-);
-```
+`EmailException` extiende `RuntimeException`. El servicio conserva las excepciones de dominio y envuelve los fallos inesperados. La aplicación decide cómo informar al usuario o reintentar.
 
-## Notificaciones de error
+### Notificación de errores
 
-`ErrorNotificationService` permite construir y enviar un correo de error sin relanzar excepciones si la propia notificación falla.
+Dentro del tratamiento de una excepción, con el servicio y las propiedades SMTP ya configurados:
 
 ```java
-EmailService emailService = new EmailServiceImpl(new EmailSenderImpl());
+import local.jarios.email.api.ErrorNotificationService;
 
-ErrorNotificationService notifier = new ErrorNotificationService(
-    emailService,
-    "errors@example.com",
-    "ops@example.com"
-);
+ErrorNotificationService notificador = new ErrorNotificationService(
+    servicio, "errors@example.com", "ops@example.com");
 
-notifier.notifyError(
-    exception,
-    "Proceso de importación",
-    smtpProperties
-);
+boolean enviado = notificador.notifyErrorAndReturnResult(
+    excepcion, "Proceso de importación", props);
 ```
 
-El remitente y destinatario se configuran por constructor. No están fijados en la librería.
+El notificador captura las excepciones del intento de notificación. Si el envío falla, registra la excepción y devuelve `false`; no sustituye el manejo del error original de la aplicación.
 
-## Helpers HTML
+`ErrorEmailBuilder.build(ex, contexto, from, to)` incluye fecha, clase y mensaje de la excepción y una traza limitada por defecto a 6.000 caracteres, más una marca si se trunca. La sobrecarga `build(ex, contexto, from, to, subject, maxStackTraceLength)` permite personalizar asunto y límite.
 
-`EmailHelper` ofrece utilidades para construir cuerpos HTML sencillos:
+### Construcción de HTML
 
-- `getCuerpoEstadistica(String[][] estadistica)`
-- `getCuerpoExcepcion(String[] excepcion)`
-- `getAsunto(String appName, String appVersion, String equipo, boolean success)`
+| Método de `EmailHelper` | Uso |
+|---|---|
+| `getCuerpoEstadistica(String[][] estadistica)` | Cuerpo HTML con estadísticas. |
+| `getCuerpoExcepcion(String[] excepcion)` | Cuerpo HTML con información de una excepción. |
+| `getAsunto(String appName, String appVersion, String equipo, boolean success)` | Asunto con aplicación, versión, equipo, resultado y fecha. |
 
-Los valores dinámicos insertados en HTML se escapan para evitar marcado inesperado en el correo.
+Los helpers escapan los valores dinámicos que insertan. El cuerpo entregado directamente a `EmailData` se trata como HTML y no se sanea automáticamente.
 
-## Logging
+## Logging y tratamiento de datos
 
-La librería solo depende de `slf4j-api`.
+La biblioteca utiliza SLF4J y no impone un backend de logging en producción. La aplicación consumidora debe aportar uno compatible; Logback solo se usa en las pruebas.
 
-La aplicación consumidora debe aportar su implementación de logging si quiere ver logs:
+Los errores de envío registran host, puerto y usuario SMTP. Los correos de error contienen mensajes de excepción y trazas, y el fallo de una notificación también registra su excepción. No existe un filtro general de secretos: revise qué información incluyen las excepciones y a quién se remiten antes de utilizar estas notificaciones con datos sensibles.
 
-- Logback
-- Log4j2
-- cualquier implementación compatible con SLF4J
+Mantenga las credenciales en la configuración protegida de la aplicación, fuera del código y del repositorio.
 
-En tests se usa `logback-classic` con `src/test/resources/logback-test.xml`.
+## Dependencias
 
-## Build y tests
+Versiones gestionadas por `jarios-parent:1.0.15`:
 
-Compilar y ejecutar tests:
+| Dependencia | Versión | Ámbito | Finalidad |
+|---|---|---|---|
+| `org.slf4j:slf4j-api` | 2.0.20 | `compile` | API de logging. |
+| `com.sun.mail:jakarta.mail` | 2.0.2 | `compile` | API y transporte de correo. |
+| `org.projectlombok:lombok` | 1.18.48 | `provided` | Generación de código durante la compilación. |
+| `ch.qos.logback:logback-classic` | 1.6.4 | `test` | Logging de las pruebas. |
+| `org.junit.jupiter:junit-jupiter` | 6.1.3 | `test` | Pruebas unitarias. |
+| `org.assertj:assertj-core` | 3.27.7 | `test` | Aserciones. |
 
-```powershell
-.\mvnw.cmd test
-```
+La revisión no detectó versiones estables posteriores de estas coordenadas. Se excluyen las versiones preliminares de SLF4J y AssertJ. La evolución de Jakarta Mail continúa en [Eclipse Angus](https://eclipse-ee4j.github.io/angus-mail/); cambiar de implementación requiere una migración específica y no forma parte de esta actualización.
 
-Instalar localmente:
+## Construcción y verificación
 
-```powershell
-.\mvnw.cmd clean install
-```
+Desde la raíz del repositorio y con `JAVA_HOME` apuntando al JDK:
 
-Ejecutar perfil de calidad:
+| Operación | Windows | Linux y macOS |
+|---|---|---|
+| Comprobar herramientas | `.\mvnw.cmd -version` | `./mvnw -version` |
+| Ejecutar pruebas | `.\mvnw.cmd test` | `./mvnw test` |
+| Construir y verificar | `.\mvnw.cmd clean verify` | `./mvnw clean verify` |
+| Comprobar calidad | `.\mvnw.cmd -Pquality verify` | `./mvnw -Pquality verify` |
+| Instalar localmente | `.\mvnw.cmd install` | `./mvnw install` |
 
-```powershell
-.\mvnw.cmd -Pquality checkstyle:check spotbugs:check
-```
+En Linux y macOS puede ser necesario ejecutar `chmod +x mvnw`. El primer uso puede descargar Maven y las dependencias.
 
-Actualmente el perfil de calidad usa Checkstyle y SpotBugs con la configuración del proyecto.
+El POM referencia `../jarios-parent/pom.xml`. Si el proyecto vecino declara otra versión, Maven resuelve **1.0.15** desde el repositorio local o remoto; no adopta automáticamente el parent vecino.
 
-## CI/CD
+La construcción genera `target/email-helper-6.2.0.jar`. El POM actual no vincula la generación de JAR de fuentes ni de Javadoc al ciclo de construcción.
 
-El repositorio incluye workflows de GitHub Actions:
+Las 19 pruebas actuales cubren validación, construcción del mensaje, delegación del envío, propagación de errores, notificaciones y helpers HTML. Utilizan transportes simulados: no verifican la conectividad ni la entrega real en un servidor SMTP.
 
-- `.github/workflows/maven-ci.yml`: compila y ejecuta el build Maven en pushes y pull requests.
-- `.github/workflows/maven-release.yml`: genera una nueva release de forma manual.
+### Herramientas de construcción y calidad
 
-## Crear una release
+| Herramienta | Versión | Procedencia |
+|---|---|---|
+| Maven Enforcer Plugin | 3.6.3 | Parent |
+| Maven Compiler Plugin | 3.16.0 | Parent |
+| Maven Surefire Plugin | 3.6.0 | Parent |
+| Maven Clean Plugin | 3.5.0 | Parent |
+| Maven JAR Plugin | 3.5.1 | Parent |
+| Versions Maven Plugin | 2.22.0 | Parent |
+| Spotless Maven Plugin | 3.10.3 | Parent |
+| Google Java Format | 1.36.1 | Parent |
+| Maven Checkstyle Plugin | 3.6.0 | Parent |
+| Checkstyle | 14.1.0 | Parent |
+| SpotBugs Maven Plugin | 4.10.4.1 | Parent |
+| OWASP Dependency-Check | 13.0.0 | Parent |
 
-Desde GitHub:
+El perfil `quality` ejecuta Spotless, Checkstyle y SpotBugs en `verify`. Checkstyle utiliza las reglas locales de [`src/checkstyle/checkstyle.xml`](src/checkstyle/checkstyle.xml). OWASP se ejecuta por separado, mediante `org.owasp:dependency-check-maven:check`, y utiliza `NVD_API_KEY` si está configurada.
 
-1. Ir a `Actions`.
-2. Seleccionar `Maven Release`.
-3. Pulsar `Run workflow`.
-4. Informar `release_version`, por ejemplo `6.0.1`.
+## Automatización y publicación
 
-El pipeline:
+| Workflow | Activación | Función |
+|---|---|---|
+| [`CI`](.github/workflows/ci.yml) | Push y PR sobre `main`; manual | `clean verify` con JDK 21. |
+| [`Quality`](.github/workflows/quality.yml) | Push y PR sobre `main`; manual | `-Pquality verify` con JDK 21. |
+| [`Dependency Check`](.github/workflows/dependency-check.yml) | Lunes a las 04:10 UTC; manual | Análisis OWASP y conservación del informe. |
+| [`Release Package`](.github/workflows/release-package.yml) | Tags `v*`; manual con `release_tag` | Verificación, publicación Maven y GitHub Release. |
 
-1. Configura JDK 21 para la release actual. El CI valida además JDK 25 manteniendo `maven.compiler.release=21`.
-2. Cambia la versión del `pom.xml`.
-3. Ejecuta tests.
-4. Publica el paquete en GitHub Packages.
-5. Crea el tag `vX.Y.Z`.
-6. Crea una GitHub Release con el JAR generado.
+Para publicar la 6.2.0, el tag **`v6.2.0` debe apuntar al commit cuyo POM declara `6.2.0`**. El workflow verifica esa coincidencia; no cambia la versión del POM. También puede ejecutarse manualmente indicando un tag existente en `release_tag`.
 
-Para publicar en GitHub Packages, el repositorio debe tener permisos de escritura para Actions:
+La publicación ejecuta `clean verify`, después `deploy`, crea la GitHub Release y adjunta los JAR de `target/`. Requiere permisos de escritura sobre contenido y paquetes. La lectura de paquetes usa `PACKAGES_TOKEN` o el `GITHUB_TOKEN` configurado como alternativa, que debe tener acceso a los paquetes necesarios.
 
-```text
-Settings > Actions > General > Workflow permissions > Read and write permissions
-```
+Dependabot revisa Maven semanalmente mediante [su configuración](.github/dependabot.yml). No hay actualización automática de GitHub Actions ni fusión automática configuradas. El acceso de Dependabot a repositorios privados debe configurarse por separado de las credenciales de los workflows.
 
-## Auditoría
+## Resolución de problemas
 
-La auditoría técnica del proyecto se encuentra en:
+| Síntoma | Comprobación |
+|---|---|
+| No se resuelve el parent o la biblioteca | Versión publicada, repositorios y credenciales Maven. |
+| Error 401 o 403 al descargar paquetes | Permisos del token y coincidencia entre identificadores de repositorio y servidor. |
+| Maven rechaza Java o su propia versión | `JAVA_HOME` y salida de `mvnw -version`. |
+| Falta una propiedad SMTP | Las seis propiedades obligatorias deben tener un valor no vacío. |
+| Falla autenticación, conexión o TLS | Host, puerto, credenciales y requisitos del servidor; causa de `EmailException`. |
+| El envío permanece bloqueado | Configurar tiempos de espera SMTP en las propiedades. |
+| No aparecen logs | Backend SLF4J y niveles de logging de la aplicación. |
+| La notificación devuelve `false` | Consultar el log y conservar el diagnóstico del error original. |
+| Falla la publicación | Coincidencia tag/POM, acceso a paquetes y permisos del workflow. |
 
-```text
-docs/auditorias/2026-08-12-auditoria-viva-proyecto.md
-```
+## Documentación y mantenimiento
 
-La auditoría anterior queda conservada como histórico en `doc/auditoria/2026_05_09_auditoria_proyecto.md`.
+- [Revisión de actualizaciones y validación de 6.2.0](docs/releases/6.2.0.md).
+- [Auditoría técnica de agosto de 2026](docs/auditorias/2026-08-12-auditoria-viva-proyecto.md).
+- [Auditoría histórica de mayo de 2026](doc/auditoria/2026_05_09_auditoria_proyecto.md).
 
-## Notas de seguridad
+Mantenga este README sincronizado con el POM, la API y los workflows. Los documentos históricos describen el estado de su fecha y no sustituyen el proceso de publicación actual.
 
-- No versionar credenciales SMTP.
-- No incluir contraseñas reales en demos, tests ni documentación.
-- Rotar cualquier secreto que haya estado en el repositorio.
-- Preferir variables de entorno o gestor de secretos.
-- Revisar el histórico Git si se sospecha exposición previa.
+## Licencia
+
+El repositorio no incluye un archivo de licencia propio ni una declaración de licencia en el POM o el parent revisado. Las dependencias conservan sus respectivas licencias.
