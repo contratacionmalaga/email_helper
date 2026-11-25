@@ -1,8 +1,8 @@
 # Biblioteca de Envío de Correo Electrónico
 
-Biblioteca Java para enviar correos HTML mediante SMTP, validar los datos del mensaje y construir notificaciones de error. La aplicación consumidora proporciona la configuración SMTP y la implementación de logging.
+Biblioteca Java para enviar correos HTML mediante SMTP o Microsoft Graph, validar los datos del mensaje y construir notificaciones de error. La aplicación consumidora proporciona la configuración del transporte y la implementación de logging.
 
-**Artefacto Maven:** `local.jarios:email-helper:6.2.0`
+**Artefacto Maven:** `local.jarios:email-helper:6.4.0`
 
 **Repositorio:** [contratacionmalaga/email_helper](https://github.com/contratacionmalaga/email_helper)
 
@@ -10,7 +10,7 @@ Biblioteca Java para enviar correos HTML mediante SMTP, validar los datos del me
 
 | Característica | Configuración |
 |---|---|
-| Versión preparada para publicación | **6.2.0** |
+| Versión | **6.4.0** |
 | Tipo de artefacto | Biblioteca `jar` |
 | Parent Maven | `local.jarios:jarios-parent:1.0.15` |
 | Java de referencia y compilación | **21** |
@@ -20,13 +20,11 @@ Biblioteca Java para enviar correos HTML mediante SMTP, validar los datos del me
 | Publicación | GitHub Packages |
 | Revisión de dependencias y herramientas | 26 de septiembre de 2026 |
 
-El POM ya declara **6.2.0**. Los ejemplos corresponden a esta versión; su disponibilidad en GitHub Packages depende de la publicación del tag `v6.2.0`.
-
-Esta versión adopta el parent 1.0.15 y actualiza herramientas de compilación, pruebas y calidad. Mantiene la API pública y el baseline Java 21. Las versiones de dependencias y herramientas se heredan del parent, sin sobrescrituras locales.
+Esta versión incorpora `GraphEmailService` para el envío con Microsoft 365. Requiere Java 21 y usa el parent 1.0.15 para gestionar las herramientas y las dependencias de SMTP y pruebas. Las versiones de Microsoft Graph y Azure Identity se declaran en el POM de esta biblioteca.
 
 ## Alcance y funcionamiento
 
-`EmailServiceImpl` valida la solicitud, crea una sesión Jakarta Mail con autenticación, construye un mensaje HTML y delega su envío en `EmailSender`. `EmailSenderImpl` utiliza el transporte SMTP de Jakarta Mail.
+`EmailServiceImpl` valida la solicitud, crea una sesión Jakarta Mail, construye un mensaje HTML y delega su envío en `EmailSender`. `EmailSenderImpl` utiliza el transporte SMTP de Jakarta Mail. Con `mail.smtp.auth=false`, la sesión admite un relé SMTP sin credenciales.
 
 - Un remitente y uno o varios destinatarios separados por comas.
 - Asunto y cuerpo obligatorios.
@@ -38,7 +36,7 @@ Es una biblioteca para integrar en aplicaciones Java. La API `EmailData` no inco
 
 ## Requisitos e integración Maven
 
-Se requiere Java 21 o superior, acceso a un servidor SMTP y sus credenciales. Para compilar se necesita un JDK y Maven 3.9.16 o superior; el Wrapper incluido proporciona Maven.
+Se requiere Java 21 o superior y acceso al transporte elegido. Para compilar se necesita un JDK y Maven 3.9.16 o superior. El Wrapper incluido proporciona Maven.
 
 Declare la dependencia en el POM de la aplicación consumidora:
 
@@ -46,11 +44,11 @@ Declare la dependencia en el POM de la aplicación consumidora:
 <dependency>
   <groupId>local.jarios</groupId>
   <artifactId>email-helper</artifactId>
-  <version>6.2.0</version>
+  <version>6.4.0</version>
 </dependency>
 ```
 
-Puede omitir la versión si su parent ya gestiona la versión deseada. En particular, `jarios-parent:1.0.15` todavía gestiona `email-helper:6.1.4`: usar ese parent no selecciona automáticamente la 6.2.0.
+Puede omitir la versión si su parent ya gestiona la versión deseada. Con `jarios-parent:1.0.15`, declare `6.4.0` explícitamente.
 
 ### Acceso a GitHub Packages
 
@@ -135,6 +133,37 @@ public final class EjemploCorreo {
 
 Adapte el host, puerto y remitente a su servidor. Los tiempos de espera del ejemplo están expresados en milisegundos; la biblioteca no establece valores propios para ellos.
 
+### Microsoft 365 desde Contratacion360
+
+Para enviar desde `contratacion360@malaga.es` con las credenciales de Microsoft Entra de Contratacion360, usa `GraphEmailService`. El lanzador del proceso Java debe pasar estas variables del perfil de entorno que corresponda.
+
+| Variable | Valor |
+|---|---|
+| `MICROSOFT_GRAPH_TENANT_ID` | Identificador del inquilino de Microsoft Entra. |
+| `MICROSOFT_GRAPH_CLIENT_ID` | Identificador de la aplicación registrada. |
+| `MICROSOFT_GRAPH_CLIENT_SECRET` | Secreto de la aplicación, suministrado por el entorno. |
+| `MAIL_MAILBOX` | `contratacion360@malaga.es`. |
+| `MAIL_OUTBOUND_ENABLED` | `true` en el entorno donde esté autorizado el envío. |
+
+El proceso Java lee su entorno, por lo que el lanzador debe inyectar las variables si el perfil está en un archivo `.env`. Selecciona explícitamente el servicio Graph en el consumidor.
+
+```java
+import java.util.Properties;
+import local.jarios.email.api.EmailService;
+import local.jarios.email.api.GraphEmailService;
+import local.jarios.email.model.EmailData;
+
+Properties props = GraphEmailService.propertiesFromEnvironment();
+EmailService servicio = new GraphEmailService();
+servicio.sendEmail(props, new EmailData(
+    props.getProperty("MAIL_MAILBOX"),
+    "destinatario@empresa.es",
+    "Prueba de envío",
+    "<p>Correo enviado mediante Microsoft Graph.</p>"));
+```
+
+La aplicación registrada necesita autorización para enviar correo con Microsoft Graph desde ese buzón. Azure Identity gestiona los tokens de acceso y el SDK de Microsoft Graph llama a [sendMail](https://learn.microsoft.com/es-es/graph/api/user-sendmail?view=graph-rest-1.0). Reutiliza la misma instancia de `GraphEmailService` para aprovechar la caché de tokens de Azure Identity. Una respuesta HTTP 202 confirma que Graph aceptó la solicitud. Para notificaciones de error, usa este mismo servicio y el buzón configurado como remitente en `ErrorNotificationService`.
+
 ## Configuración SMTP y validación
 
 Las constantes siguientes pertenecen a `local.jarios.email.common.util.Constantes`:
@@ -148,7 +177,7 @@ Las constantes siguientes pertenecen a `local.jarios.email.common.util.Constante
 | `SMTP_USER` | `mail.smtp.user` | Usuario SMTP |
 | `SMTP_PASSWORD` | `mail.smtp.password` | Contraseña SMTP |
 
-El validador exige que las seis propiedades existan y no estén en blanco, incluso si `mail.smtp.auth` vale `false`. Comprueba presencia, pero no valida el rango del puerto ni los valores booleanos. Las propiedades adicionales se entregan a Jakarta Mail.
+El validador exige `mail.smtp.host`, `mail.smtp.port`, `mail.smtp.auth` y `mail.smtp.starttls.enable`. Si `mail.smtp.auth=true`, también exige `mail.smtp.user` y `mail.smtp.password`. Las propiedades adicionales se entregan a Jakarta Mail.
 
 También rechaza propiedades o datos del mensaje nulos, campos vacíos y direcciones que no superen la validación de Jakarta Mail. Esta comprobación no garantiza que el buzón exista ni que el servidor acepte el mensaje.
 
@@ -233,7 +262,7 @@ En Linux y macOS puede ser necesario ejecutar `chmod +x mvnw`. El primer uso pue
 
 El POM referencia `../jarios-parent/pom.xml`. Si el proyecto vecino declara otra versión, Maven resuelve **1.0.15** desde el repositorio local o remoto; no adopta automáticamente el parent vecino.
 
-La construcción genera `target/email-helper-6.2.0.jar`. El POM actual no vincula la generación de JAR de fuentes ni de Javadoc al ciclo de construcción.
+La construcción genera `target/email-helper-6.4.0.jar`. El POM actual no vincula la generación de JAR de fuentes ni de Javadoc al ciclo de construcción.
 
 Las 19 pruebas actuales cubren validación, construcción del mensaje, delegación del envío, propagación de errores, notificaciones y helpers HTML. Utilizan transportes simulados: no verifican la conectividad ni la entrega real en un servidor SMTP.
 
@@ -265,7 +294,7 @@ El perfil `quality` ejecuta Spotless, Checkstyle y SpotBugs en `verify`. Checkst
 | [`Dependency Check`](.github/workflows/dependency-check.yml) | Lunes a las 04:10 UTC; manual | Análisis OWASP y conservación del informe. |
 | [`Release Package`](.github/workflows/release-package.yml) | Tags `v*`; manual con `release_tag` | Verificación, publicación Maven y GitHub Release. |
 
-Para publicar la 6.2.0, el tag **`v6.2.0` debe apuntar al commit cuyo POM declara `6.2.0`**. El workflow verifica esa coincidencia; no cambia la versión del POM. También puede ejecutarse manualmente indicando un tag existente en `release_tag`.
+Para publicar la 6.4.0, el tag **`v6.4.0` debe apuntar al commit cuyo POM declara `6.4.0`**. El workflow verifica esa coincidencia y también puede ejecutarse manualmente indicando un tag existente en `release_tag`.
 
 La publicación ejecuta `clean verify`, después `deploy`, crea la GitHub Release y adjunta los JAR de `target/`. Requiere permisos de escritura sobre contenido y paquetes. La lectura de paquetes usa `PACKAGES_TOKEN` o el `GITHUB_TOKEN` configurado como alternativa, que debe tener acceso a los paquetes necesarios.
 
@@ -287,6 +316,7 @@ Dependabot revisa Maven semanalmente mediante [su configuración](.github/depend
 
 ## Documentación y mantenimiento
 
+- [Notas de la versión 6.4.0](docs/releases/6.4.0.md).
 - [Revisión de actualizaciones y validación de 6.2.0](docs/releases/6.2.0.md).
 - [Auditoría técnica de agosto de 2026](docs/auditorias/2026-08-12-auditoria-viva-proyecto.md).
 - [Auditoría histórica de mayo de 2026](doc/auditoria/2026_05_09_auditoria_proyecto.md).

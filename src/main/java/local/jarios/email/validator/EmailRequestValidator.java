@@ -48,13 +48,18 @@ public final class EmailRequestValidator {
       throw new EmailException("Las propiedades SMTP son obligatorias.");
     }
 
+    validarMensaje(data);
+    validarPropiedadesSMTP(props);
+  }
+
+  /** Valida el mensaje independientemente del transporte. */
+  public static void validarMensaje(EmailData data) {
     if (data == null) {
       throw new EmailException("Los datos del email son obligatorios.");
     }
 
     validarEmailData(data);
     validarDirecciones(data);
-    validarPropiedadesSMTP(props);
   }
 
   /* ===================== */
@@ -94,9 +99,11 @@ public final class EmailRequestValidator {
 
   private static void validarPropiedadesSMTP(Properties props) {
 
-    validarPropiedad(props, SMTP_USER);
-    validarPropiedad(props, SMTP_PASSWORD);
     validarPropiedad(props, SMTP_AUTH);
+    if (Boolean.parseBoolean(props.getProperty(SMTP_AUTH))) {
+      validarPropiedad(props, SMTP_USER);
+      validarPropiedad(props, SMTP_PASSWORD);
+    }
     validarPropiedad(props, SMTP_STARTTLS);
     validarPropiedad(props, SMTP_HOST);
     validarPropiedad(props, SMTP_PORT);

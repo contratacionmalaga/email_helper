@@ -8,7 +8,7 @@
     <relativePath>../jarios-parent/pom.xml</relativePath>
   </parent>
   <artifactId>email-helper</artifactId>
-  <version>6.2.0</version>
+  <version>6.4.0</version>
   <packaging>jar</packaging>
   <name>email-helper</name>
   <description>Servicio de envío de emails para aplicaciones desarrolladas en Java</description>
@@ -29,6 +29,16 @@
     </snapshotRepository>
   </distributionManagement>
   <dependencies>
+    <dependency>
+      <groupId>com.microsoft.graph</groupId>
+      <artifactId>microsoft-graph</artifactId>
+      <version>6.74.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-identity</artifactId>
+      <version>1.19.0</version>
+    </dependency>
     <!-- SLF4J API (la librería solo "habla" SLF4J) -->
     <dependency>
       <groupId>org.slf4j</groupId>

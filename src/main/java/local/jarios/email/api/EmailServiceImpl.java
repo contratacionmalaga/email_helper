@@ -1,5 +1,6 @@
 package local.jarios.email.api;
 
+import static local.jarios.email.common.util.Constantes.SMTP_AUTH;
 import static local.jarios.email.common.util.Constantes.SMTP_HOST;
 import static local.jarios.email.common.util.Constantes.SMTP_PASSWORD;
 import static local.jarios.email.common.util.Constantes.SMTP_PORT;
@@ -76,7 +77,9 @@ public class EmailServiceImpl implements EmailService {
   /* ===================== */
 
   private Session createSession(Properties props) {
-
+    if (!Boolean.parseBoolean(props.getProperty(SMTP_AUTH))) {
+      return Session.getInstance(props);
+    }
     String username = getSafeProperty(props, SMTP_USER);
     String password = props.getProperty(SMTP_PASSWORD);
 

@@ -10,7 +10,7 @@ public interface EmailService {
   /**
    * Envía un correo electrónico utilizando los datos proporcionados.
    *
-   * @param props Propiedades de configuración del servidor SMTP.
+   * @param props Propiedades de configuración del transporte.
    * @param data Datos del correo electrónico a enviar.
    * @throws EmailException Si ocurre algún error durante el proceso de envío.
    */

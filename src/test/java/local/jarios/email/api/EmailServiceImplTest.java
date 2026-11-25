@@ -36,6 +36,20 @@ class EmailServiceImplTest {
   }
 
   @Test
+  void shouldDelegateToSmtpRelayWithoutCredentialsWhenAuthenticationIsDisabled() {
+    CapturingEmailSender sender = new CapturingEmailSender();
+    Properties props = validSmtpProperties();
+    props.setProperty(SMTP_AUTH, "false");
+    props.remove(SMTP_USER);
+    props.remove(SMTP_PASSWORD);
+
+    new EmailServiceImpl(sender).sendEmail(props, validEmailData());
+
+    assertThat(sender.session).isNotNull();
+    assertThat(sender.message).isNotNull();
+  }
+
+  @Test
   void shouldPropagateDomainExceptionFromSender() {
     EmailException failure = new EmailException("SMTP down");
     EmailService service =
